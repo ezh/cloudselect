@@ -1,29 +1,32 @@
 #!/bin/sh
 #
-AWSELECT=$(cloudselect x | jq -r '.[].cloud | @base64')
+CLOUD=$(cloudselect x | jq -r '.[].cloud | @base64')
+PROFILE="-"
+REGION="-"
 TMUX_LAYOUT="tiled"
 TMUX_SESSION_NAME="assh-"$(date +%s)
 WAIT_FOR_INPUT='read -n 1 -s -r -p "Press any key to continue"'
-PROFILE="-"
-REGION="-"
 WINDOW=0
 
 # Collect shared arguments
-for row in $(echo $AWSELECT); do
+for row in $(echo $CLOUD); do
   OUTPUT=$(echo ${row} | base64 --decode)
-  PROFILE=$(echo $OUTPUT | jq -r '.profile')
-  REGION=$(echo $OUTPUT | jq -r '.region')
-  OPTION_BEFORE=$(echo $OUTPUT | jq -r '.option_before')
   OPTION_AFTER=$(echo $OUTPUT | jq -r '.option_after')
+  OPTION_BEFORE=$(echo $OUTPUT | jq -r '.option_before')
   OPTION_SSH=$(echo $OUTPUT | jq -r '.option_ssh')
   OPTION_SSH_COMMAND=$(echo $OUTPUT | jq -r '.option_ssh_command')
+  PROFILE=$(echo $OUTPUT | jq -r '.profile')
+  REGION=$(echo $OUTPUT | jq -r '.region')
+
+  test "$OPTION_SSH" == "null" && OPTION_SSH=""
+  test "$OPTION_SSH_COMMAND" == "null" && OPTION_SSH_COMMAND=""
   break
 done
 
 echo "assh to $PROFILE $REGION"
-test -n "$OPTION_BEFORE" && eval $OPTION_BEFORE
+test "$OPTION_BEFORE" != "null" && eval "$OPTION_BEFORE"
 # Iterate over instances
-for row in $(echo $AWSELECT); do
+for row in $(echo $CLOUD); do
   OUTPUT=$(echo ${row} | base64 --decode)
   HOST=$(echo $OUTPUT | jq -r '.host')
   KEY="-i"$(echo $OUTPUT | jq -r '.key')
@@ -32,7 +35,7 @@ for row in $(echo $AWSELECT); do
   test "$USER" == "null@" && USER=""
   test "$KEY" == "-inull" && KEY=""
 
-  connectString="ssh -o UserKnownHostsFile=/dev/null -t $KEY $USER$HOST sudo -i"
+  connectString="ssh -o UserKnownHostsFile=/dev/null -t $OPTION_SSH $KEY $USER$HOST $OPTION_SSH_COMMAND"
   commandString="${connectString}; $WAIT_FOR_INPUT"
 
   tmux list-windows | grep -q "${TMUX_SESSION_NAME}"
@@ -49,4 +52,4 @@ done
 
 test $WINDOW -gt 0 && tmux select-layout -t "${TMUX_SESSION_NAME}" "${TMUX_LAYOUT}"
 tmux set-window-option -t "${TMUX_SESSION_NAME}" synchronize-panes on
-test -n "$OPTION_AFTER" && eval $OPTION_AFTER
+test "$OPTION_AFTER" != "null" && eval "$OPTION_AFTER"

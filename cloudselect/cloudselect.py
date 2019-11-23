@@ -15,16 +15,18 @@ class CloudSelect:
         or os.path.join(expanduser("~"), ".config"),
         "cloudselect",
     )
-    configfile = os.path.join(configpath, "cloudselect.json")
+    configfile = os.path.join(configpath, "cloud.json")
+    extension = "cloud.json"
     logger = None
 
     def __init__(self):
-        self.logger = logging.getLogger("cloudselect.AWSelect")
+        self.logger = logging.getLogger("cloudselect.CloudSelect")
         if not os.path.exists(self.configpath):
             os.mkdir(self.configpath)
         try:
             self.config = self.profile_read(self.configfile)
         except:
+            self.config = {}
             print("Unable to read {}".format(self.configfile))
 
     def get_editor(self):
@@ -60,7 +62,7 @@ class CloudSelect:
                 self.edit(self.configfile)
             else:
                 profile = os.path.join(
-                    self.configpath, "{}.cloudselect.json".format(args.edit)
+                    self.configpath, "{}.{}".format(args.edit, self.extension)
                 )
                 self.edit(profile)
         if not args.profile:
@@ -71,18 +73,18 @@ class CloudSelect:
     def profile_list(self):
         self.logger.debug("List all available profiles from {}".format(self.configpath))
         empty = True
-        print("AWSelect profiles:")
+        print("CloudSelect profiles:")
         for file in os.listdir(self.configpath):
-            if file.endswith(".cloudselect.json"):
+            if file.endswith(".{}".format(self.extension)):
                 empty = False
-                print("- {}".format(file.replace(".cloudselect.json", "")))
+                print("- {}".format(file.replace(".{}".format(self.extension), "")))
         if empty:
             print("- NO PROFILES -")
 
     def profile_process(self, profile_name, args):
         self.logger.debug("Process profile '{}'".format(profile_name))
         profile = os.path.join(
-            self.configpath, "{}.cloudselect.json".format(profile_name)
+            self.configpath, "{}.{}".format(profile_name, self.extension)
         )
         if not os.path.isfile(profile):
             print("Profile {} does not exists".format(profile))
@@ -112,14 +114,14 @@ class CloudSelect:
         for instance in instances:
             region = instance["Placement"]["AvailabilityZone"][:-1]
             profile_name = profile.get("profile_name")
-            instance["cloudselect"] = {"profile": profile_name, "region": region}
+            instance["cloud"] = {"profile": profile_name, "region": region}
             # delete unnecessary datetime elements
             instance.pop("BlockDeviceMappings", None)
             instance.pop("LaunchTime", None)
             instance.pop("NetworkInterfaces", None)
             # add secret keys
             self.logger.debug("Search for SSH key {}".format(instance["KeyName"]))
-            instance["cloudselect"]["key"] = (
+            instance["cloud"]["key"] = (
                 self.config.get("key", {})
                 .get(profile_name, {})
                 .get(region, {})
@@ -131,7 +133,7 @@ class CloudSelect:
                 or self.config.get("key", {}).get(instance["KeyName"])
             )
             # add user
-            instance["cloudselect"]["user"] = filter(
+            instance["cloud"]["user"] = filter(
                 self.config.get("user", {}).get(profile_name, {}).get(region, {})
                 or self.config.get("user", {}).get(profile_name, {})
                 or self.config.get("user", {}).get(region, {})
@@ -145,15 +147,15 @@ class CloudSelect:
                 or self.config.get("ip", {})
             )
             if ip == "public":
-                instance["cloudselect"]["host"] = instance["PublicIpAddress"]
+                instance["cloud"]["host"] = instance["PublicIpAddress"]
             elif ip == "private":
-                instance["cloudselect"]["host"] = instance["PrivateIpAddress"]
+                instance["cloud"]["host"] = instance["PrivateIpAddress"]
             elif ip == "public_private":
-                instance["cloudselect"]["host"] = instance["PublicIpAddress"]
+                instance["cloud"]["host"] = instance["PublicIpAddress"]
             elif ip == "private_public":
-                instance["cloudselect"]["host"] = instance["PrivateIpAddress"]
+                instance["cloud"]["host"] = instance["PrivateIpAddress"]
             else:
-                instance["cloudselect"]["host"] = instance["PublicIpAddress"]
+                instance["cloud"]["host"] = instance["PublicIpAddress"]
         return instances
 
     def instances_find(self, profile):
