@@ -1,13 +1,13 @@
 import pytest
 
-import awselect
-from awselect.cli import Cli
+import cloudselect
+from cloudselect.cli import Cli
 
 
 def test_cli_version(script_runner):
-    ret = script_runner.run("awselect", "--version")
+    ret = script_runner.run("cloudselect", "--version")
     assert ret.success
-    assert ret.stdout == "awselect version {}\n".format(awselect.__version__)
+    assert ret.stdout == "cloudselect version {}\n".format(cloudselect.__version__)
     assert ret.stderr == ""
 
     with pytest.raises(SystemExit):

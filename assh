@@ -1,0 +1,52 @@
+#!/bin/sh
+#
+AWSELECT=$(cloudselect x | jq -r '.[].cloud | @base64')
+TMUX_LAYOUT="tiled"
+TMUX_SESSION_NAME="assh-"$(date +%s)
+WAIT_FOR_INPUT='read -n 1 -s -r -p "Press any key to continue"'
+PROFILE="-"
+REGION="-"
+WINDOW=0
+
+# Collect shared arguments
+for row in $(echo $AWSELECT); do
+  OUTPUT=$(echo ${row} | base64 --decode)
+  PROFILE=$(echo $OUTPUT | jq -r '.profile')
+  REGION=$(echo $OUTPUT | jq -r '.region')
+  OPTION_BEFORE=$(echo $OUTPUT | jq -r '.option_before')
+  OPTION_AFTER=$(echo $OUTPUT | jq -r '.option_after')
+  OPTION_SSH=$(echo $OUTPUT | jq -r '.option_ssh')
+  OPTION_SSH_COMMAND=$(echo $OUTPUT | jq -r '.option_ssh_command')
+  break
+done
+
+echo "assh to $PROFILE $REGION"
+test -n "$OPTION_BEFORE" && eval $OPTION_BEFORE
+# Iterate over instances
+for row in $(echo $AWSELECT); do
+  OUTPUT=$(echo ${row} | base64 --decode)
+  HOST=$(echo $OUTPUT | jq -r '.host')
+  KEY="-i"$(echo $OUTPUT | jq -r '.key')
+  USER=$(echo $OUTPUT | jq -r '.user')"@"
+
+  test "$USER" == "null@" && USER=""
+  test "$KEY" == "-inull" && KEY=""
+
+  connectString="ssh -o UserKnownHostsFile=/dev/null -t $KEY $USER$HOST sudo -i"
+  commandString="${connectString}; $WAIT_FOR_INPUT"
+
+  tmux list-windows | grep -q "${TMUX_SESSION_NAME}"
+  if [ $WINDOW -eq 0 -a $? -ne 0 ]; then
+    tmux new-window -n "${TMUX_SESSION_NAME}" "$commandString"
+    echo "$connectString"
+  else
+    echo add
+    tmux split-window -t "${TMUX_SESSION_NAME}" "${commandString}" && \
+    echo "$connectString"
+  fi
+  WINDOW=$((WINDOW+1))
+done
+
+test $WINDOW -gt 0 && tmux select-layout -t "${TMUX_SESSION_NAME}" "${TMUX_LAYOUT}"
+tmux set-window-option -t "${TMUX_SESSION_NAME}" synchronize-panes on
+test -n "$OPTION_AFTER" && eval $OPTION_AFTER

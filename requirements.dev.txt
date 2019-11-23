@@ -1,3 +1,6 @@
+pyls
+pyls-iblack
+pyls-isort
 pytest
 pytest-console-scripts
 pytest-cov
