@@ -1,0 +1,5 @@
+.mypy
+.venv
+.mypy_cache
+.tox
+*.egg-info

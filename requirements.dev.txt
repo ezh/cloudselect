@@ -1,0 +1,4 @@
+pytest
+pytest-console-scripts
+pytest-cov
+wdb
