@@ -1,0 +1,27 @@
+{
+  "log": {
+    "version": 1,
+    "formatters": {
+      "f": {
+        "format": "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
+      }
+    },
+    "handlers": {
+      "h": {
+        "class": "logging.StreamHandler",
+        "formatter": "f",
+        "level": 10
+      }
+    },
+    "root": {
+      "handlers": [
+        "h"
+      ],
+      "level": 40
+    }
+  },
+  "plugin": {
+      "aws": "cloudselect.discovery.aws",
+      "discovery": "cloudselect.discovery"
+  }
+}

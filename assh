@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-CLOUD=$(cloudselect x | jq -r '.[].cloud | @base64')
+CLOUD=$(cloudselect x | jq -r '.[] | @base64')
 PROFILE="-"
 REGION="-"
 TMUX_LAYOUT="tiled"
@@ -15,8 +15,8 @@ for row in $(echo $CLOUD); do
   OPTION_BEFORE=$(echo $OUTPUT | jq -r '.option_before')
   OPTION_SSH=$(echo $OUTPUT | jq -r '.option_ssh')
   OPTION_SSH_COMMAND=$(echo $OUTPUT | jq -r '.option_ssh_command')
-  PROFILE=$(echo $OUTPUT | jq -r '.profile')
-  REGION=$(echo $OUTPUT | jq -r '.region')
+  PROFILE=$(echo $OUTPUT | jq -r '.metadata.profile')
+  REGION=$(echo $OUTPUT | jq -r '.metadata.region')
 
   test "$OPTION_SSH" == "null" && OPTION_SSH=""
   test "$OPTION_SSH_COMMAND" == "null" && OPTION_SSH_COMMAND=""
@@ -43,7 +43,6 @@ for row in $(echo $CLOUD); do
     tmux new-window -n "${TMUX_SESSION_NAME}" "$commandString"
     echo "$connectString"
   else
-    echo add
     tmux split-window -t "${TMUX_SESSION_NAME}" "${commandString}" && \
     echo "$connectString"
   fi

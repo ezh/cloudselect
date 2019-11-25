@@ -1,0 +1,95 @@
+# Copyright 2019 Alexey Aksenov and individual contributors
+# See the LICENSE.txt file at the top-level directory of this distribution.
+#
+# Licensed under the MIT license
+# <LICENSE-MIT or http://opensource.org/licenses/MIT>
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+import json
+import logging
+import os
+import subprocess
+
+from cloudselect import Container
+
+
+class Selector:
+    logger = None
+
+    def __init__(self):
+        self.logger = logging.getLogger("cloudselect.Selector")
+
+    def edit(self, file):
+        self.logger.debug("Edit '{}'".format(file))
+        if not os.path.isfile(file):
+            self.logger.info("{} does not exists".format(file))
+        editor = self.get_editor()
+        os.execvp(editor, [editor, file])
+
+    def execute(self, program, args, **kwargs):
+        """Executes a command in a subprocess and returns its standard output."""
+        return (
+            subprocess.run([program, *args], stdout=subprocess.PIPE, **kwargs)
+            .stdout.decode()
+            .strip()
+        )
+
+    def fzf_select(self, instances):
+        def find(instance_id):
+            return next(x for x in instances if x.id == instance_id)
+
+        fzf_input = "\n".join("\t".join(i.representation) for i in instances).encode()
+        selected = self.execute("fzf", ["-m"], input=fzf_input)
+        return [find(i.split("\t", 1)[0]) for i in selected.split("\n")]
+
+    def get_editor(self):
+        config = Container.config
+        if config.editor():
+            return config.editor()
+        for key in "VISUAL", "EDITOR":
+            rv = os.environ.get(key)
+            if rv:
+                return rv
+        for editor in "vim", "nano":
+            if os.system("which %s >/dev/null 2>&1" % editor) == 0:
+                return editor
+        return "vi"
+
+    def profile_list(self):
+        configpath = Container.configpath()
+        extension = Container.extension()
+
+        self.logger.debug("List all available profiles from {}".format(configpath))
+        empty = True
+        print("CloudSelect profiles:")
+        for file in os.listdir(configpath):
+            if file.endswith(".{}".format(extension)):
+                empty = False
+                print("- {}".format(file.replace(".{}".format(extension), "")))
+        if empty:
+            print("- NO PROFILES -")
+
+    def profile_process(self):
+        discovery = Container.discovery()
+        profile_name = Container.args().profile
+
+        self.logger.debug("Process profile '{}'".format(profile_name))
+        instances = discovery.run()
+        selected = list(i.toDict() for i in self.fzf_select(instances))
+        print(json.dumps(selected, sort_keys=True))
+
+    def select(self):
+        args = Container.args()
+        configpath = Container.configpath()
+        extension = Container.extension()
+
+        if args.edit is None or args.edit:
+            if args.edit is None:
+                self.edit()
+            else:
+                profile = os.path.join(configpath, "{}.{}".format(args.edit, extension))
+                self.edit(profile)
+        if not args.profile:
+            self.profile_list()
+        else:
+            self.profile_process()

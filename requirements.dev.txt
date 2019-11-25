@@ -1,5 +1,8 @@
+flake8
+ptpdb
+pylint
 pyls
-pyls-iblack
+pyls-black
 pyls-isort
 pytest
 pytest-console-scripts

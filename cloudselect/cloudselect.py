@@ -1,213 +1,172 @@
+# Copyright 2019 Alexey Aksenov and individual contributors
+# See the LICENSE.txt file at the top-level directory of this distribution.
+#
+# Licensed under the MIT license
+# <LICENSE-MIT or http://opensource.org/licenses/MIT>
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+import argparse
+import inspect
 import json
 import logging
 import os
-import subprocess
-from os.path import expanduser
+import sys
+from logging.config import dictConfig
 
-import boto3
+import appdirs
+import dependency_injector.providers as providers
+import pkg_resources
+
+import cloudselect
+from cloudselect import Container
+from cloudselect.discovery import DiscoveryService, DiscoveryServiceProvider
+from cloudselect.discovery.stub import Stub
+from cloudselect.selector import Selector
 
 
 class CloudSelect:
-    config = None
-    configpath = os.path.join(
-        os.environ.get("APPDATA")
-        or os.environ.get("XDG_CONFIG_HOME")
-        or os.path.join(expanduser("~"), ".config"),
-        "cloudselect",
-    )
-    configfile = os.path.join(configpath, "cloud.json")
+    configpath = appdirs.user_config_dir("cloudselect")
     extension = "cloud.json"
+    importer = staticmethod(__import__)
     logger = None
 
-    def __init__(self):
+    def fabric(self, configuration, args):
+        if args.verbose:
+            if args.verbose == 1:
+                configuration.get("log", {}).get("root", {})["level"] = logging.INFO
+            elif args.verbose > 1:
+                configuration.get("log", {}).get("root", {})["level"] = logging.DEBUG
+        dictConfig(configuration.get("log", {}))
         self.logger = logging.getLogger("cloudselect.CloudSelect")
-        if not os.path.exists(self.configpath):
-            os.mkdir(self.configpath)
-        try:
-            self.config = self.profile_read(self.configfile)
-        except:
-            self.config = {}
-            print("Unable to read {}".format(self.configfile))
-
-    def get_editor(self):
-        if "editor" in self.config and self.config["editor"] is not None:
-            return self.config["editor"]
-        for key in "VISUAL", "EDITOR":
-            rv = os.environ.get(key)
-            if rv:
-                return rv
-        for editor in "vim", "nano":
-            if os.system("which %s >/dev/null 2>&1" % editor) == 0:
-                return editor
-        return "vi"
-
-    def edit(self, file):
-        self.logger.debug("Edit '{}'".format(file))
-        if not os.path.isfile(file):
-            self.logger.info("{} does not exists".format(file))
-        editor = self.get_editor()
-        os.execvp(editor, [editor, file])
-
-    def execute(self, program, args, **kwargs):
-        """Executes a command in a subprocess and returns its standard output."""
-        return (
-            subprocess.run([program, *args], stdout=subprocess.PIPE, **kwargs)
-            .stdout.decode()
-            .strip()
-        )
-
-    def run(self, args):
-        if args.edit is None or args.edit:
-            if args.edit is None:
-                self.edit(self.configfile)
-            else:
-                profile = os.path.join(
-                    self.configpath, "{}.{}".format(args.edit, self.extension)
+        self.logger.debug("Logging is initialized")
+        self.logger.debug(
+            "Configuration:\n{}".format(
+                json.dumps(
+                    configuration, sort_keys=True, indent=4, separators=(",", ": ")
                 )
-                self.edit(profile)
-        if not args.profile:
-            self.profile_list()
-        else:
-            self.profile_process(args.profile, args)
-
-    def profile_list(self):
-        self.logger.debug("List all available profiles from {}".format(self.configpath))
-        empty = True
-        print("CloudSelect profiles:")
-        for file in os.listdir(self.configpath):
-            if file.endswith(".{}".format(self.extension)):
-                empty = False
-                print("- {}".format(file.replace(".{}".format(self.extension), "")))
-        if empty:
-            print("- NO PROFILES -")
-
-    def profile_process(self, profile_name, args):
-        self.logger.debug("Process profile '{}'".format(profile_name))
-        profile = os.path.join(
-            self.configpath, "{}.{}".format(profile_name, self.extension)
+            )
         )
-        if not os.path.isfile(profile):
-            print("Profile {} does not exists".format(profile))
-            self.logger.warn("Profile {} does not exists".format(profile))
-            return False
-        configuration = self.profile_read(profile)
-        instances = self.instances_find(configuration)
-        selected = self.instances_select(instances)
-        selected = self.instances_enrich(configuration, selected)
-        print(json.dumps(selected, sort_keys=True))
-
-    def profile_read(self, profile):
-        with open(profile, "r") as f:
-            return json.load(f)
-
-    def instances_enrich(self, profile, instances):
-        def filter(filters):
-            for filter in filters:
-                if filter == "*":
-                    return filters[filter]
-                if filter in instance["InstanceId"]:
-                    return filters[filter]
-                if filter in self.instance_tag(instance, "Name"):
-                    return filters[filter]
-            return None
-
-        for instance in instances:
-            region = instance["Placement"]["AvailabilityZone"][:-1]
-            profile_name = profile.get("profile_name")
-            instance["cloud"] = {"profile": profile_name, "region": region}
-            # delete unnecessary datetime elements
-            instance.pop("BlockDeviceMappings", None)
-            instance.pop("LaunchTime", None)
-            instance.pop("NetworkInterfaces", None)
-            # add secret keys
-            self.logger.debug("Search for SSH key {}".format(instance["KeyName"]))
-            instance["cloud"]["key"] = (
-                self.config.get("key", {})
-                .get(profile_name, {})
-                .get(region, {})
-                .get(instance["KeyName"])
-                or self.config.get("key", {})
-                .get(profile_name, {})
-                .get(instance["KeyName"])
-                or self.config.get("key", {}).get(region, {}).get(instance["KeyName"])
-                or self.config.get("key", {}).get(instance["KeyName"])
+        Container.args = providers.Object(args)
+        Container.config = providers.Configuration(name="config", default=configuration)
+        Container.configpath = providers.Object(self.configpath)
+        Container.selector = providers.Singleton(Selector)
+        Container.extension = providers.Object(self.extension)
+        if configuration.get("discovery", {}).get("type"):
+            plugin = configuration.get("plugin", {}).get(
+                configuration["discovery"]["type"]
             )
-            # add user
-            instance["cloud"]["user"] = filter(
-                self.config.get("user", {}).get(profile_name, {}).get(region, {})
-                or self.config.get("user", {}).get(profile_name, {})
-                or self.config.get("user", {}).get(region, {})
-                or self.config.get("user", {})
-            )
-            # add host
-            ip = filter(
-                self.config.get("ip", {}).get(profile_name, {}).get(region, {})
-                or self.config.get("ip", {}).get(profile_name, {})
-                or self.config.get("ip", {}).get(region, {})
-                or self.config.get("ip", {})
-            )
-            if ip == "public":
-                instance["cloud"]["host"] = instance["PublicIpAddress"]
-            elif ip == "private":
-                instance["cloud"]["host"] = instance["PrivateIpAddress"]
-            elif ip == "public_private":
-                instance["cloud"]["host"] = instance["PublicIpAddress"]
-            elif ip == "private_public":
-                instance["cloud"]["host"] = instance["PrivateIpAddress"]
+            discovery = self.resolve(plugin, DiscoveryService)
+            Container.discovery = DiscoveryServiceProvider(discovery)
+        else:
+            Container.discovery = DiscoveryServiceProvider(Stub)
+        return Container.selector()
+
+    def merge(self, a, b, path=None):
+        """ Merge two dictioraries """
+        if path is None:
+            path = []
+        for key in b:
+            if key in a:
+                if isinstance(a[key], dict) and isinstance(b[key], dict):
+                    self.merge(a[key], b[key], path + [str(key)])
+                elif a[key] == b[key]:
+                    pass  # same leaf value
+                else:
+                    raise Exception("Conflict at %s" % ".".join(path + [str(key)]))
             else:
-                instance["cloud"]["host"] = instance["PublicIpAddress"]
-        return instances
+                a[key] = b[key]
+        return a
 
-    def instances_find(self, profile):
-        session = None
-        if "profile_name" in profile and "region" in profile:
-            session = boto3.Session(
-                profile_name=profile["profile_name"], region=profile["region"]
-            )
-        elif "profile_name" in profile:
-            session = boto3.Session(profile_name=profile["profile_name"])
-        elif "region" in profile:
-            session = boto3.Session(region=profile["region"])
-        else:
-            session = boto3.Session()
-        ec2 = session.client("ec2")
-        response = ec2.describe_instances(
-            Filters=[{"Name": "instance-state-name", "Values": ["running"]}]
-        )["Reservations"]
-        return [
-            item for sublist in [i["Instances"] for i in response] for item in sublist
-        ]
+    def parse_args(self, args):
+        parser = argparse.ArgumentParser(prog="cloudselect")
+        parser.add_argument(
+            "--version",
+            action="version",
+            version="%(prog)s version {}".format(cloudselect.__version__,),
+        )
+        parser.add_argument(
+            "--verbose", "-v", action="count", help="maximum verbosity: -vv"
+        )
+        parser.add_argument("--query", "-q", nargs="?", default="")
+        parser.add_argument(
+            "--edit",
+            "-e",
+            nargs="?",
+            default=False,
+            help="edit configuration or profile",
+        )
+        parser.add_argument("profile", nargs="?")
+        return parser.parse_args(args)
 
-    def instances_select(self, instances):
-        def find(instance_id):
-            return next(x for x in instances if x["InstanceId"] == instance_id)
+    def read_configuration(self, name=None):
+        """
+        Read json configuration from configpath
+        Copy initial configuration from cloud.json.dist to cloud.json if needed
+        """
+        file_name = ".".join(filter(None, [name, self.extension]))
+        full_path = os.path.join(self.configpath, file_name)
+        try:
+            if name is None and not os.path.isfile(full_path):
+                if not os.path.exists(self.configpath):
+                    os.mkdir(self.configpath)
+                source = pkg_resources.resource_stream(
+                    __name__, "{}.dist".format(self.extension)
+                )
+                with open(full_path, "w") as f:
+                    json.dump(
+                        json.load(source),
+                        f,
+                        sort_keys=True,
+                        indent=4,
+                        separators=(",", ": "),
+                    )
+            with open(full_path, "r") as f:
+                return json.load(f)
+        except Exception as e:
+            message = "Unable to read configuration {}: {}".format(file_name, str(e))
+            if self.logger:
+                self.logger.error(message)
+            else:
+                print(message)
 
-        fzf_input = "\n".join(
-            "\t".join(self.instance_filter(i)) for i in instances
-        ).encode()
-        selected = self.execute("fzf", ["-m"], input=fzf_input)
-        return [find(i.split("\t", 1)[0]) for i in selected.split("\n")]
+    def resolve(self, s, base):
+        """
+        Resolve strings to objects using standard import and attribute
+        syntax.
+        """
+        name = s.split(".")
+        used = name.pop(0)
+        try:
+            found = self.importer(used)
+            for frag in name:
+                used += "." + frag
+                try:
+                    found = getattr(found, frag)
+                except AttributeError:
+                    self.importer(used)
+                    found = getattr(found, frag)
+            for cls in dir(found):
+                cls = getattr(found, cls)
+                if (
+                    inspect.isclass(cls)
+                    and inspect.getmodule(cls) == found
+                    and issubclass(cls, base)
+                ):
+                    return cls
+                raise ImportError("Unable to find plugin class for {}".format(found))
+        except ImportError:
+            e, tb = sys.exc_info()[1:]
+            v = ValueError("Cannot resolve %r: %s" % (s, e))
+            v.__cause__, v.__traceback__ = e, tb
+            raise v
 
-    def instance_filter(self, instance):
-        result = []
-        result.append(instance["InstanceId"])
-        if self.config.get("ip") == "public":
-            result.append(instance["PublicIpAddress"])
-        elif self.config.get("ip") == "private":
-            result.append(instance["PrivateIpAddress"])
-        elif self.config.get("ip") == "public_private":
-            result.append(instance["PublicIpAddress"])
-        elif self.config.get("ip") == "private_public":
-            result.append(instance["PrivateIpAddress"])
-        else:
-            result.append(instance["PublicIpAddress"])
-        for i in self.config.get("instance_fields"):
-            if i in instance:
-                result.append(instance[i])
-            elif i.startswith("tag:"):
-                result.append(self.instance_tag(instance, i.replace("tag:", "")))
-        return result
 
-    def instance_tag(self, instance, tag):
-        tags = instance["Tags"]
-        return ",".join([i["Value"] for i in tags if i["Key"] == tag])
+def main():
+    cloud = CloudSelect()
+    args = cloud.parse_args(sys.argv[1:])
+    # Read shared part
+    profile = cloud.read_configuration()
+    if args.profile:
+        # Read part with profile information
+        profile = cloud.merge(profile, cloud.read_configuration(args.profile))
+    cloud.fabric(profile, args).select()
