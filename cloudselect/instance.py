@@ -9,9 +9,17 @@ from collections import namedtuple
 
 
 class Instance(
-    namedtuple("Instance", ["id", "host", "key", "user", "metadata", "representation"])
+    namedtuple(
+        "Instance",
+        ["id", "host", "key", "user", "port", "jumphost", "metadata", "representation"],
+    )
 ):
     def toDict(self):
         return dict(
-            host=self.host, key=self.key, user=self.user, metadata=self.metadata
+            host=self.host,
+            key=self.key,
+            user=self.user,
+            port=self.port,
+            jumphost=self.jumphost,
+            metadata=self.metadata,
         )

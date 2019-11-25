@@ -15,6 +15,9 @@ from . import ReportService
 class Json(ReportService):
     def run(self, selected):
         filter = Container.filter()
-        options = filter.run(Container.config.option())
-        report = dict(instances=selected, option=options)
+        # get first instance
+        # assume that all instances match the same group/pattern
+        instance = next(iter(selected), None)
+        options = filter.run("option", instance)
+        report = dict(instances=list(i.toDict() for i in selected), option=options)
         print(json.dumps(report, sort_keys=True))

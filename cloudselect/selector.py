@@ -76,7 +76,7 @@ class Selector:
 
         self.logger.debug("Process profile '{}'".format(profile_name))
         instances = discovery.run()
-        selected = list(i.toDict() for i in self.fzf_select(instances))
+        selected = self.fzf_select(instances)
         report.run(selected)
 
     def select(self):

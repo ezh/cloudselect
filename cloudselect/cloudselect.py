@@ -23,6 +23,8 @@ from cloudselect.discovery import DiscoveryService, DiscoveryServiceProvider
 from cloudselect.discovery.stub import Stub as DiscoveryStub
 from cloudselect.filter import FilterService, FilterServiceProvider
 from cloudselect.filter.stub import Stub as FilterStub
+from cloudselect.pathfinder import PathFinderService, PathFinderServiceProvider
+from cloudselect.pathfinder.stub import Stub as PathFinderStub
 from cloudselect.report import ReportService, ReportServiceProvider
 from cloudselect.report.stub import Stub as ReportStub
 from cloudselect.selector import Selector
@@ -85,6 +87,21 @@ class CloudSelect:
             Container.filter = FilterServiceProvider(filter)
         else:
             Container.filter = FilterServiceProvider(FilterStub)
+
+        if configuration.get("pathfinder", {}).get("type"):
+            plugin = configuration.get("plugin", {}).get(
+                configuration["pathfinder"]["type"]
+            )
+            if plugin is None:
+                raise ValueError(
+                    "Unable to find class for pathfinder: {}".format(
+                        configuration["pathfinder"]["type"]
+                    )
+                )
+            pathfinder = self.resolve(plugin, PathFinderService)
+            Container.pathfinder = PathFinderServiceProvider(pathfinder)
+        else:
+            Container.pathfinder = PathFinderServiceProvider(PathFinderStub)
 
         if configuration.get("report", {}).get("type"):
             plugin = configuration.get("plugin", {}).get(

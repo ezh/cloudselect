@@ -25,6 +25,8 @@ class AWS(DiscoveryService):
         return list(self.instances())
 
     def instances(self):
+        pathfinder = Container.pathfinder()
+
         for i in self.find():
             id = i["InstanceId"]
             ip = self.get_ip(i)
@@ -37,7 +39,8 @@ class AWS(DiscoveryService):
                     representation.append(i[field])
                 elif field.startswith("tag:"):
                     representation.append(self.tag(i, field.replace("tag:", "")))
-            yield Instance(id, ip, key, user, metadata, representation)
+            instance = Instance(id, ip, key, user, 22, [], metadata, representation)
+            yield pathfinder.run(instance)
 
     def config(self):
         return Container.config().get("discovery", {})
@@ -85,23 +88,25 @@ class AWS(DiscoveryService):
             instance,
         )
         if ip == "public":
-            return instance["PublicIpAddress"]
+            return instance.get("PublicIpAddress", "")
         elif ip == "private":
-            return instance["PrivateIpAddress"]
+            return instance.get("PrivateIpAddress", "")
         elif ip == "public_private":
-            return instance["PublicIpAddress"]
+            return instance.get("PublicIpAddress", instance.get("PrivateIpAddress", ""))
         elif ip == "private_public":
-            return instance["PrivateIpAddress"]
+            return instance.get("PrivateIpAddress", instance.get("PublicIpAddress", ""))
         else:
-            return instance["PublicIpAddress"]
+            return instance.get("PublicIpAddress", instance.get("PrivateIpAddress", ""))
 
     def get_key(self, instance):
+        filter = Container.filter()
         profile_name = Container.config.discovery.profile_name()
         region = instance["Placement"]["AvailabilityZone"][:-1]
 
         self.logger.debug("Search for SSH key {}".format(instance["KeyName"]))
         return (
-            self.config()
+            filter.run("discovery", self.get_metadata(instance)).get("key")
+            or self.config()
             .get("key", {})
             .get(profile_name, {})
             .get(region, {})
@@ -143,5 +148,5 @@ class AWS(DiscoveryService):
         )
 
     def tag(self, instance, tag):
-        tags = instance["Tags"]
+        tags = instance.get("Tags", [])
         return ",".join([i["Value"] for i in tags if i["Key"] == tag])

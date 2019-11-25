@@ -10,14 +10,14 @@ import dependency_injector.providers as providers
 from cloudselect import Container
 
 
-class FilterService(object):
-    def run(self, service, instance):
-        return None
+class PathFinderService(object):
+    def run(self, instance):
+        return instance
 
     def config(self):
-        return Container.config().get("filter", {})
+        return Container.config().get("pathfinder", {})
 
 
-class FilterServiceProvider(providers.Factory):
+class PathFinderServiceProvider(providers.Factory):
 
-    provided_type = FilterService
+    provided_type = PathFinderService
