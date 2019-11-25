@@ -20,7 +20,9 @@ import pkg_resources
 import cloudselect
 from cloudselect import Container
 from cloudselect.discovery import DiscoveryService, DiscoveryServiceProvider
-from cloudselect.discovery.stub import Stub
+from cloudselect.discovery.stub import Stub as DiscoveryStub
+from cloudselect.report import ReportService, ReportServiceProvider
+from cloudselect.report.stub import Stub as ReportStub
 from cloudselect.selector import Selector
 
 
@@ -51,6 +53,7 @@ class CloudSelect:
         Container.configpath = providers.Object(self.configpath)
         Container.selector = providers.Singleton(Selector)
         Container.extension = providers.Object(self.extension)
+
         if configuration.get("discovery", {}).get("type"):
             plugin = configuration.get("plugin", {}).get(
                 configuration["discovery"]["type"]
@@ -58,7 +61,16 @@ class CloudSelect:
             discovery = self.resolve(plugin, DiscoveryService)
             Container.discovery = DiscoveryServiceProvider(discovery)
         else:
-            Container.discovery = DiscoveryServiceProvider(Stub)
+            Container.discovery = DiscoveryServiceProvider(DiscoveryStub)
+
+        if configuration.get("report", {}).get("type"):
+            plugin = configuration.get("plugin", {}).get(
+                configuration["report"]["type"]
+            )
+            report = self.resolve(plugin, ReportService)
+            Container.report = ReportServiceProvider(report)
+        else:
+            Container.report = ReportServiceProvider(ReportStub)
         return Container.selector()
 
     def merge(self, a, b, path=None):
@@ -153,7 +165,7 @@ class CloudSelect:
                     and issubclass(cls, base)
                 ):
                     return cls
-                raise ImportError("Unable to find plugin class for {}".format(found))
+            raise ImportError("Unable to find plugin in {}".format(found))
         except ImportError:
             e, tb = sys.exc_info()[1:]
             v = ValueError("Cannot resolve %r: %s" % (s, e))

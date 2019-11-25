@@ -72,11 +72,12 @@ class Selector:
     def profile_process(self):
         discovery = Container.discovery()
         profile_name = Container.args().profile
+        report = Container.report()
 
         self.logger.debug("Process profile '{}'".format(profile_name))
         instances = discovery.run()
         selected = list(i.toDict() for i in self.fzf_select(instances))
-        print(json.dumps(selected, sort_keys=True))
+        report.run(selected)
 
     def select(self):
         args = Container.args()
@@ -85,7 +86,8 @@ class Selector:
 
         if args.edit is None or args.edit:
             if args.edit is None:
-                self.edit()
+                configuration = os.path.join(configpath, "{}".format(extension))
+                self.edit(configuration)
             else:
                 profile = os.path.join(configpath, "{}.{}".format(args.edit, extension))
                 self.edit(profile)

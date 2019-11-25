@@ -1,6 +1,5 @@
 {
   "log": {
-    "version": 1,
     "formatters": {
       "f": {
         "format": "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
@@ -18,10 +17,13 @@
         "h"
       ],
       "level": 40
-    }
+    },
+    "version": 1
   },
   "plugin": {
-      "aws": "cloudselect.discovery.aws",
-      "discovery": "cloudselect.discovery"
+    "aws": "cloudselect.discovery.aws",
+    "discovery": "cloudselect.discovery",
+    "json": "cloudselect.report.json",
+    "report": "cloudselect.report"
   }
 }
