@@ -14,5 +14,7 @@ from . import ReportService
 
 class Json(ReportService):
     def run(self, selected):
-        report = dict(instances=selected, options=Container.config.option())
+        filter = Container.filter()
+        options = filter.run(Container.config.option())
+        report = dict(instances=selected, option=options)
         print(json.dumps(report, sort_keys=True))

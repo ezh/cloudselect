@@ -22,8 +22,7 @@
   },
   "plugin": {
     "aws": "cloudselect.discovery.aws",
-    "discovery": "cloudselect.discovery",
-    "json": "cloudselect.report.json",
-    "report": "cloudselect.report"
+    "json_report": "cloudselect.report.json",
+    "simple_filter": "cloudselect.filter.simple"
   }
 }

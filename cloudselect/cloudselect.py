@@ -21,6 +21,8 @@ import cloudselect
 from cloudselect import Container
 from cloudselect.discovery import DiscoveryService, DiscoveryServiceProvider
 from cloudselect.discovery.stub import Stub as DiscoveryStub
+from cloudselect.filter import FilterService, FilterServiceProvider
+from cloudselect.filter.stub import Stub as FilterStub
 from cloudselect.report import ReportService, ReportServiceProvider
 from cloudselect.report.stub import Stub as ReportStub
 from cloudselect.selector import Selector
@@ -58,19 +60,47 @@ class CloudSelect:
             plugin = configuration.get("plugin", {}).get(
                 configuration["discovery"]["type"]
             )
+            if plugin is None:
+                raise ValueError(
+                    "Unable to find class for discovery: {}".format(
+                        configuration["discovery"]["type"]
+                    )
+                )
             discovery = self.resolve(plugin, DiscoveryService)
             Container.discovery = DiscoveryServiceProvider(discovery)
         else:
             Container.discovery = DiscoveryServiceProvider(DiscoveryStub)
 
+        if configuration.get("filter", {}).get("type"):
+            plugin = configuration.get("plugin", {}).get(
+                configuration["filter"]["type"]
+            )
+            if plugin is None:
+                raise ValueError(
+                    "Unable to find class for filter: {}".format(
+                        configuration["filter"]["type"]
+                    )
+                )
+            filter = self.resolve(plugin, FilterService)
+            Container.filter = FilterServiceProvider(filter)
+        else:
+            Container.filter = FilterServiceProvider(FilterStub)
+
         if configuration.get("report", {}).get("type"):
             plugin = configuration.get("plugin", {}).get(
                 configuration["report"]["type"]
             )
+            if plugin is None:
+                raise ValueError(
+                    "Unable to find class for report: {}".format(
+                        configuration["report"]["type"]
+                    )
+                )
             report = self.resolve(plugin, ReportService)
             Container.report = ReportServiceProvider(report)
         else:
             Container.report = ReportServiceProvider(ReportStub)
+
         return Container.selector()
 
     def merge(self, a, b, path=None):

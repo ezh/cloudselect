@@ -1,6 +1,8 @@
 #!/bin/sh
 #
-CLOUD=$(cloudselect x | jq -r '.[] | @base64')
+OUTPUT=$(cloudselect x)
+
+CLOUD=$(echo $OUTPUT | jq -r '.instances[] | @base64')
 PROFILE="-"
 REGION="-"
 TMUX_LAYOUT="tiled"
@@ -8,18 +10,16 @@ TMUX_SESSION_NAME="assh-"$(date +%s)
 WAIT_FOR_INPUT='read -n 1 -s -r -p "Press any key to continue"'
 WINDOW=0
 
+OPTION_AFTER=$(echo $OUTPUT | jq -r '.option.after // ""')
+OPTION_BEFORE=$(echo $OUTPUT | jq -r '.option.before // ""')
+OPTION_SSH=$(echo $OUTPUT | jq -r '.option.ssh // ""')
+OPTION_SSH_COMMAND=$(echo $OUTPUT | jq -r '.option.ssh_command // ""')
+
 # Collect shared arguments
 for row in $(echo $CLOUD); do
   OUTPUT=$(echo ${row} | base64 --decode)
-  OPTION_AFTER=$(echo $OUTPUT | jq -r '.option_after')
-  OPTION_BEFORE=$(echo $OUTPUT | jq -r '.option_before')
-  OPTION_SSH=$(echo $OUTPUT | jq -r '.option_ssh')
-  OPTION_SSH_COMMAND=$(echo $OUTPUT | jq -r '.option_ssh_command')
   PROFILE=$(echo $OUTPUT | jq -r '.metadata.profile')
   REGION=$(echo $OUTPUT | jq -r '.metadata.region')
-
-  test "$OPTION_SSH" == "null" && OPTION_SSH=""
-  test "$OPTION_SSH_COMMAND" == "null" && OPTION_SSH_COMMAND=""
   break
 done
 
@@ -29,13 +29,10 @@ test "$OPTION_BEFORE" != "null" && eval "$OPTION_BEFORE"
 for row in $(echo $CLOUD); do
   OUTPUT=$(echo ${row} | base64 --decode)
   HOST=$(echo $OUTPUT | jq -r '.host')
-  KEY="-i"$(echo $OUTPUT | jq -r '.key')
-  USER=$(echo $OUTPUT | jq -r '.user')"@"
+  KEY="-i"$(echo $OUTPUT | jq -r '.key // ""')
+  USER=$(echo $OUTPUT | jq -r '.user // ""')"@"
 
-  test "$USER" == "null@" && USER=""
-  test "$KEY" == "-inull" && KEY=""
-
-  connectString="ssh -o UserKnownHostsFile=/dev/null -t $OPTION_SSH $KEY $USER$HOST $OPTION_SSH_COMMAND"
+  connectString="ssh -o UserKnownHostsFile=/dev/null $OPTION_SSH $KEY $USER$HOST $OPTION_SSH_COMMAND"
   commandString="${connectString}; $WAIT_FOR_INPUT"
 
   tmux list-windows | grep -q "${TMUX_SESSION_NAME}"
