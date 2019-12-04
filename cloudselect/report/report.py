@@ -14,6 +14,6 @@ class ReportService(object):
         pp.pprint(selected)
 
 
-class ReportServiceProvider(providers.Factory):
+class ReportServiceProvider(providers.Singleton):
 
     provided_type = ReportService

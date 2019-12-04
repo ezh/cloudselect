@@ -58,67 +58,37 @@ class CloudSelect:
         Container.selector = providers.Singleton(Selector)
         Container.extension = providers.Object(self.extension)
 
-        if configuration.get("discovery", {}).get("type"):
-            plugin = configuration.get("plugin", {}).get(
-                configuration["discovery"]["type"]
-            )
-            if plugin is None:
-                raise ValueError(
-                    "Unable to find class for discovery: {}".format(
-                        configuration["discovery"]["type"]
-                    )
-                )
-            discovery = self.resolve(plugin, DiscoveryService)
-            Container.discovery = DiscoveryServiceProvider(discovery)
-        else:
-            Container.discovery = DiscoveryServiceProvider(DiscoveryStub)
-
-        if configuration.get("filter", {}).get("type"):
-            plugin = configuration.get("plugin", {}).get(
-                configuration["filter"]["type"]
-            )
-            if plugin is None:
-                raise ValueError(
-                    "Unable to find class for filter: {}".format(
-                        configuration["filter"]["type"]
-                    )
-                )
-            filter = self.resolve(plugin, FilterService)
-            Container.filter = FilterServiceProvider(filter)
-        else:
-            Container.filter = FilterServiceProvider(FilterStub)
-
-        if configuration.get("pathfinder", {}).get("type"):
-            plugin = configuration.get("plugin", {}).get(
-                configuration["pathfinder"]["type"]
-            )
-            if plugin is None:
-                raise ValueError(
-                    "Unable to find class for pathfinder: {}".format(
-                        configuration["pathfinder"]["type"]
-                    )
-                )
-            pathfinder = self.resolve(plugin, PathFinderService)
-            Container.pathfinder = PathFinderServiceProvider(pathfinder)
-        else:
-            Container.pathfinder = PathFinderServiceProvider(PathFinderStub)
-
-        if configuration.get("report", {}).get("type"):
-            plugin = configuration.get("plugin", {}).get(
-                configuration["report"]["type"]
-            )
-            if plugin is None:
-                raise ValueError(
-                    "Unable to find class for report: {}".format(
-                        configuration["report"]["type"]
-                    )
-                )
-            report = self.resolve(plugin, ReportService)
-            Container.report = ReportServiceProvider(report)
-        else:
-            Container.report = ReportServiceProvider(ReportStub)
+        Container.discovery = self.fabric_load_plugin(
+            configuration, "discovery", DiscoveryServiceProvider, DiscoveryStub
+        )
+        Container.filter = self.fabric_load_plugin(
+            configuration, "filter", FilterServiceProvider, FilterStub
+        )
+        Container.pathfinder = self.fabric_load_plugin(
+            configuration, "pathfinder", PathFinderServiceProvider, PathFinderStub
+        )
+        Container.report = self.fabric_load_plugin(
+            configuration, "report", ReportServiceProvider, ReportStub
+        )
 
         return Container.selector()
+
+    def fabric_load_plugin(
+        self, configuration, plugin_type, service_provider, service_stub
+    ):
+        if configuration.get(plugin_type, {}).get("type"):
+            plugin = configuration.get("plugin", {}).get(
+                configuration[plugin_type]["type"]
+            )
+            if plugin is None:
+                raise ValueError(
+                    "Unable to find class for {}: {}".format(
+                        plugin_type, configuration[plugin_type]["type"]
+                    )
+                )
+            return self.plugin(plugin, service_provider)
+        else:
+            return self.plugin(service_stub, service_provider)
 
     def merge(self, a, b, path=None):
         """ Merge two dictioraries """
@@ -156,6 +126,18 @@ class CloudSelect:
         )
         parser.add_argument("profile", nargs="?")
         return parser.parse_args(args)
+
+    def plugin(self, plugin_class, service_provider):
+        assert service_provider.provided_type, "{} lost provided_type value".format(
+            service_provider
+        )
+        if isinstance(plugin_class, str):
+            plugin_class_object = self.resolve(
+                plugin_class, service_provider.provided_type
+            )
+            return service_provider(plugin_class_object)
+        else:
+            return service_provider(plugin_class)
 
     def read_configuration(self, name=None):
         """

@@ -7,27 +7,27 @@
 # except according to those terms.
 from cloudselect import Container
 from cloudselect.cloudselect import CloudSelect
-from cloudselect.discovery import DiscoveryServiceProvider
-from cloudselect.discovery.stub import Stub
+from cloudselect.filter import FilterServiceProvider
+from cloudselect.filter.stub import Stub
+
+metadata = {"hello": "world"}
 
 
-def test_stub_discovery():
+def test_stub_filter():
     cloud = CloudSelect()
     # Read shared part
     profile = cloud.read_configuration()
     args = cloud.parse_args([])
     cloud.fabric(profile, args)
-    assert Container.discovery().__class__.__name__ == "Stub"
-    assert Container.discovery().run() == []
-    assert Container.discovery() == Container.discovery()
+    assert Container.filter().__class__.__name__ == "Stub"
+    assert Container.filter().run("aws", metadata) is None
+    assert Container.filter() == Container.filter()
 
 
 def test_stub_behaviour(mocker):
     cloud = CloudSelect()
-    service_provider = cloud.plugin(
-        "cloudselect.discovery.stub", DiscoveryServiceProvider
-    )
+    service_provider = cloud.plugin("cloudselect.filter.stub", FilterServiceProvider)
     stub = service_provider()
     mocker.patch.object(Stub, "run")
-    stub.run()
-    Stub.run.assert_called_once_with()
+    stub.run("aws", metadata)
+    Stub.run.assert_called_once_with("aws", metadata)

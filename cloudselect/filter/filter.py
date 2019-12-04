@@ -11,13 +11,13 @@ from cloudselect import Container
 
 
 class FilterService(object):
-    def run(self, service, instance):
+    def run(self, service, metadata):
         return None
 
     def config(self):
         return Container.config().get("filter", {})
 
 
-class FilterServiceProvider(providers.Factory):
+class FilterServiceProvider(providers.Singleton):
 
     provided_type = FilterService

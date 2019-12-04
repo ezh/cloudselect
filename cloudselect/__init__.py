@@ -9,30 +9,33 @@
 from __future__ import absolute_import, division, print_function
 
 import dependency_injector.containers as containers
+import pkg_resources
+
 from .instance import *
 
 __all__ = (
     "__title__",
     "__summary__",
     "__uri__",
-    "__version__",
     "__author__",
     "__email__",
     "__license__",
-    "__copyright__",
+    "__version__",
 )
 
 __title__ = "awselect"
 __summary__ = "AWS FZF selector"
 __uri__ = "https://github.com/ezh/awselect"
 
-__version__ = "19.1"
-
 __author__ = "Alexey Aksenov and individual contributors"
 __email__ = "ezh@ezh.msk.ru"
 
 __license__ = "MIT License"
-__copyright__ = "Copyright 2019 Alexey Aksenov and individual contributors"
 
+
+try:
+    __version__ = pkg_resources.get_distribution("cloudselect").version
+except Exception:
+    __version__ = "unknown"
 
 Container = containers.DynamicContainer()

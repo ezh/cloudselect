@@ -60,7 +60,7 @@ class AWS(DiscoveryService):
         session = None
         if config.profile_name() and config.region():
             session = boto3.Session(
-                profile_name=config.profile_name(), region=config.region()
+                profile_name=config.profile_name(), region_name=config.region()
             )
         elif config.profile_name():
             session = boto3.Session(profile_name=config.profile_name())

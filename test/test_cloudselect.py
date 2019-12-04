@@ -1,10 +1,20 @@
+# Copyright 2019 Alexey Aksenov and individual contributors
+# See the LICENSE.txt file at the top-level directory of this distribution.
+#
+# Licensed under the MIT license
+# <LICENSE-MIT or http://opensource.org/licenses/MIT>
+# This file may not be copied, modified, or distributed
+# except according to those terms.
 import logging
 
+import dependency_injector.providers as providers
 import pytest
 
 import cloudselect
 from cloudselect.cloudselect import CloudSelect
-from cloudselect.discovery import DiscoveryService
+from cloudselect.discovery import DiscoveryService, DiscoveryServiceProvider
+from cloudselect.discovery.aws import AWS
+from cloudselect.discovery.stub import Stub as DiscoveryStub
 
 
 def test_cli_version(script_runner):
@@ -59,6 +69,12 @@ def test_cli_read_configuration():
             },
             "root": {"handlers": ["h"], "level": logging.ERROR},
         },
+        plugin={
+            "aws": "cloudselect.discovery.aws",
+            "bastion": "cloudselect.pathfinder.bastion",
+            "json_report": "cloudselect.report.json",
+            "simple_filter": "cloudselect.filter.simple",
+        },
     )
     cloud = CloudSelect()
     configuration = cloud.read_configuration()
@@ -67,6 +83,41 @@ def test_cli_read_configuration():
 
 def test_resolve():
     cloud = CloudSelect()
-    discovery = cloud.resolve("discovery.aws", DiscoveryService)
+    discovery = cloud.resolve("cloudselect.discovery.aws", DiscoveryService)
     discovery_instance = discovery()
     assert discovery_instance.__class__.__name__ == "AWS"
+
+
+def test_factory_load_plugin():
+    class BrokenServiceProvider(providers.Singleton):
+        pass
+
+    cloud = CloudSelect()
+    configuration = {}
+    discovery = cloud.fabric_load_plugin(
+        configuration, "discovery", DiscoveryServiceProvider, DiscoveryStub
+    )
+    assert type(discovery) == DiscoveryServiceProvider
+    assert type(discovery()) == DiscoveryStub
+    assert discovery() == discovery()
+
+    # pass ServiceProvider without specialization
+    with pytest.raises(AssertionError):
+        cloud.fabric_load_plugin(
+            configuration, "discovery", BrokenServiceProvider, DiscoveryStub
+        )
+
+    configuration = {"discovery": {"type": "unknown"}}
+    with pytest.raises(ValueError):
+        cloud.fabric_load_plugin(
+            configuration, "discovery", DiscoveryServiceProvider, DiscoveryStub
+        )
+
+    configuration = {
+        "discovery": {"type": "aws"},
+        "plugin": {"aws": "cloudselect.discovery.aws"},
+    }
+    discovery = cloud.fabric_load_plugin(
+        configuration, "discovery", DiscoveryServiceProvider, DiscoveryStub
+    )
+    assert type(discovery()) == AWS

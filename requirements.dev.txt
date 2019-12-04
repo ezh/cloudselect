@@ -7,4 +7,5 @@ pyls-isort
 pytest
 pytest-console-scripts
 pytest-cov
+pytest-mock
 wdb

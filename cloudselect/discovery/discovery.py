@@ -13,6 +13,6 @@ class DiscoveryService(object):
         return []
 
 
-class DiscoveryServiceProvider(providers.Factory):
+class DiscoveryServiceProvider(providers.Singleton):
 
     provided_type = DiscoveryService

@@ -18,6 +18,6 @@ class PathFinderService(object):
         return Container.config().get("pathfinder", {})
 
 
-class PathFinderServiceProvider(providers.Factory):
+class PathFinderServiceProvider(providers.Singleton):
 
     provided_type = PathFinderService
