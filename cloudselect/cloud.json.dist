@@ -1,29 +1,38 @@
 {
-  "log": {
-    "formatters": {
-      "f": {
-        "format": "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
-      }
+    "log": {
+        "formatters": {
+            "f": {
+                "format": "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
+            }
+        },
+        "handlers": {
+            "h": {
+                "class": "logging.StreamHandler",
+                "formatter": "f",
+                "level": 10
+            }
+        },
+        "root": {
+            "handlers": [
+                "h"
+            ],
+            "level": 40
+        },
+        "version": 1
     },
-    "handlers": {
-      "h": {
-        "class": "logging.StreamHandler",
-        "formatter": "f",
-        "level": 10
-      }
-    },
-    "root": {
-      "handlers": [
-        "h"
-      ],
-      "level": 40
-    },
-    "version": 1
-  },
-  "plugin": {
-    "aws": "cloudselect.discovery.aws",
-    "bastion": "cloudselect.pathfinder.bastion",
-    "json_report": "cloudselect.report.json",
-    "simple_filter": "cloudselect.filter.simple"
-  }
+    "plugin": {
+        "discovery": {
+            "aws": "cloudselect.discovery.aws",
+            "local": "cloudselect.discovery.local"
+        },
+        "group": {
+            "simple": "cloudselect.group.simple"
+        },
+        "pathfinder": {
+            "bastion": "cloudselect.pathfinder.bastion"
+        },
+        "report": {
+            "json_report": "cloudselect.report.json"
+        }
+    }
 }

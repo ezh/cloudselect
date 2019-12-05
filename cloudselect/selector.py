@@ -5,7 +5,6 @@
 # <LICENSE-MIT or http://opensource.org/licenses/MIT>
 # This file may not be copied, modified, or distributed
 # except according to those terms.
-import json
 import logging
 import os
 import subprocess
@@ -18,6 +17,20 @@ class Selector:
 
     def __init__(self):
         self.logger = logging.getLogger("cloudselect.Selector")
+
+    def complete(self, cline, cpoint):
+        configpath = Container.configpath()
+        extension = Container.extension()
+
+        prefix = cline[0:cpoint].partition(" ")[-1]
+        self.logger.debug(
+            "Complete line {}, point {}, prefix".format(cline, cpoint, prefix)
+        )
+        for file in os.listdir(configpath):
+            if file.endswith(".{}".format(extension)):
+                name = file.replace(".{}".format(extension), "")
+                if name.startswith(prefix):
+                    print(name)
 
     def edit(self, file):
         self.logger.debug("Edit '{}'".format(file))
@@ -35,11 +48,16 @@ class Selector:
         )
 
     def fzf_select(self, instances):
+        fzf_options = Container.config.fzf() or ["-m", "--with-nth", "2.."]
+
         def find(instance_id):
             return next(x for x in instances if x.id == instance_id)
 
         fzf_input = "\n".join("\t".join(i.representation) for i in instances).encode()
-        selected = self.execute("fzf", ["-m"], input=fzf_input)
+        selected = self.execute("fzf", fzf_options, input=fzf_input)
+        assert (
+            "\t" in selected
+        ), "There should be at least 2 fields in instance representation: id and something meaningful"
         return [find(i.split("\t", 1)[0]) for i in selected.split("\n")]
 
     def get_editor(self):

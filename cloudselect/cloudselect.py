@@ -19,13 +19,13 @@ import pkg_resources
 
 import cloudselect
 from cloudselect import Container
-from cloudselect.discovery import DiscoveryService, DiscoveryServiceProvider
+from cloudselect.discovery import DiscoveryServiceProvider
 from cloudselect.discovery.stub import Stub as DiscoveryStub
-from cloudselect.filter import FilterService, FilterServiceProvider
+from cloudselect.filter import FilterServiceProvider
 from cloudselect.filter.stub import Stub as FilterStub
-from cloudselect.pathfinder import PathFinderService, PathFinderServiceProvider
+from cloudselect.pathfinder import PathFinderServiceProvider
 from cloudselect.pathfinder.stub import Stub as PathFinderStub
-from cloudselect.report import ReportService, ReportServiceProvider
+from cloudselect.report import ReportServiceProvider
 from cloudselect.report.stub import Stub as ReportStub
 from cloudselect.selector import Selector
 
@@ -35,6 +35,7 @@ class CloudSelect:
     extension = "cloud.json"
     importer = staticmethod(__import__)
     logger = None
+    parser = argparse.ArgumentParser(prog="cloudselect")
 
     def fabric(self, configuration, args):
         if args.verbose:
@@ -55,8 +56,9 @@ class CloudSelect:
         Container.args = providers.Object(args)
         Container.config = providers.Configuration(name="config", default=configuration)
         Container.configpath = providers.Object(self.configpath)
-        Container.selector = providers.Singleton(Selector)
         Container.extension = providers.Object(self.extension)
+        Container.parser = providers.Object(self.parser)
+        Container.selector = providers.Singleton(Selector)
 
         Container.discovery = self.fabric_load_plugin(
             configuration, "discovery", DiscoveryServiceProvider, DiscoveryStub
@@ -107,25 +109,24 @@ class CloudSelect:
         return a
 
     def parse_args(self, args):
-        parser = argparse.ArgumentParser(prog="cloudselect")
-        parser.add_argument(
+        self.parser.add_argument(
             "--version",
             action="version",
             version="%(prog)s version {}".format(cloudselect.__version__,),
         )
-        parser.add_argument(
+        self.parser.add_argument(
             "--verbose", "-v", action="count", help="maximum verbosity: -vv"
         )
-        parser.add_argument("--query", "-q", nargs="?", default="")
-        parser.add_argument(
+        self.parser.add_argument("--query", "-q", nargs="?", default="")
+        self.parser.add_argument(
             "--edit",
             "-e",
             nargs="?",
             default=False,
             help="edit configuration or profile",
         )
-        parser.add_argument("profile", nargs="?")
-        return parser.parse_args(args)
+        self.parser.add_argument("profile", nargs="?")
+        return self.parser.parse_args(args)
 
     def plugin(self, plugin_class, service_provider):
         assert service_provider.provided_type, "{} lost provided_type value".format(
@@ -202,12 +203,28 @@ class CloudSelect:
             raise v
 
 
+def complete():
+    # bash exports COMP_LINE and COMP_POINT, tcsh COMMAND_LINE only
+    cline = os.environ.get("COMP_LINE") or os.environ.get("COMMAND_LINE") or ""
+    cpoint = int(os.environ.get("COMP_POINT") or len(cline))
+    try:
+        cloud = CloudSelect()
+        profile = cloud.read_configuration()
+        args = cloud.parse_args([])
+        cloud.fabric(profile, args).complete(cline, cpoint)
+    except KeyboardInterrupt:
+        # If the user hits Ctrl+C, we don't want to print
+        # a traceback to the user.
+        pass
+
+
 def main():
     cloud = CloudSelect()
-    args = cloud.parse_args(sys.argv[1:])
-    # Read shared part
     profile = cloud.read_configuration()
+
+    args = cloud.parse_args(sys.argv[1:])
+    # Read configuration part with profile information
     if args.profile:
-        # Read part with profile information
         profile = cloud.merge(profile, cloud.read_configuration(args.profile))
+
     cloud.fabric(profile, args).select()

@@ -9,7 +9,12 @@ setup(
     package_data={"cloudselect": ["cloud.json.dist"]},
     description="FZF selector for cloud instances",
     download_url="https://github.com/ezh/cloudselect/archive/v_01.tar.gz",
-    entry_points={"console_scripts": ["cloudselect=cloudselect.cloudselect:main"]},
+    entry_points={
+        "console_scripts": [
+            "cloudselect=cloudselect.cloudselect:main",
+            "cloudcomplete=cloudselect.cloudselect:complete",
+        ]
+    },
     install_requires=["appdirs", "boto3", "dependency_injector"],
     keywords=["AWS", "CLI", "FZF", "SSH", "SCP"],
     license="MIT",

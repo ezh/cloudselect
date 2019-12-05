@@ -12,7 +12,7 @@ from cloudselect import Container
 
 class FilterService(object):
     def run(self, service, metadata):
-        return None
+        return {}
 
     def config(self):
         return Container.config().get("filter", {})
