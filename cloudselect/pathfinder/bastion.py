@@ -12,9 +12,7 @@ from . import PathFinderService
 
 class Bastion(PathFinderService):
     def run(self, instance):
-        filter = Container.filter()
-
-        arguments = filter.run("pathfinder", instance.metadata)
+        arguments = Container.options("pathfinder", instance.metadata)
         if arguments:
             jumphost = {}
             if "host" in arguments:

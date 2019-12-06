@@ -14,10 +14,9 @@ from . import ReportService
 
 class Json(ReportService):
     def run(self, selected):
-        filter = Container.filter()
         # get first instance
         # assume that all instances match the same group/pattern
         instance = next(iter(selected), None)
-        options = filter.run("option", instance)
+        options = Container.options("option", instance)
         report = dict(instances=list(i.toDict() for i in selected), option=options)
         print(json.dumps(report, sort_keys=True))

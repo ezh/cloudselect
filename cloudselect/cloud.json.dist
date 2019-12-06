@@ -32,7 +32,7 @@
             "bastion": "cloudselect.pathfinder.bastion"
         },
         "report": {
-            "json_report": "cloudselect.report.json"
+            "json": "cloudselect.report.json"
         }
     }
 }

@@ -46,21 +46,19 @@ class Local(DiscoveryService):
         return Container.config().get("discovery", {})
 
     def get_key(self, host):
-        filter = Container.filter()
-
         self.logger.debug("Search SSH key for {}".format(host))
+        config = Container.options("discovery", host)
         return (
-            filter.run("discovery", host).get("key")
-            or self.config().get("key", {}).get(host)
-            or self.config().get("key", {}).get("*")
+            config.get("key")
+            or config.get("key", {}).get(host)
+            or config.get("key", {}).get("*")
         )
 
     def get_user(self, host):
-        filter = Container.filter()
-
         self.logger.debug("Search user for {}".format(host))
+        config = Container.options("discovery", host)
         return (
-            filter.run("discovery", host).get("user")
-            or self.config().get("user", {}).get(host)
-            or self.config().get("user", {}).get("*")
+            config.get("user")
+            or config.get("user", {}).get(host)
+            or config.get("user", {}).get("*")
         )

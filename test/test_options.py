@@ -1,0 +1,19 @@
+# Copyright 2019 Alexey Aksenov and individual contributors
+# See the LICENSE.txt file at the top-level directory of this distribution.
+#
+# Licensed under the MIT license
+# <LICENSE-MIT or http://opensource.org/licenses/MIT>
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+from cloudselect.cloudselect import CloudSelect
+
+
+def test_options():
+    cloud = CloudSelect()
+    configuration = cloud.read_configuration()
+    args = cloud.parse_args([])
+    cloud.fabric(configuration, args)
+
+    assert cloud.options("test") == {}
+    assert cloud.options("plugin") == configuration["plugin"]
+    assert cloud.options("log") == configuration["log"]

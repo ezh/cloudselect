@@ -77,16 +77,17 @@ class AWS(DiscoveryService):
         ]
 
     def get_ip(self, instance):
+        config = Container.options("discovery", self.get_metadata(instance))
         profile_name = Container.args().profile
         region = instance["Placement"]["AvailabilityZone"][:-1]
 
-        ip = self.filter(
-            self.config().get("ip", {}).get(profile_name, {}).get(region, {})
-            or self.config().get("ip", {}).get(profile_name, {})
-            or self.config().get("ip", {}).get(region, {})
-            or self.config().get("ip", {}),
-            instance,
-        )
+        ip = config.get("ip")
+        if isinstance(ip, dict):
+            ip = (
+                config["ip"].get(profile_name, {}).get(region, {})
+                or config["ip"].get(profile_name, {})
+                or config["ip"].get(region, {})
+            )
         if ip == "public":
             return instance.get("PublicIpAddress", "")
         elif ip == "private":
@@ -99,24 +100,20 @@ class AWS(DiscoveryService):
             return instance.get("PublicIpAddress", instance.get("PrivateIpAddress", ""))
 
     def get_key(self, instance):
-        filter = Container.filter()
+        config = Container.options("discovery", self.get_metadata(instance))
         profile_name = Container.config.discovery.profile_name()
         region = instance["Placement"]["AvailabilityZone"][:-1]
 
         self.logger.debug("Search for SSH key {}".format(instance["KeyName"]))
         return (
-            filter.run("discovery", self.get_metadata(instance)).get("key")
-            or self.config()
-            .get("key", {})
+            config.get("key")
+            or config.get("key", {})
             .get(profile_name, {})
             .get(region, {})
             .get(instance["KeyName"])
-            or self.config()
-            .get("key", {})
-            .get(profile_name, {})
-            .get(instance["KeyName"])
-            or self.config().get("key", {}).get(region, {}).get(instance["KeyName"])
-            or self.config().get("key", {}).get(instance["KeyName"])
+            or config.get("key", {}).get(profile_name, {}).get(instance["KeyName"])
+            or config.get("key", {}).get(region, {}).get(instance["KeyName"])
+            or config.get("key", {}).get(instance["KeyName"])
         )
 
     def get_metadata(self, instance):
@@ -136,16 +133,19 @@ class AWS(DiscoveryService):
         return metadata
 
     def get_user(self, instance):
+        config = Container.options("discovery", self.get_metadata(instance))
         profile_name = Container.config.discovery.profile_name()
         region = instance["Placement"]["AvailabilityZone"][:-1]
 
-        return self.filter(
-            self.config().get("user", {}).get(profile_name, {}).get(region, {})
-            or self.config().get("user", {}).get(profile_name, {})
-            or self.config().get("user", {}).get(region, {})
-            or self.config().get("user", {}),
-            instance,
-        )
+        if isinstance(config.get("user"), dict):
+            return (
+                config["user"].get(profile_name, {}).get(region, {})
+                or config["user"].get(profile_name, {})
+                or config["user"].get(region, {})
+                or config["user"].get("*")
+            )
+        else:
+            return config.get("user")
 
     def tag(self, instance, tag):
         tags = instance.get("Tags", [])

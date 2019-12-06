@@ -14,7 +14,17 @@ import cloudselect
 from cloudselect.cloudselect import CloudSelect
 from cloudselect.discovery import DiscoveryService, DiscoveryServiceProvider
 from cloudselect.discovery.aws import AWS
+from cloudselect.discovery.local import Local
 from cloudselect.discovery.stub import Stub as DiscoveryStub
+from cloudselect.group import GroupServiceProvider
+from cloudselect.group.simple import Simple as Simple
+from cloudselect.group.stub import Stub as GroupStub
+from cloudselect.pathfinder import PathFinderServiceProvider
+from cloudselect.pathfinder.bastion import Bastion
+from cloudselect.pathfinder.stub import Stub as PathFinderStub
+from cloudselect.report import ReportServiceProvider
+from cloudselect.report.json import Json
+from cloudselect.report.stub import Stub as ReportStub
 
 
 def test_cli_version(script_runner):
@@ -70,10 +80,13 @@ def test_cli_read_configuration():
             "root": {"handlers": ["h"], "level": logging.ERROR},
         },
         plugin={
-            "aws": "cloudselect.discovery.aws",
-            "bastion": "cloudselect.pathfinder.bastion",
-            "json_report": "cloudselect.report.json",
-            "simple_filter": "cloudselect.filter.simple",
+            "discovery": {
+                "aws": "cloudselect.discovery.aws",
+                "local": "cloudselect.discovery.local",
+            },
+            "group": {"simple": "cloudselect.group.simple"},
+            "pathfinder": {"bastion": "cloudselect.pathfinder.bastion"},
+            "report": {"json": "cloudselect.report.json"},
         },
     )
     cloud = CloudSelect()
@@ -115,9 +128,59 @@ def test_factory_load_plugin():
 
     configuration = {
         "discovery": {"type": "aws"},
-        "plugin": {"aws": "cloudselect.discovery.aws"},
+        "plugin": {"discovery": {"aws": "cloudselect.discovery.aws"}},
     }
     discovery = cloud.fabric_load_plugin(
         configuration, "discovery", DiscoveryServiceProvider, DiscoveryStub
     )
     assert type(discovery()) == AWS
+
+
+def test_factory_load_discovery():
+    cloud = CloudSelect()
+    configuration = cloud.read_configuration()
+
+    configuration["discovery"] = {"type": "aws"}
+    plugin = cloud.fabric_load_plugin(
+        configuration, "discovery", DiscoveryServiceProvider, DiscoveryStub
+    )
+    assert type(plugin()) == AWS
+
+    configuration["discovery"] = {"type": "local"}
+    plugin = cloud.fabric_load_plugin(
+        configuration, "discovery", DiscoveryServiceProvider, DiscoveryStub
+    )
+    assert type(plugin()) == Local
+
+
+def test_factory_load_group():
+    cloud = CloudSelect()
+    configuration = cloud.read_configuration()
+
+    configuration["group"] = {"type": "simple"}
+    plugin = cloud.fabric_load_plugin(
+        configuration, "group", GroupServiceProvider, GroupStub
+    )
+    assert type(plugin()) == Simple
+
+
+def test_factory_load_pathfinder():
+    cloud = CloudSelect()
+    configuration = cloud.read_configuration()
+
+    configuration["pathfinder"] = {"type": "bastion"}
+    plugin = cloud.fabric_load_plugin(
+        configuration, "pathfinder", PathFinderServiceProvider, PathFinderStub
+    )
+    assert type(plugin()) == Bastion
+
+
+def test_factory_load_report():
+    cloud = CloudSelect()
+    configuration = cloud.read_configuration()
+
+    configuration["report"] = {"type": "json"}
+    plugin = cloud.fabric_load_plugin(
+        configuration, "report", ReportServiceProvider, ReportStub
+    )
+    assert type(plugin()) == Json

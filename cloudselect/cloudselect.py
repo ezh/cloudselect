@@ -21,8 +21,8 @@ import cloudselect
 from cloudselect import Container
 from cloudselect.discovery import DiscoveryServiceProvider
 from cloudselect.discovery.stub import Stub as DiscoveryStub
-from cloudselect.filter import FilterServiceProvider
-from cloudselect.filter.stub import Stub as FilterStub
+from cloudselect.group import GroupServiceProvider
+from cloudselect.group.stub import Stub as GroupStub
 from cloudselect.pathfinder import PathFinderServiceProvider
 from cloudselect.pathfinder.stub import Stub as PathFinderStub
 from cloudselect.report import ReportServiceProvider
@@ -35,7 +35,6 @@ class CloudSelect:
     extension = "cloud.json"
     importer = staticmethod(__import__)
     logger = None
-    parser = argparse.ArgumentParser(prog="cloudselect")
 
     def fabric(self, configuration, args):
         if args.verbose:
@@ -57,14 +56,14 @@ class CloudSelect:
         Container.config = providers.Configuration(name="config", default=configuration)
         Container.configpath = providers.Object(self.configpath)
         Container.extension = providers.Object(self.extension)
-        Container.parser = providers.Object(self.parser)
+        Container.options = providers.Callable(self.options)
         Container.selector = providers.Singleton(Selector)
 
         Container.discovery = self.fabric_load_plugin(
             configuration, "discovery", DiscoveryServiceProvider, DiscoveryStub
         )
-        Container.filter = self.fabric_load_plugin(
-            configuration, "filter", FilterServiceProvider, FilterStub
+        Container.group = self.fabric_load_plugin(
+            configuration, "group", GroupServiceProvider, GroupStub
         )
         Container.pathfinder = self.fabric_load_plugin(
             configuration, "pathfinder", PathFinderServiceProvider, PathFinderStub
@@ -79,8 +78,10 @@ class CloudSelect:
         self, configuration, plugin_type, service_provider, service_stub
     ):
         if configuration.get(plugin_type, {}).get("type"):
-            plugin = configuration.get("plugin", {}).get(
-                configuration[plugin_type]["type"]
+            plugin = (
+                configuration.get("plugin", {})
+                .get(plugin_type, {})
+                .get(configuration[plugin_type]["type"])
             )
             if plugin is None:
                 raise ValueError(
@@ -96,6 +97,10 @@ class CloudSelect:
         """ Merge two dictioraries """
         if path is None:
             path = []
+        if b is None:
+            return a
+        if a is None:
+            return b
         for key in b:
             if key in a:
                 if isinstance(a[key], dict) and isinstance(b[key], dict):
@@ -103,30 +108,40 @@ class CloudSelect:
                 elif a[key] == b[key]:
                     pass  # same leaf value
                 else:
-                    raise Exception("Conflict at %s" % ".".join(path + [str(key)]))
+                    logging.debug(
+                        "Conflict at %s; overwrite" % ".".join(path + [str(key)])
+                    )
+                    a[key] = b[key]
             else:
                 a[key] = b[key]
         return a
 
+    def options(self, name, metadata=None):
+        group = Container.group()
+        base = Container.config().get(name, {})
+        override = group.run(name, metadata)
+        return self.merge(base, override)
+
     def parse_args(self, args):
-        self.parser.add_argument(
+        parser = argparse.ArgumentParser(prog="cloudselect")
+        parser.add_argument(
             "--version",
             action="version",
             version="%(prog)s version {}".format(cloudselect.__version__,),
         )
-        self.parser.add_argument(
+        parser.add_argument(
             "--verbose", "-v", action="count", help="maximum verbosity: -vv"
         )
-        self.parser.add_argument("--query", "-q", nargs="?", default="")
-        self.parser.add_argument(
+        parser.add_argument("--query", "-q", nargs="?", default="")
+        parser.add_argument(
             "--edit",
             "-e",
             nargs="?",
             default=False,
             help="edit configuration or profile",
         )
-        self.parser.add_argument("profile", nargs="?")
-        return self.parser.parse_args(args)
+        parser.add_argument("profile", nargs="?")
+        return parser.parse_args(args)
 
     def plugin(self, plugin_class, service_provider):
         assert service_provider.provided_type, "{} lost provided_type value".format(
@@ -220,11 +235,13 @@ def complete():
 
 def main():
     cloud = CloudSelect()
-    profile = cloud.read_configuration()
+    configuration = cloud.read_configuration()
 
     args = cloud.parse_args(sys.argv[1:])
     # Read configuration part with profile information
     if args.profile:
-        profile = cloud.merge(profile, cloud.read_configuration(args.profile))
+        configuration = cloud.merge(
+            configuration, cloud.read_configuration(args.profile)
+        )
 
-    cloud.fabric(profile, args).select()
+    cloud.fabric(configuration, args).select()

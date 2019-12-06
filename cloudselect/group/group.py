@@ -10,14 +10,14 @@ import dependency_injector.providers as providers
 from cloudselect import Container
 
 
-class FilterService(object):
+class GroupService(object):
     def run(self, service, metadata):
         return {}
 
     def config(self):
-        return Container.config().get("filter", {})
+        return Container.config().get("group", {})
 
 
-class FilterServiceProvider(providers.Singleton):
+class GroupServiceProvider(providers.Singleton):
 
-    provided_type = FilterService
+    provided_type = GroupService

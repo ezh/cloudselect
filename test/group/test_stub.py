@@ -7,26 +7,26 @@
 # except according to those terms.
 from cloudselect import Container
 from cloudselect.cloudselect import CloudSelect
-from cloudselect.filter import FilterServiceProvider
-from cloudselect.filter.stub import Stub
+from cloudselect.group import GroupServiceProvider
+from cloudselect.group.stub import Stub
 
 metadata = {"hello": "world"}
 
 
-def test_stub_filter():
+def test_stub_group():
     cloud = CloudSelect()
     # Read shared part
     profile = cloud.read_configuration()
     args = cloud.parse_args([])
     cloud.fabric(profile, args)
-    assert Container.filter().__class__.__name__ == "Stub"
-    assert Container.filter().run("aws", metadata) is None
-    assert Container.filter() == Container.filter()
+    assert Container.group().__class__.__name__ == "Stub"
+    assert Container.group().run("aws", metadata) == {}
+    assert Container.group() == Container.group()
 
 
 def test_stub_behaviour(mocker):
     cloud = CloudSelect()
-    service_provider = cloud.plugin("cloudselect.filter.stub", FilterServiceProvider)
+    service_provider = cloud.plugin("cloudselect.group.stub", GroupServiceProvider)
     stub = service_provider()
     mocker.patch.object(Stub, "run")
     stub.run("aws", metadata)
