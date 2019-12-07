@@ -15,6 +15,7 @@ import sys
 from logging.config import dictConfig
 
 import appdirs
+import chardet
 import dependency_injector.providers as providers
 import pkg_resources
 
@@ -75,7 +76,8 @@ class CloudSelect:
                         indent=4,
                         separators=(",", ": "),
                     )
-            with open(full_path, "r") as f:
+            charenc = chardet.detect(open(full_path, "rb").read())["encoding"]
+            with open(full_path, "r", encoding=charenc) as f:
                 return json.load(f)
         except Exception as e:
             message = "Unable to read configuration {}: {}".format(file_name, str(e))

@@ -1,3 +1,4 @@
 appdirs
 boto3
+chardet
 dependency_injector

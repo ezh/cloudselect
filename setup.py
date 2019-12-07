@@ -17,7 +17,7 @@ setup(
             "cloudselect_completer=cloudselect.cloudselect:complete",
         ],
     },
-    install_requires=["appdirs", "boto3", "dependency_injector"],
+    install_requires=["appdirs", "boto3", "chardet", "dependency_injector"],
     keywords=["Cloud", "CLI", "FZF", "SSH", "SCP", "AWS"],
     license="MIT",
     include_package_data=True,
