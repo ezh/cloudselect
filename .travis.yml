@@ -1,0 +1,13 @@
+language: python
+cache: pip
+
+install:
+  - pip install codecov tox
+
+jobs:
+  include:
+    - stage: test
+      env: TOXENV=py35
+      python: 3.5
+      script: tox
+      after_success: codecov -e TOXENV

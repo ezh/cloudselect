@@ -52,3 +52,11 @@ repos:
     - id: requirements-txt-fixer
     - id: mixed-line-ending
       args: ['--fix=no']
+  - repo: local
+    hooks:
+      - id: remark
+        name: remark
+        entry: remark
+        language: system
+        files: \.(md)$
+        args: ['-f']

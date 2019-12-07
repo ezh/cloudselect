@@ -1,22 +1,23 @@
 # Project maturity checklist
-- [x] Define your command-line interface (CLI)
-- [x] Structure your code
-- [x] Write a setup.py file
-- [x] Add entry_points for your script command
-- [x] Create a requirements.txt file
-- [x] Set up a Git repo
-- [x] Use Black to format your code
-- [x] pre-commit hooks
-- [x] Code linters
-- [x] Create a tox.ini config
-- [x] Write unit-tests
-- [x] Add docstrings and documentation
-- [ ] Type annotations and MyPy
-- [x] Upload to GitHub
-- [x] README and LICENSE files
-- [ ] Continuous integration service
-- [ ] Requirements updater
-- [x] Test coverage checker
-- [ ] Automated code review
-- [ ] Publish your project on PyPI
-- [ ] Advertise your project
+
+-   [x] Define your command-line interface (CLI)
+-   [x] Structure your code
+-   [x] Write a setup.py file
+-   [x] Add entry_points for your script command
+-   [x] Create a requirements.txt file
+-   [x] Set up a Git repo
+-   [x] Use Black to format your code
+-   [x] pre-commit hooks
+-   [x] Code linters
+-   [x] Create a tox.ini config
+-   [x] Write unit-tests
+-   [x] Add docstrings and documentation
+-   [ ] Type annotations and MyPy
+-   [x] Upload to GitHub
+-   [x] README and LICENSE files
+-   [ ] Continuous integration service
+-   [ ] Requirements updater
+-   [x] Test coverage checker
+-   [ ] Automated code review
+-   [ ] Publish your project on PyPI
+-   [ ] Advertise your project

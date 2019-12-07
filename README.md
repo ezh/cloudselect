@@ -1,6 +1,6 @@
 #### FZF Cloud Select
-[![MIT License](https://img.shields.io/badge/license-MIT-007EC7.svg?style=flat-square)](/LICENSE)
 
+[![MIT License](https://img.shields.io/badge/license-MIT-007EC7.svg?style=flat-square)](/LICENSE)
 
 ## Purpose
 
@@ -18,9 +18,10 @@ CloudSelect retrieves node list from the cloud, pass that list to FZF, add some 
 
 [MIT][mit] © [Alexey Aksenov][author] et [al][contributors]
 
+[mit]: https://opensource.org/licenses/MIT
 
-[mit]:            https://opensource.org/licenses/MIT
-[author]:         https://github.com/ezh
-[contributors]:   https://github.com/ezh/cloudselect/graphs/contributors
+[author]: https://github.com/ezh
 
-[license-badge]:  https://img.shields.io/badge/license-MIT-007EC7.svg?style=flat-square
+[contributors]: https://github.com/ezh/cloudselect/graphs/contributors
+
+[license-badge]: https://img.shields.io/badge/license-MIT-007EC7.svg?style=flat-square
