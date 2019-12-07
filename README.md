@@ -1,6 +1,11 @@
 #### FZF Cloud Select
 
-[![MIT License](https://img.shields.io/badge/license-MIT-007EC7.svg?style=flat-square)](/LICENSE)
+[![Build Status](https://travis-ci.org/ezh/cloudselect.svg?branch=master)](https://travis-ci.org/ezh/cloudselect)
+[![codecov](https://codecov.io/gh/ezh/cloudselect/branch/master/graph/badge.svg)](https://codecov.io/gh/ezh/cloudselect)
+[![MIT License](https://img.shields.io/badge/license-MIT-007EC7.svg)](/LICENSE)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/cloudselect)(https://pypi.org/project/cloudselect/)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/124d1f6ec45e45deaf924e740670087f)](https://www.codacy.com/manual/ezh/cloudselect?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ezh/cloudselect&amp;utm_campaign=Badge_Grade)
+[![code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://black.readthedocs.io/en/stable)
 
 ## Purpose
 
