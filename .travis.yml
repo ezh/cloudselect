@@ -6,10 +6,18 @@ install:
   - git clone https://github.com/junegunn/fzf/
   - fzf/install --bin
   - sudo ln -s $PWD/fzf/bin/fzf /usr/bin
-jobs:
+
+matrix:
   include:
-    - stage: test
-      env: TOXENV=py35 CLOUDSELECT_VERBOSE=2
+    - env: TOXENV=py35 CLOUDSELECT_VERBOSE=2
       python: 3.5
-      script: tox
-      after_success: codecov -e TOXENV
+    - env: TOXENV=py36 CLOUDSELECT_VERBOSE=2
+      python: 3.6
+    - env: TOXENV=py37 CLOUDSELECT_VERBOSE=2
+      python: 3.7
+    - env: TOXENV=py38 CLOUDSELECT_VERBOSE=2
+      python: 3.8
+
+script: tox
+
+after_success: codecov -e TOXENV
