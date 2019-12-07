@@ -7,6 +7,7 @@
 # except according to those terms.
 """This module is used for testing CloudSelect class."""
 import logging
+import os
 
 import dependency_injector.providers as providers
 import pytest
@@ -51,9 +52,19 @@ def test_cli_version(script_runner):
 def test_cli_verbose():
     """Testing cloudselect verbose behavior."""
     cloud = CloudSelect()
+    if os.environ.get("CLOUDSELECT_VERBOSE"):
+        del os.environ["CLOUDSELECT_VERBOSE"]
     args = cloud.parse_args("-v".split(" "))
     assert args.verbose == 1
     args = cloud.parse_args("-vv".split(" "))
+    assert args.verbose == 2
+    args = cloud.parse_args([])
+    assert args.verbose is None
+    os.environ["CLOUDSELECT_VERBOSE"] = "1"
+    args = cloud.parse_args([])
+    assert args.verbose == 1
+    os.environ["CLOUDSELECT_VERBOSE"] = "2"
+    args = cloud.parse_args([])
     assert args.verbose == 2
 
 

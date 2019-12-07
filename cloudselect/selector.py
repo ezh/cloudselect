@@ -56,7 +56,8 @@ class Selector:
         editor = self.get_editor()
         os.execvp(editor, [editor, configuration])
 
-    def execute(self, program, args, **kwargs):
+    @staticmethod
+    def execute(program, args, **kwargs):
         """Execute a command in a subprocess and returns its standard output."""
         return (
             subprocess.run([program, *args], stdout=subprocess.PIPE, **kwargs)

@@ -7,7 +7,7 @@ install:
 jobs:
   include:
     - stage: test
-      env: TOXENV=py35
+      env: TOXENV=py35 CLOUDSELECT_VERBOSE=2
       python: 3.5
       script: tox
       after_success: codecov -e TOXENV

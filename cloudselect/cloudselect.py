@@ -12,6 +12,7 @@ import json
 import logging
 import os
 import sys
+import traceback
 from logging.config import dictConfig
 
 import appdirs
@@ -65,25 +66,24 @@ class CloudSelect:
             if name is None and not os.path.isfile(full_path):
                 if not os.path.exists(self.configpath):
                     os.mkdir(self.configpath)
-                source = pkg_resources.resource_stream(
+                source = pkg_resources.resource_string(
                     __name__, "{}.dist".format(self.extension),
                 )
                 with open(full_path, "w") as f:
+                    data = json.loads(source.decode())
                     json.dump(
-                        json.load(source),
-                        f,
-                        sort_keys=True,
-                        indent=4,
-                        separators=(",", ": "),
+                        data, f, sort_keys=True, indent=4, separators=(",", ": "),
                     )
             charenc = chardet.detect(open(full_path, "rb").read())["encoding"]
             with open(full_path, "r", encoding=charenc) as f:
                 return json.load(f)
         except Exception as e:
-            message = "Unable to read configuration {}: {}".format(file_name, str(e))
+            message = "Unable to read configuration {}: {}".format(full_path, str(e))
             if self.logger:
+                self.logger.debug(traceback.format_exc())
                 self.logger.error(message)
             else:
+                traceback.print_exc()
                 print(message)
 
     def fabric(self, configuration, args):
@@ -145,7 +145,8 @@ class CloudSelect:
         else:
             return self.plugin(service_stub, service_provider)
 
-    def merge(self, dict1, dict2, path=None):
+    @staticmethod
+    def merge(dict1, dict2, path=None):
         """Merge two dictioraries."""
         if path is None:
             path = []
@@ -156,7 +157,7 @@ class CloudSelect:
         for key in dict2:
             if key in dict1:
                 if isinstance(dict1[key], dict) and isinstance(dict2[key], dict):
-                    self.merge(dict1[key], dict2[key], path + [str(key)])
+                    CloudSelect.merge(dict1[key], dict2[key], path + [str(key)])
                 elif dict1[key] == dict2[key]:
                     pass  # same leaf value
                 else:
@@ -194,8 +195,18 @@ class CloudSelect:
             default=False,
             help="edit configuration or profile",
         )
+        if (
+            os.environ.get("CLOUDSELECT_VERBOSE")
+            and "-v" not in args
+            and "-vv" not in args
+        ):
+            if os.environ["CLOUDSELECT_VERBOSE"] == "1":
+                args.append("-v")
+            else:
+                args.append("-vv")
         parser.add_argument("profile", nargs="?")
-        return parser.parse_args(args)
+        result = parser.parse_args(args)
+        return result
 
     def plugin(self, plugin_class, service_provider):
         """Return service provider."""
