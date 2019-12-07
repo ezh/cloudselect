@@ -1,0 +1,6 @@
+{
+  "discovery": {
+    "type": "local",
+    "cmd": "echo"
+  }
+}

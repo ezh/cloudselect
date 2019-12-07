@@ -1,0 +1,6 @@
+{
+  "discovery": {
+    "type": "local",
+    "cmd": "echo my.cloud.instance"
+  }
+}

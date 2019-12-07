@@ -5,42 +5,59 @@
 # <LICENSE-MIT or http://opensource.org/licenses/MIT>
 # This file may not be copied, modified, or distributed
 # except according to those terms.
+"""
+Module that invoke FZF on list of discovered instances.
+
+This module is invoked by CloudSelect when all data is prepared:
+- configuration is loaded;
+- plugins are resolved and loaded;
+- arguments are parsed.
+
+The entry point is select function.
+"""
+
 import logging
 import os
 import subprocess
+import sys
 
 from cloudselect import Container
 
 
 class Selector:
+    """Selector class that selects cloud instances."""
+
     logger = None
 
     def __init__(self):
+        """Class constructor."""
         self.logger = logging.getLogger("cloudselect.Selector")
 
     def complete(self, cline, cpoint):
+        """List profiles for shell completion."""
         configpath = Container.configpath()
         extension = Container.extension()
 
         prefix = cline[0:cpoint].partition(" ")[-1]
         self.logger.debug(
-            "Complete line {}, point {}, prefix".format(cline, cpoint, prefix)
+            "Complete line {}, point {}, prefix".format(cline, cpoint, prefix),
         )
-        for file in os.listdir(configpath):
-            if file.endswith(".{}".format(extension)):
-                name = file.replace(".{}".format(extension), "")
+        for profile in os.listdir(configpath):
+            if profile.endswith(".{}".format(extension)):
+                name = profile.replace(".{}".format(extension), "")
                 if name.startswith(prefix):
                     print(name)
 
-    def edit(self, file):
-        self.logger.debug("Edit '{}'".format(file))
-        if not os.path.isfile(file):
-            self.logger.info("{} does not exists".format(file))
+    def edit(self, configuration):
+        """Edit profile or shared configuration file if file is None."""
+        self.logger.debug("Edit '{}'".format(configuration))
+        if not os.path.isfile(configuration):
+            self.logger.info("{} does not exists".format(configuration))
         editor = self.get_editor()
-        os.execvp(editor, [editor, file])
+        os.execvp(editor, [editor, configuration])
 
     def execute(self, program, args, **kwargs):
-        """Executes a command in a subprocess and returns its standard output."""
+        """Execute a command in a subprocess and returns its standard output."""
         return (
             subprocess.run([program, *args], stdout=subprocess.PIPE, **kwargs)
             .stdout.decode()
@@ -48,19 +65,23 @@ class Selector:
         )
 
     def fzf_select(self, instances):
-        fzf_options = Container.config.fzf() or ["-m", "--with-nth", "2.."]
+        """Invoke FZF with list of instances and return selected."""
+        fzf_options = Container.config.fzf() or ["-1", "-m", "--with-nth", "2.."]
 
         def find(instance_id):
             return next(x for x in instances if x.id == instance_id)
 
         fzf_input = "\n".join("\t".join(i.representation) for i in instances).encode()
         selected = self.execute("fzf", fzf_options, input=fzf_input)
+        if not selected:
+            sys.exit("Error: No instances selected")
         assert (
             "\t" in selected
         ), "There should be at least 2 fields in instance representation: id and something meaningful"
         return [find(i.split("\t", 1)[0]) for i in selected.split("\n")]
 
     def get_editor(self):
+        """Get editor path."""
         config = Container.config
         if config.editor():
             return config.editor()
@@ -69,35 +90,44 @@ class Selector:
             if rv:
                 return rv
         for editor in "vim", "nano":
-            if os.system("which %s >/dev/null 2>&1" % editor) == 0:
-                return editor
+            try:
+                return subprocess.check_output(  # noqa: DUO116
+                    "which {} >/dev/null 2>&1".format(editor), shell=False,
+                )
+            except subprocess.CalledProcessError as exc:
+                self.logger.warning("Unable to fild editor: {}".format(str(exc)))
         return "vi"
 
     def profile_list(self):
+        """List available profiles."""
         configpath = Container.configpath()
         extension = Container.extension()
 
         self.logger.debug("List all available profiles from {}".format(configpath))
         empty = True
         print("CloudSelect profiles:")
-        for file in os.listdir(configpath):
-            if file.endswith(".{}".format(extension)):
+        for profile in os.listdir(configpath):
+            if profile.endswith(".{}".format(extension)):
                 empty = False
-                print("- {}".format(file.replace(".{}".format(extension), "")))
+                print("- {}".format(profile.replace(".{}".format(extension), "")))
         if empty:
             print("- NO PROFILES -")
 
     def profile_process(self):
+        """Run selection process for the specific profile."""
         discovery = Container.discovery()
         profile_name = Container.args().profile
         report = Container.report()
 
         self.logger.debug("Process profile '{}'".format(profile_name))
         instances = discovery.run()
+        if not instances:
+            sys.exit("Error: No instances found")
         selected = self.fzf_select(instances)
-        report.run(selected)
+        return report.run(selected)
 
     def select(self):
+        """Entry point. Select instances."""
         args = Container.args()
         configpath = Container.configpath()
         extension = Container.extension()
@@ -110,6 +140,6 @@ class Selector:
                 profile = os.path.join(configpath, "{}.{}".format(args.edit, extension))
                 self.edit(profile)
         if not args.profile:
-            self.profile_list()
+            return self.profile_list()
         else:
-            self.profile_process()
+            return self.profile_process()

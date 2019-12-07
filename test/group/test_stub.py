@@ -5,6 +5,7 @@
 # <LICENSE-MIT or http://opensource.org/licenses/MIT>
 # This file may not be copied, modified, or distributed
 # except according to those terms.
+"""This module is used for testing Stub group plugin."""
 from cloudselect import Container
 from cloudselect.cloudselect import CloudSelect
 from cloudselect.group import GroupServiceProvider
@@ -14,9 +15,16 @@ metadata = {"hello": "world"}
 
 
 def test_stub_group():
+    """
+    Testing Stub initializaion.
+
+    Is fabric creating Stub by default?
+    Does Stub return {}?
+    Is Stub singleton?
+    """
     cloud = CloudSelect()
     # Read shared part
-    profile = cloud.read_configuration()
+    profile = cloud.configuration_read()
     args = cloud.parse_args([])
     cloud.fabric(profile, args)
     assert Container.group().__class__.__name__ == "Stub"
@@ -25,6 +33,7 @@ def test_stub_group():
 
 
 def test_stub_behaviour(mocker):
+    """Assert calling run() for "cloudselect.group.stub" plugin."""
     cloud = CloudSelect()
     service_provider = cloud.plugin("cloudselect.group.stub", GroupServiceProvider)
     stub = service_provider()

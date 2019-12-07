@@ -1,0 +1,18 @@
+{
+  "discovery": {
+    "type": "local",
+    "cmd": "awk -F'[ ,]' '!/:/ && $1 !~ /[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+/ { print $1 }' ~/.ssh/known_hosts | sort -u"
+  },
+  "group": {
+    "*": {
+      "option": {
+        "ssh": "-t",
+        "ssh_command": "sudo -i"
+      }
+    },
+    "type": "simple"
+  },
+  "report": {
+    "type": "json"
+  }
+}

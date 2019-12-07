@@ -6,17 +6,17 @@
 - [x] Create a requirements.txt file
 - [x] Set up a Git repo
 - [x] Use Black to format your code
-- [ ] pre-commit hooks
+- [x] pre-commit hooks
 - [x] Code linters
 - [x] Create a tox.ini config
 - [x] Write unit-tests
-- [ ] Add docstrings and documentation
+- [x] Add docstrings and documentation
 - [ ] Type annotations and MyPy
 - [x] Upload to GitHub
-- [ ] README and LICENSE files
+- [x] README and LICENSE files
 - [ ] Continuous integration service
 - [ ] Requirements updater
-- [ ] Test coverage checker
+- [x] Test coverage checker
 - [ ] Automated code review
 - [ ] Publish your project on PyPI
 - [ ] Advertise your project

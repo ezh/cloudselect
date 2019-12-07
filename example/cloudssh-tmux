@@ -1,10 +1,11 @@
 #!/bin/sh
 #
 OUTPUT=$(cloudselect $@)
+if [ $? -ne 0 ];then
+  exit
+fi
 
 CLOUD=$(echo $OUTPUT | jq -r '.instances[] | @base64')
-PROFILE="-"
-REGION="-"
 TMUX_LAYOUT="tiled"
 TMUX_SESSION_NAME="assh-"$(date +%s)
 WAIT_FOR_INPUT='read -n 1 -s -r -p "Press any key to continue"'
@@ -18,12 +19,9 @@ OPTION_SSH_COMMAND=$(echo $OUTPUT | jq -r '.option.ssh_command // ""')
 # Collect shared arguments
 for row in $(echo $CLOUD); do
     OUTPUT=$(echo ${row} | base64 --decode)
-    PROFILE=$(echo $OUTPUT | jq -r '.metadata.profile')
-    REGION=$(echo $OUTPUT | jq -r '.metadata.region')
     break
 done
 
-echo "assh to $PROFILE $REGION"
 test "$OPTION_BEFORE" != "null" && eval "$OPTION_BEFORE"
 # Iterate over instances
 for row in $(echo $CLOUD); do

@@ -1,3 +1,5 @@
+/build
+/dist
 .mypy
 .venv
 .mypy_cache

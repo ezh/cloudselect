@@ -1,4 +1,6 @@
-from setuptools import find_packages, setup
+"""``CloudSelect`` lives on `GitHub <https://github.com/ezh/cloudselect>`_."""
+from setuptools import find_packages
+from setuptools import setup
 
 __version__ = "19.1"
 
@@ -12,11 +14,11 @@ setup(
     entry_points={
         "console_scripts": [
             "cloudselect=cloudselect.cloudselect:main",
-            "cloudcomplete=cloudselect.cloudselect:complete",
-        ]
+            "cloudselect_completer=cloudselect.cloudselect:complete",
+        ],
     },
     install_requires=["appdirs", "boto3", "dependency_injector"],
-    keywords=["AWS", "CLI", "FZF", "SSH", "SCP"],
+    keywords=["Cloud", "CLI", "FZF", "SSH", "SCP", "AWS"],
     license="MIT",
     include_package_data=True,
     packages=find_packages(include=["cloudselect"]),

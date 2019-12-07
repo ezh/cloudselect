@@ -5,12 +5,19 @@
 # <LICENSE-MIT or http://opensource.org/licenses/MIT>
 # This file may not be copied, modified, or distributed
 # except according to those terms.
+"""This module is used for testing Cloud.options(...) behaviour."""
 from cloudselect.cloudselect import CloudSelect
 
 
 def test_options():
+    """
+    Testing cloud.options(...) behaviour.
+
+    There should be {} if there is no any options.
+    There should be dictionary if there is required option.
+    """
     cloud = CloudSelect()
-    configuration = cloud.read_configuration()
+    configuration = cloud.configuration_read()
     args = cloud.parse_args([])
     cloud.fabric(configuration, args)
 
