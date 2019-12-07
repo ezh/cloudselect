@@ -3,7 +3,9 @@ cache: pip
 
 install:
   - pip install codecov tox
-
+  - git clone https://github.com/junegunn/fzf/
+  - fzf/install --bin
+  - sudo ln -s $PWD/fzf/bin/fzf /usr/bin
 jobs:
   include:
     - stage: test
