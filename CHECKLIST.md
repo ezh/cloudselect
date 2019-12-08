@@ -18,6 +18,6 @@
 -   [x] Continuous integration service
 -   [ ] Requirements updater
 -   [x] Test coverage checker
--   [ ] Automated code review
+-   [x] Automated code review
 -   [x] Publish your project on PyPI
 -   [ ] Advertise your project
