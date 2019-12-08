@@ -41,7 +41,7 @@ def test_cli_version(script_runner):
     """Testing that cloudselect has expected version."""
     ret = script_runner.run("cloudselect", "--version")
     assert ret.success
-    assert ret.stdout == "cloudselect version {}\n".format(cloudselect.__version__)
+    assert ret.stdout == "cloudselect ven {}\n".format(cloudselect.__version__)
     assert ret.stderr == ""
 
     with pytest.raises(SystemExit):
