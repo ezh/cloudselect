@@ -15,9 +15,9 @@
 -   [ ] Type annotations and MyPy
 -   [x] Upload to GitHub
 -   [x] README and LICENSE files
--   [ ] Continuous integration service
+-   [x] Continuous integration service
 -   [ ] Requirements updater
 -   [x] Test coverage checker
 -   [ ] Automated code review
--   [ ] Publish your project on PyPI
+-   [x] Publish your project on PyPI
 -   [ ] Advertise your project
