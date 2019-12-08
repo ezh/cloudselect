@@ -1,7 +1,14 @@
 """``CloudSelect`` lives on `GitHub <https://github.com/ezh/cloudselect>`_."""
 from setuptools import find_packages, setup
 
-__version__ = "19.1"
+__version__ = "19.1.1"
+
+# read the contents of your README file
+from os import path
+
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
+    long_description = f.read()
 
 setup(
     name="cloudselect",
@@ -17,18 +24,28 @@ setup(
         ],
     },
     install_requires=["appdirs", "boto3", "chardet", "dependency_injector"],
+    include_package_data=True,
     keywords=["Cloud", "CLI", "FZF", "SSH", "SCP", "AWS"],
     license="MIT",
-    include_package_data=True,
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     packages=find_packages(include=["cloudselect"]),
     python_requires=">=3",
     url="https://github.com/ezh/cloudselect",
     version=__version__,
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        # 'Development Status :: 1 - Planning',
+        # 'Development Status :: 2 - Pre-Alpha',
+        # 'Development Status :: 3 - Alpha',
+        "Development Status :: 4 - Beta",
+        # 'Development Status :: 5 - Production/Stable',
+        # 'Development Status :: 6 - Mature',
+        # 'Development Status :: 7 - Inactive',
         "Environment :: Console",
-        "Intended Audience :: Developers",
-        "Topic :: Software Development :: Build Tools",
+        "Intended Audience :: Information Technology",
+        "Intended Audience :: System Administrators",
+        "Topic :: System :: Distributed Computing",
+        "Topic :: System :: Shells",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",
