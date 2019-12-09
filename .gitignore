@@ -1,7 +1,9 @@
 /build
 /dist
 .mypy
-.venv
 .mypy_cache
+.terraform
 .tox
+.venv
 *.egg-info
+terraform.tfstate*

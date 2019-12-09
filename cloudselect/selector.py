@@ -40,7 +40,7 @@ class Selector:
 
         prefix = cline[0:cpoint].partition(" ")[-1]
         self.logger.debug(
-            "Complete line {}, point {}, prefix".format(cline, cpoint, prefix),
+            "Complete line {}, point {}, prefix {}".format(cline, cpoint, prefix),
         )
         for profile in os.listdir(configpath):
             if profile.endswith(".{}".format(extension)):

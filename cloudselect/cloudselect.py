@@ -176,7 +176,8 @@ class CloudSelect:
         override = group.run(name, metadata)
         return self.merge(base, override)
 
-    def parse_args(self, args):
+    @staticmethod
+    def parse_args(args):
         """Parse command line arguments."""
         parser = argparse.ArgumentParser(prog="cloudselect")
         parser.add_argument(

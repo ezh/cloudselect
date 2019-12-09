@@ -30,7 +30,7 @@ We are:
 4. running `sudo -i` at startup
 5. entering `sudo` password
 
-_All of those were completed in a few arrow/enter key clicks..._
+*All of those were completed in a few arrow/enter key clicks...*
 
 ## Simple usage
 

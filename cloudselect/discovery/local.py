@@ -5,6 +5,7 @@
 # <LICENSE-MIT or http://opensource.org/licenses/MIT>
 # This file may not be copied, modified, or distributed
 # except according to those terms.
+"""Module collecting instances from shell output."""
 import logging
 import subprocess
 
@@ -14,38 +15,43 @@ from . import DiscoveryService
 
 
 class Local(DiscoveryService):
+    """Class implementing discovery service plugin."""
+
     logger = None
 
     def __init__(self):
+        """Class constructor."""
         self.logger = logging.getLogger("cloudselect.discovery.Local")
 
     def run(self):
+        """Collect instances from shell output."""
         logging.debug("Discover local instances")
         return list(self.instances())
 
     def instances(self):
+        """Collect instances from shell output."""
         pathfinder = Container.pathfinder()
         config = Container.config.discovery
 
-        stdout = subprocess.check_output(config.cmd(), shell=True)
+        stdout = subprocess.check_output(config.cmd(), shell=True)  # noqa: DUO116
         output = sorted(
             filter(lambda item: item.strip() != "", stdout.decode().split("\n")),
             reverse=True,
         )
         for index, host in enumerate(output):
-            id = str(index)
+            host_id = str(index)
             ip = host
             key = self.get_key(host)
             metadata = {"host": host}
-            representation = [id, host]
+            representation = [host_id, host]
             user = self.get_user(host)
-            instance = Instance(id, ip, key, user, None, [], metadata, representation)
+            instance = Instance(
+                host_id, ip, key, user, None, [], metadata, representation,
+            )
             yield pathfinder.run(instance)
 
-    def config(self):
-        return Container.config().get("discovery", {})
-
     def get_key(self, host):
+        """Get key for ssh host."""
         self.logger.debug("Search SSH key for {}".format(host))
         config = Container.options("discovery", host)
         return (
@@ -55,6 +61,7 @@ class Local(DiscoveryService):
         )
 
     def get_user(self, host):
+        """Get user for SSH host."""
         self.logger.debug("Search user for {}".format(host))
         config = Container.options("discovery", host)
         return (
