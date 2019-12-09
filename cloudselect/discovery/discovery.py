@@ -19,7 +19,8 @@ class DiscoveryService(object):
         """Get list of instances."""
         return []
 
-    def config(self):
+    @staticmethod
+    def config():
         """Return discovery configuration."""
         return Container.config().get("discovery", {})
 

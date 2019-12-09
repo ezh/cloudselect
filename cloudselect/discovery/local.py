@@ -7,7 +7,7 @@
 # except according to those terms.
 """Module collecting instances from shell output."""
 import logging
-import subprocess
+import subprocess  # NOQA: B404
 
 from cloudselect import Container, Instance
 

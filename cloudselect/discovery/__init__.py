@@ -5,4 +5,7 @@
 # <LICENSE-MIT or http://opensource.org/licenses/MIT>
 # This file may not be copied, modified, or distributed
 # except according to those terms.
-from .discovery import *
+"""Discovery package."""
+from .discovery import DiscoveryService, DiscoveryServiceProvider
+
+__all__ = ["DiscoveryService", "DiscoveryServiceProvider"]

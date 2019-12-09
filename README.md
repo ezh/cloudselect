@@ -19,7 +19,7 @@ It is useful for diving inside geo-distributed onion enterprise environments wit
 
 ## Implementation
 
-CloudSelect retrieves node list from the cloud, pass that list to FZF, add some useful information to selected nodes (like jump hosts, `sudo -i` command, etc...) and returns JSON dictionary that could be used by other programs. CloudSelect is a team player in a shell environment. We can automatically open multiple interactive SSH sessions and provide passwords to `sudo -i` under TMUX environment.
+CloudSelect retrieves node list from the cloud, passes that list to FZF, adds some useful information to selected nodes (like jump hosts, `sudo -i` command, etc...), and returns JSON dictionary that could be used by other programs. CloudSelect is a team player in a shell environment. We can automatically open multiple interactive SSH sessions and provide passwords to `sudo -i` under TMUX environment.
 
 ## Demo
 
@@ -75,5 +75,3 @@ You may copy suitable wrapper from `example` directory.
 [author]: https://github.com/ezh
 
 [contributors]: https://github.com/ezh/cloudselect/graphs/contributors
-
-[license-badge]: https://img.shields.io/badge/license-MIT-007EC7.svg?style=flat-square

@@ -54,7 +54,7 @@ class CloudSelect:
         """
         Read json configuration from configpath
         Copy initial configuration from cloud.json.dist to cloud.json if needed
-        """
+        """  # pylint: disable=W0105
         full_path = name
         if name and os.path.isabs(name):
             name = os.path.basename(name).replace(".{}".format(self.extension), "")
@@ -211,9 +211,10 @@ class CloudSelect:
 
     def plugin(self, plugin_class, service_provider):
         """Return service provider."""
-        assert service_provider.provided_type, "{} lost provided_type value".format(
-            service_provider,
-        )
+        if not service_provider.provided_type:
+            raise AssertionError(
+                "{} lost provided_type value".format(service_provider,),
+            )
         if isinstance(plugin_class, str):
             plugin_class_object = self.resolve(
                 plugin_class, service_provider.provided_type,

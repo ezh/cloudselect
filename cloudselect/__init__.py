@@ -5,23 +5,15 @@
 # <LICENSE-MIT or http://opensource.org/licenses/MIT>
 # This file may not be copied, modified, or distributed
 # except according to those terms.
-
+"""CloudSelect package."""
 from __future__ import absolute_import, division, print_function
 
 import dependency_injector.containers as containers
 import pkg_resources
 
-from .instance import *
+from .instance import Instance
 
-__all__ = (
-    "__title__",
-    "__summary__",
-    "__uri__",
-    "__author__",
-    "__email__",
-    "__license__",
-    "__version__",
-)
+__all__ = ["Instance"]
 
 __title__ = "awselect"
 __summary__ = "AWS FZF selector"

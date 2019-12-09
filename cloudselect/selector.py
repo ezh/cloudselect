@@ -60,7 +60,7 @@ class Selector:
     def execute(program, args, **kwargs):
         """Execute a command in a subprocess and returns its standard output."""
         return (
-            subprocess.run([program, *args], stdout=subprocess.PIPE, **kwargs)
+            subprocess.run([program] + args, stdout=subprocess.PIPE, **kwargs)
             .stdout.decode()
             .strip()
         )
@@ -76,9 +76,10 @@ class Selector:
         selected = self.execute("fzf", fzf_options, input=fzf_input)
         if not selected:
             sys.exit("Error: No instances selected")
-        assert (
-            "\t" in selected
-        ), "There should be at least 2 fields in instance representation: id and something meaningful"
+        if "\t" not in selected:
+            raise AssertionError(
+                "There should be at least 2 fields in instance representation: id and something meaningful",
+            )
         return [find(i.split("\t", 1)[0]) for i in selected.split("\n")]
 
     def get_editor(self):

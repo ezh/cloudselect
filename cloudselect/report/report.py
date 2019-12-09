@@ -14,7 +14,8 @@ import dependency_injector.providers as providers
 class ReportService(object):
     """Base class for reporting service."""
 
-    def run(self, selected):
+    @staticmethod
+    def run(selected):
         """Prepare report based on list of selected instances."""
         pp = pprint.PrettyPrinter()
         pp.pprint(selected)
