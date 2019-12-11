@@ -23,12 +23,14 @@ CloudSelect retrieves node list from the cloud, passes that list to FZF, adds so
 
 ## Demo
 
+[![demo](docs/demo/2019-12-11_23-04-56%20cloudselect%20demo.gif)](docs/demo/)
+
 We are:
-1. connecting to bastion host
-2. using locally stored key because usage of ssh-agent is restricted and sshd settings are `AllowTcpForwarding no`, `GatewayPorts no`
-3. jumping to EC2 instances
+1. connecting to bastion host with public IP 54.171.154.230
+2. using locally stored key on bastion because the usage of ssh-agent is restricted by security team ?lol? and sshd settings are `AllowTcpForwarding no`, `GatewayPorts no`
+3. jumping to 4 EC2 web instances in development environment that located in private subnet 172.30.x.x
 4. running `sudo -i` at startup
-5. entering `sudo` password
+5. entering `sudo` password 12345678
 
 *All of those were completed in a few arrow/enter key clicks...*
 

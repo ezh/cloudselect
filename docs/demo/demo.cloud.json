@@ -1,0 +1,40 @@
+{
+  "discovery": {
+    "fzf_extra": [
+      "InstanceId",
+      "KeyName",
+      "tag:Name"
+    ],
+    "profile_name": "ezh",
+    "type": "aws",
+    "region": "eu-west-1"
+  },
+  "group": {
+    "*": {
+      "discovery": {
+        "key": "id_rsa",
+        "ip": "public_private",
+        "user": "ec2-user"
+      },
+      "option": {
+        "after": "sleep 2 && tmux set-buffer 12345678$'\n'; tmux list-pane -F '#{pane_index}' | xargs -n 1 tmux paste-buffer -t",
+        "ssh": "-t",
+        "ssh_command": "sudo -i"
+      },
+      "pathfinder": {
+        "metadata": "Tags.Name:Bastion"
+      }
+    },
+    "type": "simple"
+  },
+  "option": {
+    "ssh": "-t",
+    "ssh_command": "sudo -i"
+  },
+  "pathfinder": {
+    "type": "bastion"
+  },
+  "report": {
+    "type": "json"
+  }
+}
