@@ -34,18 +34,14 @@ We are:
 
 *All of those were completed in a few arrow/enter key clicks...*
 
-## Simple usage
+## Basic usage
 
 -   Connect to a single known_hosts server
--   Connect to multiple known_hosts servers
 -   Connect to a single EC2 AWS instance
--   Connect to multiple EC2 AWS instances
 
 ## Advanced usage
 
--   Connect to multiple known_hosts servers and run `sudo -i` command at startup
 -   Connect to multiple known_hosts servers, run `sudo -i` command at startup and enter `sudo` password
--   Connect to multiple EC2 AWS instances and run `sudo -i` command at startup
 -   Connect to multiple EC2 AWS instances, run `sudo -i` command at startup and enter `sudo` password
 -   Connect to multiple EC2 AWS instances through a *bastion* host, run `sudo -i` command at startup and enter `sudo` password
 
