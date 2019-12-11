@@ -27,28 +27,32 @@ class AWS(DiscoveryService):
 
     def run(self):
         """Collect AWS instances."""
-        return list(self.instances())
+        pathfinder = Container.pathfinder()
+
+        instances = list(self.instances())
+        return [pathfinder.run(i, instances) for i in instances]
 
     def instances(self):
         """Collect AWS instances."""
-        pathfinder = Container.pathfinder()
-
         for i in self.find():
             instance_id = i["InstanceId"]
-            ip = self.get_ip(i)
-            key = self.get_key(i)
             metadata = self.get_metadata(i)
-            representation = [i["InstanceId"], ip]
-            user = self.get_user(i)
+            config = Container.options("discovery", metadata)
+
+            ip = self.get_ip(i, config)
+            key = self.get_key(i, config)
+            user = self.get_user(i, config)
+
+            representation = [instance_id, ip]
             for field in self.config().get("fzf_extra", []):
                 if field in i:
                     representation.append(i[field])
                 elif field.startswith("tag:"):
                     representation.append(self.tag(i, field.replace("tag:", "")))
             instance = Instance(
-                instance_id, ip, key, user, 22, [], metadata, representation,
+                instance_id, ip, key, user, 22, None, metadata, representation,
             )
-            yield pathfinder.run(instance)
+            yield instance
 
     @staticmethod
     def find():
@@ -73,19 +77,43 @@ class AWS(DiscoveryService):
             item for sublist in [i["Instances"] for i in response] for item in sublist
         ]
 
-    def get_ip(self, instance):
+    @staticmethod
+    def get_option(options, option_name, profile, region):
+        """Get an option from more precise to more general."""
+        # value
+        result = options
+        if isinstance(result, str):
+            return result
+        # profile:region:option_name
+        result = options.get(profile, {}).get(region, {})
+        if isinstance(result, dict):
+            result = result.get(option_name)
+        if isinstance(result, str):
+            return result
+        # profile:option_name
+        result = options.get(profile, {})
+        if isinstance(result, dict):
+            result = result.get(option_name)
+        if isinstance(result, str):
+            return result
+        # region:key_name
+        result = options.get(region, {})
+        if isinstance(result, dict):
+            result = result.get(option_name)
+        if isinstance(result, str):
+            return result
+        # key_name
+        result = options
+        if isinstance(result, dict):
+            result = result.get(option_name)
+        return None
+
+    def get_ip(self, instance, config):
         """Get instance IP."""
-        config = Container.options("discovery", self.get_metadata(instance))
         profile_name = Container.args().profile
         region = instance["Placement"]["AvailabilityZone"][:-1]
 
-        ip = config.get("ip")
-        if isinstance(ip, dict):
-            ip = (
-                config["ip"].get(profile_name, {}).get(region, {})
-                or config["ip"].get(profile_name, {})
-                or config["ip"].get(region, {})
-            )
+        ip = self.get_option(config.get("ip", {}), None, profile_name, region)
         if ip == "public":
             return instance.get("PublicIpAddress", "")
         elif ip == "private":
@@ -97,22 +125,14 @@ class AWS(DiscoveryService):
         else:
             return instance.get("PublicIpAddress", instance.get("PrivateIpAddress", ""))
 
-    def get_key(self, instance):
+    def get_key(self, instance, config):
         """Get instance key."""
-        config = Container.options("discovery", self.get_metadata(instance))
         profile_name = Container.config.discovery.profile_name()
         region = instance["Placement"]["AvailabilityZone"][:-1]
 
         self.logger.debug("Search for SSH key {}".format(instance["KeyName"]))
-        return (
-            config.get("key")
-            or config.get("key", {})
-            .get(profile_name, {})
-            .get(region, {})
-            .get(instance["KeyName"])
-            or config.get("key", {}).get(profile_name, {}).get(instance["KeyName"])
-            or config.get("key", {}).get(region, {}).get(instance["KeyName"])
-            or config.get("key", {}).get(instance["KeyName"])
+        return self.get_option(
+            config.get("key", {}), instance["KeyName"], profile_name, region,
         )
 
     @staticmethod
@@ -133,21 +153,12 @@ class AWS(DiscoveryService):
         metadata.pop("NetworkInterfaces", None)
         return metadata
 
-    def get_user(self, instance):
+    def get_user(self, instance, config):
         """Get instance user."""
-        config = Container.options("discovery", self.get_metadata(instance))
         profile_name = Container.config.discovery.profile_name()
         region = instance["Placement"]["AvailabilityZone"][:-1]
 
-        if isinstance(config.get("user"), dict):
-            return (
-                config["user"].get(profile_name, {}).get(region, {})
-                or config["user"].get(profile_name, {})
-                or config["user"].get(region, {})
-                or config["user"].get("*")
-            )
-        else:
-            return config.get("user")
+        return self.get_option(config.get("user", {}), None, profile_name, region)
 
     @staticmethod
     def tag(instance, tag):

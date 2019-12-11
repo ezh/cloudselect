@@ -5,6 +5,7 @@
 # <LICENSE-MIT or http://opensource.org/licenses/MIT>
 # This file may not be copied, modified, or distributed
 # except according to those terms.
+"""Module defining Instance object."""
 from collections import namedtuple
 
 
@@ -12,14 +13,17 @@ class Instance(
     namedtuple(
         "Instance",
         ["id", "host", "key", "user", "port", "jumphost", "metadata", "representation"],
-    )
+    ),
 ):
-    def toDict(self):
-        return dict(
-            host=self.host,
-            key=self.key,
-            user=self.user,
-            port=self.port,
-            jumphost=self.jumphost,
-            metadata=self.metadata,
-        )
+    """Instance class based on namedtuple implementation."""
+
+    def to_dict(self):
+        """Convert namedtuple to dictionary."""
+        return {
+            "host": self.host,
+            "key": self.key,
+            "user": self.user,
+            "port": self.port,
+            "jumphost": self.jumphost.to_dict() if self.jumphost else None,
+            "metadata": self.metadata,
+        }

@@ -15,7 +15,7 @@ class PathFinderService(object):
     """Base class for pathfinder service."""
 
     @staticmethod
-    def run(instance):
+    def run(instance, instances):
         """Enrich instance object with jump hosts."""
         return instance
 

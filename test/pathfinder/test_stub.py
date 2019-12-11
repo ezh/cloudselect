@@ -29,7 +29,7 @@ def test_stub_pathfinder():
     args = cloud.parse_args([])
     cloud.fabric(profile, args)
     assert Container.pathfinder().__class__.__name__ == "Stub"
-    assert Container.pathfinder().run(instance) == instance
+    assert Container.pathfinder().run(instance, [instance]) == instance
     assert Container.pathfinder() == Container.pathfinder()
 
 
@@ -41,5 +41,5 @@ def test_stub_behaviour(mocker):
     )
     stub = service_provider()
     mocker.patch.object(Stub, "run")
-    stub.run(instance)
-    Stub.run.assert_called_once_with(instance)
+    stub.run(instance, [instance])
+    Stub.run.assert_called_once_with(instance, [instance])

@@ -7,7 +7,7 @@
 # except according to those terms.
 """Module collecting instances from shell output."""
 import logging
-import subprocess  # NOQA: B404
+import subprocess
 
 from cloudselect import Container, Instance
 
@@ -25,12 +25,14 @@ class Local(DiscoveryService):
 
     def run(self):
         """Collect instances from shell output."""
+        pathfinder = Container.pathfinder()
+
         logging.debug("Discover local instances")
-        return list(self.instances())
+        instances = list(self.instances())
+        return [pathfinder.run(i, instances) for i in instances]
 
     def instances(self):
         """Collect instances from shell output."""
-        pathfinder = Container.pathfinder()
         config = Container.config.discovery
 
         stdout = subprocess.check_output(config.cmd(), shell=True)  # noqa: DUO116
@@ -46,9 +48,9 @@ class Local(DiscoveryService):
             representation = [host_id, host]
             user = self.get_user(host)
             instance = Instance(
-                host_id, ip, key, user, None, [], metadata, representation,
+                host_id, ip, key, user, None, None, metadata, representation,
             )
-            yield pathfinder.run(instance)
+            yield instance
 
     def get_key(self, host):
         """Get key for ssh host."""
