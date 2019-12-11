@@ -1,6 +1,33 @@
 #!/bin/sh
 #
-OUTPUT=$(cloudselect $@)
+# Split arguments by --:
+# cloudselect arguments -- ssh arguments
+
+function jumphost() {
+    OUTPUT=$(echo $1 | base64 --decode)
+    JUMPHOST=$(echo $OUTPUT | jq -r '.jumphost // ""')
+    test -z "$JUMPHOST" && return
+
+    HOST=$(echo $OUTPUT | jq -r '.jumphost.host')
+    KEY="-i"$(echo $OUTPUT | jq -r '.jumphost.key // ""')
+    USER=$(echo $OUTPUT | jq -r '.jumphost.user // ""')"@"
+
+    test "$KEY" == "-i" && KEY=""
+    test "$USER" == "@" && USER=""
+    echo ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $OPTION_SSH $KEY $USER$HOST
+}
+
+
+CLOUDSELECT_ARGS=$#
+for (( i=1; i <= "$#"; i++ )); do
+  if [ "${!i}" == "--" ]; then
+    CLOUDSELECT_ARGS=$(($i-1))
+    break
+  fi
+done
+SSH_ARGS=$(($CLOUDSELECT_ARGS+2))
+
+OUTPUT=$(cloudselect "${@:1:$CLOUDSELECT_ARGS}")
 if [ $? -ne 0 ];then
   exit
 fi
@@ -25,30 +52,23 @@ done
 test "$OPTION_BEFORE" != "null" && eval "$OPTION_BEFORE"
 # Iterate over instances
 for row in $(echo $CLOUD); do
-    test $WINDOW -gt 0 && tmux select-layout -t "${TMUX_SESSION_NAME}" "${TMUX_LAYOUT}"
-
     OUTPUT=$(echo ${row} | base64 --decode)
-    JUMPHOST=$(echo $OUTPUT | jq -r '.jumphost[0] // ""')
     HOST=$(echo $OUTPUT | jq -r '.host')
+    JUMPHOST=$(jumphost $row)
     KEY="-i"$(echo $OUTPUT | jq -r '.key // ""')
     USER=$(echo $OUTPUT | jq -r '.user // ""')"@"
 
     test "$KEY" == "-i" && KEY=""
     test "$USER" == "@" && USER=""
 
-    if [ -n "$JUMPHOST" ]; then
-        JHOST=$(echo $JUMPHOST | jq -r '.host')
-        JKEY="-i"$(echo $JUMPHOST | jq -r '.key // ""')
-        JUSER=$(echo $JUMPHOST | jq -r '.user // ""')"@"
-
-        test "$JKEY" == "-i" && JKEY=""
-        test "$JUSER" == "@" && JUSER=""
-
-        JUMPHOST="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $OPTION_SSH $JKEY $JUSER$JHOST"
-    fi
-
-    connectString="$JUMPHOST ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $OPTION_SSH $KEY $USER$HOST $OPTION_SSH_COMMAND"
+    connectString="$JUMPHOST ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $OPTION_SSH $KEY $USER$HOST $OPTION_SSH_COMMAND ${@:$SSH_ARGS}"
     commandString="${connectString}; $WAIT_FOR_INPUT"
+
+    if [ $# -ge $SSH_ARGS ];then
+      echo "$JUMPHOST ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $OPTION_SSH $KEY $USER$HOST ${@:$SSH_ARGS}"
+      $JUMPHOST ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $OPTION_SSH $KEY $USER$HOST ${@:$SSH_ARGS}
+      continue
+    fi
 
     tmux list-windows | grep -q "${TMUX_SESSION_NAME}"
     if [ $WINDOW -eq 0 -a $? -ne 0 ]; then
@@ -61,5 +81,6 @@ for row in $(echo $CLOUD); do
     WINDOW=$((WINDOW+1))
 done
 
-tmux set-window-option -t "${TMUX_SESSION_NAME}" synchronize-panes on
+test $WINDOW -gt 0 && tmux set-window-option -t "${TMUX_SESSION_NAME}" synchronize-panes on
+test $WINDOW -gt 0 && tmux select-layout -t "${TMUX_SESSION_NAME}" "${TMUX_LAYOUT}"
 test "$OPTION_AFTER" != "null" && eval "$OPTION_AFTER"

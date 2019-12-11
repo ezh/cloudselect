@@ -18,7 +18,7 @@ class Simple(GroupService):
     logger = None
 
     def __init__(self):
-        """Class container."""
+        """Class constructor."""
         self.logger = logging.getLogger("cloudselect.group.Simple")
 
     def run(self, name, metadata):
