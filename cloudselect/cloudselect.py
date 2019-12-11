@@ -43,11 +43,7 @@ class CloudSelect:
 
     def configuration_exists(self, name):
         """Check if configuration/profile exists."""
-        full_path = name
-        if name and not os.path.isabs(name):
-            file_name = ".".join(filter(None, [name, self.extension]))
-            full_path = os.path.join(self.configpath, file_name)
-        return os.path.isfile(full_path)
+        return os.path.isfile(name)
 
     def configuration_read(self, name=None):
         """Read configuration/profile."""
@@ -56,7 +52,8 @@ class CloudSelect:
         Copy initial configuration from cloud.json.dist to cloud.json if needed
         """  # pylint: disable=W0105
         full_path = name
-        if name and os.path.isabs(name):
+        if name and os.path.isfile(name):
+            full_path = os.path.abspath(name)
             name = os.path.basename(name).replace(".{}".format(self.extension), "")
         else:
             file_name = ".".join(filter(None, [name, self.extension]))
