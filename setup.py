@@ -1,10 +1,11 @@
 """``CloudSelect`` lives on `GitHub <https://github.com/ezh/cloudselect>`_."""
+# read the contents of your README file
+from os import path
+
 from setuptools import find_packages, setup
 
 __version__ = "19.1.2"
 
-# read the contents of your README file
-from os import path
 
 this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
@@ -23,7 +24,12 @@ setup(
             "cloudselect_completer=cloudselect.cloudselect:complete",
         ],
     },
-    install_requires=["appdirs", "boto3", "chardet", "dependency_injector"],
+    install_requires=[
+        "appdirs==1.4.3",
+        "boto3==1.10.26",
+        "chardet==3.0.4",
+        "dependency-injector==3.14.12",
+    ],
     include_package_data=True,
     keywords=["Cloud", "CLI", "FZF", "SSH", "SCP", "AWS"],
     license="MIT",
