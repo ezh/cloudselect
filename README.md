@@ -23,7 +23,7 @@ CloudSelect retrieves node list from the cloud, passes that list to FZF, adds so
 
 ## Demo
 
-[![demo](docs/demo/2019-12-11_23-04-56%20cloudselect%20demo.gif)](docs/demo/)
+[![demo](https://raw.githubusercontent.com/ezh/cloudselect/master/docs/demo/2019-12-11_23-04-56%20cloudselect%20demo.gif)](https://github.com/ezh/cloudselect/docs/demo/)
 
 We are:
 1. connecting to bastion host with public IP 54.171.154.230
