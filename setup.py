@@ -1,7 +1,7 @@
 """``CloudSelect`` lives on `GitHub <https://github.com/ezh/cloudselect>`_."""
 from setuptools import find_packages, setup
 
-__version__ = "19.1.1"
+__version__ = "19.1.2"
 
 # read the contents of your README file
 from os import path
