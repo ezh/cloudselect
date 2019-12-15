@@ -23,16 +23,16 @@ CloudSelect retrieves node list from the cloud, passes that list to FZF, adds so
 
 ## Demo
 
-[![demo](https://raw.githubusercontent.com/ezh/cloudselect/master/docs/demo/2019-12-11_23-04-56%20cloudselect%20demo.gif)](https://github.com/ezh/cloudselect/docs/demo/)
+[![demo](https://raw.githubusercontent.com/ezh/cloudselect/master/docs/demo/2019-12-11_23-04-56%20cloudselect%20demo.gif)](https://github.com/ezh/cloudselect/tree/master/docs/demo)
 
-We are:
+The tool is:
 1. connecting to bastion host with public IP 54.171.154.230
 2. using locally stored key on bastion because the usage of ssh-agent is restricted by security team ?lol? and sshd settings are `AllowTcpForwarding no`, `GatewayPorts no`
 3. jumping to 4 EC2 web instances in development environment that located in private subnet 172.30.x.x
 4. running `sudo -i` at startup
 5. entering `sudo` password 12345678
 
-*All of those were completed in a few arrow/enter key clicks...*
+*And after that, we have four ready to use interactive sessions in our terminal...*
 
 ## Basic usage
 
