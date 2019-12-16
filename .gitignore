@@ -1,5 +1,6 @@
 /build
 /dist
+/site
 .mypy
 .mypy_cache
 .terraform
