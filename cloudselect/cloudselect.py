@@ -42,11 +42,12 @@ class CloudSelect:
 
     """
 
+    extension = "cloud.json"
+    importer = staticmethod(__import__)
+
     def __init__(self):
         """Class constructor."""
         self.configpath = appdirs.user_config_dir("cloudselect")
-        self.extension = "cloud.json"
-        self.importer = staticmethod(__import__)
         self.logger = None
 
     def configuration_exists(self, name):
