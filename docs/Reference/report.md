@@ -6,7 +6,13 @@ Report package.
 Module providing Report service base class and service provider.
 <h3 id="cloudselect.report.stub">cloudselect.report.stub</h3>
 
+Report stub plugin.
+<h4 id="cloudselect.report.stub.Stub">Stub</h4>
 
+```python
+Stub(self, /, *args, **kwargs)
+```
+Class implementing report stub plugin.
 <h3 id="cloudselect.report.json">cloudselect.report.json</h3>
 
 Module that represents list of selected instances as pretty print output.

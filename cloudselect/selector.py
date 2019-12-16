@@ -5,13 +5,12 @@
 # <LICENSE-MIT or http://opensource.org/licenses/MIT>
 # This file may not be copied, modified, or distributed
 # except according to those terms.
-"""
-Module that invoke FZF on list of discovered instances.
+"""Module that invoke FZF on list of discovered instances.
 
 This module is invoked by CloudSelect when all data is prepared:
-- configuration is loaded;
-- plugins are resolved and loaded;
-- arguments are parsed.
+-   configuration is loaded;
+-   plugins are resolved and loaded;
+-   arguments are parsed.
 
 The entry point is select function.
 """

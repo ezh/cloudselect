@@ -5,8 +5,11 @@
 # <LICENSE-MIT or http://opensource.org/licenses/MIT>
 # This file may not be copied, modified, or distributed
 # except according to those terms.
+"""Group stub plugin."""
 from . import GroupService
 
 
 class Stub(GroupService):
+    """Class implementing group stub plugin."""
+
     pass

@@ -6,7 +6,13 @@ Discovery package.
 Module providing Discovery service base class and service provider.
 <h3 id="cloudselect.discovery.stub">cloudselect.discovery.stub</h3>
 
+Discovery stub plugin.
+<h4 id="cloudselect.discovery.stub.Stub">Stub</h4>
 
+```python
+Stub(self, /, *args, **kwargs)
+```
+Class implementing discovery stub plugin.
 <h3 id="cloudselect.discovery.aws">cloudselect.discovery.aws</h3>
 
 Module collecting instances from AWS cloud.

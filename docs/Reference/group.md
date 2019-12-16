@@ -6,7 +6,13 @@ Group package.
 Module providing Group service base class and service provider.
 <h3 id="cloudselect.group.stub">cloudselect.group.stub</h3>
 
+Group stub plugin.
+<h4 id="cloudselect.group.stub.Stub">Stub</h4>
 
+```python
+Stub(self, /, *args, **kwargs)
+```
+Class implementing group stub plugin.
 <h3 id="cloudselect.group.simple">cloudselect.group.simple</h3>
 
 Module returning appropriate options per group of instances.

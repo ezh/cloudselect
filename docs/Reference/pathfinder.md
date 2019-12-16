@@ -6,7 +6,13 @@ PathFinder package.
 Module providing PathFinder service base class and service provider.
 <h3 id="cloudselect.pathfinder.stub">cloudselect.pathfinder.stub</h3>
 
+PathFinder stub plugin.
+<h4 id="cloudselect.pathfinder.stub.Stub">Stub</h4>
 
+```python
+Stub(self, /, *args, **kwargs)
+```
+Class implementing pathfinder stub plugin.
 <h3 id="cloudselect.pathfinder.bastion">cloudselect.pathfinder.bastion</h3>
 
 Module that enrich instances with jumphosts.

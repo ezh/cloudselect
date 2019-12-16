@@ -5,8 +5,11 @@
 # <LICENSE-MIT or http://opensource.org/licenses/MIT>
 # This file may not be copied, modified, or distributed
 # except according to those terms.
+"""Report stub plugin."""
 from . import ReportService
 
 
 class Stub(ReportService):
+    """Class implementing report stub plugin."""
+
     pass
