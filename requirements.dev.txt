@@ -1,4 +1,6 @@
 flake8==3.7.9
+mkdocs==1.0.4
+pre-commit==1.20.0
 ptpdb==0.17
 pylint==2.4.4
 pyls==0.1.6
