@@ -1,25 +1,29 @@
 generate:
-- cloudselect.md:
-  - cloudselect.cloudselect++
-- selector.md:
-  - cloudselect.selector++
-- discovery.md:
-  - cloudselect.discovery.discovery
-  - cloudselect.discovery.stub++
-  - cloudselect.discovery.aws++
-  - cloudselect.discovery.local++
-- group.md:
-  - cloudselect.group.group
-  - cloudselect.group.stub++
-  - cloudselect.group.simple++
-- pathfinder.md:
-  - cloudselect.pathfinder.pathfinder
-  - cloudselect.pathfinder.stub++
-  - cloudselect.pathfinder.bastion++
-- report.md:
-  - cloudselect.report.report
-  - cloudselect.report.stub++
-  - cloudselect.report.json++
+  - cloudselect.md:
+      - cloudselect.cloudselect+
+  - selector.md:
+      - cloudselect.selector+
+  - discovery.md:
+      - cloudselect.discovery:
+          - cloudselect.discovery.discovery:
+              - cloudselect.discovery.stub+
+              - cloudselect.discovery.aws+
+              - cloudselect.discovery.local+
+  - group.md:
+      - cloudselect.group:
+        - cloudselect.group.group:
+          - cloudselect.group.stub+
+          - cloudselect.group.simple+
+  - pathfinder.md:
+      - cloudselect.pathfinder:
+        - cloudselect.pathfinder.pathfinder:
+          - cloudselect.pathfinder.stub+
+          - cloudselect.pathfinder.bastion+
+  - report.md:
+      - cloudselect.report:
+        - cloudselect.report.report:
+          - cloudselect.report.stub+
+          - cloudselect.report.json+
 
 pages:
   - Home: index.md

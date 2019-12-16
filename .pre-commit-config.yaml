@@ -59,3 +59,9 @@ repos:
         language: system
         files: \.(md)$
         args: ['-f']
+      - id: pydocmd
+        name: pydocmd
+        entry: pydocmd
+        language: system
+        args: ['build']
+        pass_filenames: false
