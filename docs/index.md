@@ -1,12 +1,5 @@
 #### FZF Cloud Select
 
-[![Build Status](https://travis-ci.org/ezh/cloudselect.svg?branch=master)](https://travis-ci.org/ezh/cloudselect)
-[![codecov](https://codecov.io/gh/ezh/cloudselect/branch/master/graph/badge.svg)](https://codecov.io/gh/ezh/cloudselect)
-[![MIT License](https://img.shields.io/badge/license-MIT-007EC7.svg)](/LICENSE)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/cloudselect)](https://pypi.org/project/cloudselect/)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/124d1f6ec45e45deaf924e740670087f)](https://www.codacy.com/manual/ezh/cloudselect?utm_source=github.com&utm_medium=referral&utm_content=ezh/cloudselect&utm_campaign=Badge_Grade)
-[![code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://black.readthedocs.io/en/stable)
-
 ## Purpose
 
 We have to jump between nodes quickly. There is a list of cloud accounts. Each account has multiple regions. Some nodes are publicity available, some of them not. Dozen of nodes sit behind bastion hosts. And few of them sit behind a group of jump points. And they all have different SSH keys.

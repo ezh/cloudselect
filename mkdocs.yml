@@ -1,1 +1,56 @@
+edit_uri: tree/master/docs
+extra_css:
+  - https://assets.readthedocs.org/static/css/badge_only.css
+  - https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css
+extra_javascript:
+  - readthedocs-data.js
+  - https://assets.readthedocs.org/static/core/js/readthedocs-doc-embed.js
+  - https://assets.readthedocs.org/static/javascript/readthedocs-analytics.js
+markdown_extensions:
+  - toc:
+      permalink: True
+  - markdown.extensions.admonition
+  - markdown.extensions.codehilite:
+      guess_lang: false
+  - markdown.extensions.def_list
+  - markdown.extensions.footnotes
+  - markdown.extensions.meta
+  - markdown.extensions.toc:
+      permalink: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+repo_url: https://github.com/ezh/cloudselect
+site_author: ezh
+site_description: FZF selector for cloud instances
 site_name: CloudSelect
+
+theme:
+  name: readthedocs
+  highlightjs: true
+  hljs_languages:
+    - json
+    - python
+
+nav:
+  - Home: index.md
+  - Reference:
+      - Home: Reference/index.md
+      - CloudSelect: Reference/cloudselect.md
+      - Selector: Reference/selector.md
+      - Discovery plugins: Reference/discovery.md
+      - Group plugins: Reference/group.md
+      - Pathfinder plugins: Reference/pathfinder.md
+      - Report plugins: Reference/report.md

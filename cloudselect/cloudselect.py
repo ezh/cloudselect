@@ -34,12 +34,20 @@ from cloudselect.selector import Selector
 
 
 class CloudSelect:
-    """CloudSelect class that bootstraps application."""
+    """CloudSelect class that bootstraps application.
 
-    configpath = appdirs.user_config_dir("cloudselect")
-    extension = "cloud.json"
-    importer = staticmethod(__import__)
-    logger = None
+    Attributes:
+       configpath     The path to the user configuration directory ~/.config/cloudselect.
+       extension      CloudSelect files extension 'cloud.json'.
+
+    """
+
+    def __init__(self):
+        """Class constructor."""
+        self.configpath = appdirs.user_config_dir("cloudselect")
+        self.extension = "cloud.json"
+        self.importer = staticmethod(__import__)
+        self.logger = None
 
     def configuration_exists(self, name):
         """Check if configuration/profile exists."""

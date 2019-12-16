@@ -14,11 +14,9 @@ from . import GroupService
 class Simple(GroupService):
     """Simple group implementation."""
 
-    default_priority = 1000
-    logger = None
-
     def __init__(self):
         """Class constructor."""
+        self.default_priority = 1000
         self.logger = logging.getLogger("cloudselect.group.Simple")
 
     def run(self, name, metadata):
