@@ -50,10 +50,14 @@ class CloudSelect:
         self.configpath = appdirs.user_config_dir("cloudselect")
         self.logger = None
 
-    @staticmethod
-    def configuration_exists(name):
+    def configuration_exists(self, name):
         """Check if configuration/profile exists."""
-        return os.path.isfile(name)
+        if os.path.isfile(name):
+            return True
+        else:
+            file_name = ".".join(filter(None, [name, self.extension]))
+            full_path = os.path.join(self.configpath, file_name)
+            return os.path.isfile(full_path)
 
     def configuration_read(self, name=None):
         """Read configuration/profile."""
