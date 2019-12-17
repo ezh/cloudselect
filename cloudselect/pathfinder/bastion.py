@@ -28,9 +28,9 @@ class Bastion(PathFinderService):
             raise ValueError("instance must be something, not None")
         arguments = Container.options("pathfinder", instance.metadata)
         if arguments:
-            jumphost = {}
+            jumphost = None
             if "host" in arguments:
-                jumphost["host"] = Instance(
+                jumphost = Instance(
                     -1,
                     arguments["host"],
                     arguments.get("key"),
@@ -40,7 +40,7 @@ class Bastion(PathFinderService):
                     {},
                     [],
                 )
-            if "metadata" in arguments and ":" in arguments["metadata"]:
+            elif "metadata" in arguments and ":" in arguments["metadata"]:
                 key, pattern = arguments["metadata"].split(":", 1)
                 for i in instances:
                     point = self.find_jumphost(key, pattern, i)
