@@ -27,10 +27,8 @@ class AWS(DiscoveryService):
 
     def run(self):
         """Collect AWS instances."""
-        pathfinder = Container.pathfinder()
-
-        instances = list(self.instances())
-        return [pathfinder.run(i, instances) for i in instances]
+        self.logger.debug("Discover AWS instances")
+        return list(self.instances())
 
     def instances(self):
         """Collect AWS instances."""

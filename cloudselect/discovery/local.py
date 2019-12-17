@@ -25,11 +25,8 @@ class Local(DiscoveryService):
 
     def run(self):
         """Collect instances from shell output."""
-        pathfinder = Container.pathfinder()
-
-        logging.debug("Discover local instances")
-        instances = list(self.instances())
-        return [pathfinder.run(i, instances) for i in instances]
+        self.logger.debug("Discover local instances")
+        return list(self.instances())
 
     def instances(self):
         """Collect instances from shell output."""

@@ -117,6 +117,7 @@ class Selector:
     def profile_process(self):
         """Run selection process for the specific profile."""
         discovery = Container.discovery()
+        pathfinder = Container.pathfinder()
         profile_name = Container.args().profile
         report = Container.report()
 
@@ -125,6 +126,7 @@ class Selector:
         if not instances:
             sys.exit("Error: No instances found")
         selected = self.fzf_select(instances)
+        selected = [pathfinder.run(i, instances) for i in selected]
         return report.run(selected)
 
     def select(self):

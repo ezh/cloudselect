@@ -49,7 +49,7 @@ class Simple(GroupService):
                                 "Match pattern {} and value {}".format(pattern, value),
                             )
                             result = group.get(name)
-                            if result:
+                            if result is not None:
                                 return result
                 else:
                     self.logger.warning(
