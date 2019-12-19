@@ -48,7 +48,7 @@ theme:
 
 nav:
   - Overview: index.md
-  - Quick start: quick_start.md
+  - Quick start: quick-start.md
   - Reference:
       - Overview: Reference/index.md
       - CloudSelect: Reference/cloudselect.md

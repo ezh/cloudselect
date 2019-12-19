@@ -12,7 +12,6 @@ Attributes:
 configpath     The path to the user configuration directory ~/.config/cloudselect.
 extension      CloudSelect files extension 'cloud.json'.
 
-
 <h2 id="cloudselect.cloudselect.complete">complete</h2>
 
 ```python

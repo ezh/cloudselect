@@ -53,15 +53,15 @@ repos:
       args: ['--fix=no']
   - repo: local
     hooks:
+      - id: md_newlines
+        name: md_newlines
+        entry: sed
+        language: system
+        files: \.(md)$
+        args: ['$!N; /^\(.*\)\n\1$/!P; D', '-i']
       - id: remark
         name: remark
         entry: remark
         language: system
         files: \.(md)$
         args: ['-f']
-      - id: pydocmd
-        name: pydocmd
-        entry: pydocmd
-        language: system
-        args: ['build']
-        pass_filenames: false

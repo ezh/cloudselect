@@ -35,7 +35,7 @@ The tool is:
 4.  running `sudo -i` at startup
 5.  entering `sudo` password 12345678
 
-*And after that, we have four ready to use interactive sessions in our terminal...*
+&nbsp; *And after that, we have four ready to use interactive sessions in our terminal...*
 
 You may find a demo files in <a href="https://github.com/ezh/cloudselect/tree/master/docs/demo" target="_blank">docs/demo</a> directory.
 
