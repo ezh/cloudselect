@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+<style>
+.github-fork-ribbon:before {
+  background-color: #2980B9;
+}
+</style>
+{% endblock %}
+
+{%- block footer %}
+  {% include "footer.html" %}
+<a class="github-fork-ribbon right-bottom fixed" href="https://github.com/ezh/cloudselect" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
+{% endblock %}

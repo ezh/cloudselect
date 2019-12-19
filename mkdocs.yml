@@ -2,6 +2,7 @@ edit_uri: tree/master/docs
 extra_css:
   - https://assets.readthedocs.org/static/css/badge_only.css
   - https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css
+  - https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css
 extra_javascript:
   - readthedocs-data.js
   - https://assets.readthedocs.org/static/core/js/readthedocs-doc-embed.js
@@ -38,6 +39,7 @@ site_description: FZF selector for cloud instances
 site_name: CloudSelect
 
 theme:
+  custom_dir: 'docs/theme/'
   name: readthedocs
   highlightjs: true
   hljs_languages:
@@ -45,9 +47,10 @@ theme:
     - python
 
 nav:
-  - Home: index.md
+  - Overview: index.md
+  - Quick start: quick_start.md
   - Reference:
-      - Home: Reference/index.md
+      - Overview: Reference/index.md
       - CloudSelect: Reference/cloudselect.md
       - Selector: Reference/selector.md
       - Discovery plugins: Reference/discovery.md

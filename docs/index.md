@@ -1,5 +1,3 @@
-#### FZF Cloud Select
-
 ## Purpose
 
 We have to jump between nodes quickly. There is a list of cloud accounts. Each account has multiple regions. Some nodes are publicity available, some of them not. Dozen of nodes sit behind bastion hosts. And few of them sit behind a group of jump points. And they all have different SSH keys.
@@ -19,18 +17,23 @@ CloudSelect retrieves node list from the cloud, passes that list to FZF, adds so
 [![demo](https://raw.githubusercontent.com/ezh/cloudselect/master/docs/demo/2019-12-11_23-04-56%20cloudselect%20demo.gif)](https://github.com/ezh/cloudselect/tree/master/docs/demo)
 
 The tool is:
-1. connecting to bastion host with public IP 54.171.154.230
-2. using locally stored key on bastion because the usage of ssh-agent is restricted by security team ?lol? and sshd settings are `AllowTcpForwarding no`, `GatewayPorts no`
-3. jumping to 4 EC2 web instances in development environment that located in private subnet 172.30.x.x
-4. running `sudo -i` at startup
-5. entering `sudo` password 12345678
+
+1.  connecting to bastion host with public IP 54.171.154.230
+2.  using locally stored key on bastion because the usage of ssh-agent is restricted by security team ?lol? and sshd settings are `AllowTcpForwarding no`, `GatewayPorts no`
+3.  jumping to 4 EC2 web instances in development environment that located in private subnet 172.30.x.x
+4.  running `sudo -i` at startup
+5.  entering `sudo` password 12345678
 
 *And after that, we have four ready to use interactive sessions in our terminal...*
+
+You may find a demo files in <a href="https://github.com/ezh/cloudselect/tree/master/docs/demo" target="_blank">docs/demo</a> directory.
 
 ## Basic usage
 
 -   Connect to a single known_hosts server
 -   Connect to a single EC2 AWS instance
+
+P.S. To be exact, *connect* or *execute* command or whatever you like
 
 ## Advanced usage
 
@@ -38,31 +41,11 @@ The tool is:
 -   Connect to multiple EC2 AWS instances, run `sudo -i` command at startup and enter `sudo` password
 -   Connect to multiple EC2 AWS instances through a *bastion* host, run `sudo -i` command at startup and enter `sudo` password
 
+P.S. To be exact, *connect* or *execute* command or whatever you like
+
 ## Features
 
 :rocket: We may use jump hosts even if jump host hasn't been configured to allow remote port forwarding and we have the following settings in sshd_config:
 
         AllowTcpForwarding no
         GatewayPorts no
-
-## Installation
-
-CloudSelect is on PyPi! You can install CloudSelect with a simple pip command:
-
-        pip install cloudselect
-
-Add profile bash completion:
-
-         complete -C cloudselect_completer cloudselect
-
-You may copy suitable wrapper from `example` directory.
-
-# License
-
-[MIT][mit] © [Alexey Aksenov][author] et [al][contributors]
-
-[mit]: https://opensource.org/licenses/MIT
-
-[author]: https://github.com/ezh
-
-[contributors]: https://github.com/ezh/cloudselect/graphs/contributors
