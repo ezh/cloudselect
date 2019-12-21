@@ -26,7 +26,7 @@ setup(
     },
     install_requires=[
         "appdirs==1.4.3",
-        "boto3==1.10.42",
+        "boto3==1.10.44",
         "chardet==3.0.4",
         "dependency-injector==3.14.12",
     ],
