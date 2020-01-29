@@ -28,7 +28,7 @@ setup(
         "appdirs==1.4.3",
         "boto3==1.10.45",
         "chardet==3.0.4",
-        "dependency-injector==3.14.12",
+        "dependency-injector==3.15.4",
     ],
     include_package_data=True,
     keywords=["Cloud", "CLI", "FZF", "SSH", "SCP", "AWS"],
