@@ -1,5 +1,5 @@
 flake8==3.7.9
-invoke==1.4.0
+invoke==1.4.1
 mkdocs==1.0.4
 pre-commit==2.0.0
 ptpdb==0.17
