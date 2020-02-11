@@ -19,7 +19,8 @@ script: tox
 after_success: codecov -e TOXENV
 before_deploy:
   - echo 'Starting deploy to PyPI...'
-  - ls -la
+  - grep '__version__ =' setup.py
+  - ls -laR cloudselect
 deploy:
   provider: pypi
   user: __token__
@@ -32,7 +33,6 @@ deploy:
   password:
     secure: hIHdTKx2A6q3pw9YaHg2269px4UqSB0zhZIxpjvR1yU7lt7x487woTm5FNc9FfLFrgglWEMo88/036B04DIuhatRQjrYdE+UN5SAiWuQ1GOoBzaSM6bTE9G0FDozQ0peM+dPeC6PrQtMqESKfypkjN3HFDgaWZGsFIyqPUoHRYk5zRjAsRuTaBm9FLce7kwEqGZawJuB5MvA0KkFJcrrhnhg1FBEFEqpuv+NurmlsFLgViXYwB9pj2aoIpSi8s/clahX9bjRYA/xfvw7GBN6dSsfVreWzL9ClMYFWvPZcqhdz5uRvgJLz/qAyeLLTagNkhn/fKHBElw0ldVhzcKQv/sRmsAAA+jnwGNpmGjDUoTBaGN+KLTiXcPRmq4Fc14Qbtr4meFx71oPldWkjGK1kJF0zbEq/TAFz6PE0f+k2EV8BX4v8AEnsUmQbRH0U0KN6jrkbU13ydUiIQBooymEQ8wJlHxRkYyrqjWMKEa7w8XnQzbRn5OLYerK9aq6TacWjv6mE/rqC+Jm/+IN1m5J/P6KlbmfYk+ybJHRA3+97Ni8SvTx4Jcf4ZRgwaJ8RCCIIwVK3I+65rc7FOXvPvM8NOZUr+qL6atQ0ZMXr1xJsBRneMhTBjwugpM3f1/eRi/RGg2updbAzQJumEV7IjAvgbrmSRI83TxURixHij0SlHc=
 after_deploy:
-  - ls -la
   - echo 'Deployment finished!'
 notifications:
   webhooks: https://www.travisbuddy.com/
