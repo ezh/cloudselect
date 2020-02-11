@@ -131,7 +131,8 @@ class Selector:
         selected = [pathfinder.run(i, instances) for i in selected]
         return report.run(selected)
 
-    def reporter_list(self):
+    @staticmethod
+    def reporter_list():
         """List available reporters."""
         empty = True
         print("CloudSelect reporters:")
