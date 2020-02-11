@@ -3,6 +3,7 @@ invoke==1.4.1
 mkdocs==1.0.4
 pre-commit==2.0.1
 ptpdb==0.17
+ptvsd==4.3.2
 pydoc-markdown==2.0.5
 pylint==2.4.4
 pyls==0.1.6
