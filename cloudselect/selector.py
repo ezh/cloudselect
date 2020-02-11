@@ -152,13 +152,11 @@ class Selector:
         if args.edit is None or args.edit:
             if args.edit is None:
                 configuration = os.path.join(configpath, "{}".format(extension))
-                self.edit(configuration)
-            else:
-                profile = os.path.join(configpath, "{}.{}".format(args.edit, extension))
-                self.edit(profile)
-        elif args.reporter is None:
-            self.reporter_list()
-        elif not args.profile:
-            self.profile_list()
-        else:
-            self.profile_process()
+                return self.edit(configuration)
+            profile = os.path.join(configpath, "{}.{}".format(args.edit, extension))
+            return self.edit(profile)
+        if args.reporter is None:
+            return self.reporter_list()
+        if not args.profile:
+            return self.profile_list()
+        return self.profile_process()

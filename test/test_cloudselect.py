@@ -111,7 +111,10 @@ def test_cli_configuration_read():
             },
             "group": {"simple": "cloudselect.group.simple"},
             "pathfinder": {"bastion": "cloudselect.pathfinder.bastion"},
-            "report": {"json": "cloudselect.report.json"},
+            "report": {
+                "json": "cloudselect.report.json",
+                "json_pp": "cloudselect.report.json_pp",
+            },
         },
     }
     cloud = CloudSelect()
