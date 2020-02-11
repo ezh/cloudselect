@@ -3,7 +3,7 @@
 ## v20.1 (11/02/2020)
 
 -   [Add **main** entry point](https://github.com/ezh/cloudselect/commit/d8b81956ee28def4ba2d28a5a8990a552393c9d7) - @ezh
--   [Add 'site' to .gitignore](https://github.com/ezh/cloudselect/commit/ef95946b479935cc0e3d087d9cdd52d3c69b5232) - @ezh
+-   [Add "site" to .gitignore](https://github.com/ezh/cloudselect/commit/ef95946b479935cc0e3d087d9cdd52d3c69b5232) - @ezh
 -   [Add CHANGELOG file](https://github.com/ezh/cloudselect/commit/7a6d611e39a3a2551973d976bb429ac647745d0d) - @ezh
 -   [Add JSON pretty print formatter](https://github.com/ezh/cloudselect/commit/2672defaa6238f421e1825356cd7fba892214e65) - @ezh
 -   [Add mkdocs, app pre-commit dependency](https://github.com/ezh/cloudselect/commit/593536f93e2363654f2e9251da07fc1c8baf0e7f) - @ezh
