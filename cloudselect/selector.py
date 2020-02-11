@@ -39,7 +39,7 @@ class Selector:
 
         prefix = cline[0:cpoint].partition(" ")[-1]
         self.logger.debug(
-            "Complete line {}, point {}, prefix {}".format(cline, cpoint, prefix),
+            "Complete line %s, point %s, prefix %s", cline, cpoint, prefix,
         )
         for profile in os.listdir(configpath):
             if profile.endswith(".{}".format(extension)):
@@ -49,9 +49,9 @@ class Selector:
 
     def edit(self, configuration):
         """Edit profile or shared configuration file if file is None."""
-        self.logger.debug("Edit '{}'".format(configuration))
+        self.logger.debug("Edit '%s'", configuration)
         if not os.path.isfile(configuration):
-            self.logger.info("{} does not exists".format(configuration))
+            self.logger.info("%s does not exists", configuration)
         editor = self.get_editor()
         os.execvp(editor, [editor, configuration])
 
@@ -59,7 +59,9 @@ class Selector:
     def execute(program, args, **kwargs):
         """Execute a command in a subprocess and returns its standard output."""
         return (
-            subprocess.run([program] + args, stdout=subprocess.PIPE, **kwargs)
+            subprocess.run(
+                [program] + args, stdout=subprocess.PIPE, check=False, **kwargs
+            )
             .stdout.decode()
             .strip()
         )
@@ -96,7 +98,7 @@ class Selector:
                     "which {} >/dev/null 2>&1".format(editor), shell=False,
                 )
             except subprocess.CalledProcessError as exc:
-                self.logger.warning("Unable to fild editor: {}".format(str(exc)))
+                self.logger.warning("Unable to fild editor: %s", str(exc))
         return "vi"
 
     def profile_list(self):
@@ -104,7 +106,7 @@ class Selector:
         configpath = Container.configpath()
         extension = Container.extension()
 
-        self.logger.debug("List all available profiles from {}".format(configpath))
+        self.logger.debug("List all available profiles from %s", configpath)
         empty = True
         print("CloudSelect profiles:")
         for profile in os.listdir(configpath):
@@ -121,13 +123,25 @@ class Selector:
         profile_name = Container.args().profile
         report = Container.report()
 
-        self.logger.debug("Process profile '{}'".format(profile_name))
+        self.logger.debug("Process profile '%s'", profile_name)
         instances = discovery.run()
         if not instances:
             sys.exit("Error: No instances found")
         selected = self.fzf_select(instances)
         selected = [pathfinder.run(i, instances) for i in selected]
         return report.run(selected)
+
+    def reporter_list(self):
+        """List available reporters."""
+        empty = True
+        print("CloudSelect reporters:")
+        for reporter in sorted(
+            Container.config().get("plugin", {}).get("report", {}).keys(),
+        ):
+            empty = False
+            print("- {}".format(reporter))
+        if empty:
+            print("- NO REPORTERS -")
 
     def select(self):
         """Entry point. Select instances."""
@@ -142,7 +156,9 @@ class Selector:
             else:
                 profile = os.path.join(configpath, "{}.{}".format(args.edit, extension))
                 self.edit(profile)
-        if not args.profile:
-            return self.profile_list()
+        elif args.reporter is None:
+            self.reporter_list()
+        elif not args.profile:
+            self.profile_list()
         else:
-            return self.profile_process()
+            self.profile_process()

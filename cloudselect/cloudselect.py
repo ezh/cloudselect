@@ -108,11 +108,8 @@ class CloudSelect:
         self.logger = logging.getLogger("cloudselect.CloudSelect")
         self.logger.debug("Logging is initialized")
         self.logger.debug(
-            "Configuration:\n{}".format(
-                json.dumps(
-                    configuration, sort_keys=True, indent=4, separators=(",", ": "),
-                ),
-            ),
+            "Configuration:\n%s",
+            json.dumps(configuration, sort_keys=True, indent=4, separators=(",", ": ")),
         )
         Container.args = providers.Object(args)
         Container.config = providers.Configuration(name="config", default=configuration)
@@ -131,20 +128,25 @@ class CloudSelect:
             configuration, "pathfinder", PathFinderServiceProvider, PathFinderStub,
         )
         Container.report = self.fabric_load_plugin(
-            configuration, "report", ReportServiceProvider, ReportStub,
+            configuration, "report", ReportServiceProvider, ReportStub, args.reporter,
         )
 
         return Container.selector()
 
     def fabric_load_plugin(
-        self, configuration, plugin_type, service_provider, service_stub,
+        self,
+        configuration,
+        plugin_type,
+        service_provider,
+        service_stub,
+        plugin_name=None,
     ):
         """Load plugins."""
         if configuration.get(plugin_type, {}).get("type"):
+            if not plugin_name:
+                plugin_name = configuration[plugin_type]["type"]
             plugin = (
-                configuration.get("plugin", {})
-                .get(plugin_type, {})
-                .get(configuration[plugin_type]["type"])
+                configuration.get("plugin", {}).get(plugin_type, {}).get(plugin_name)
             )
             if plugin is None:
                 raise ValueError(
@@ -153,8 +155,7 @@ class CloudSelect:
                     ),
                 )
             return self.plugin(plugin, service_provider)
-        else:
-            return self.plugin(service_stub, service_provider)
+        return self.plugin(service_stub, service_provider)
 
     @staticmethod
     def merge(dict1, dict2, path=None):
@@ -173,7 +174,7 @@ class CloudSelect:
                     pass  # same leaf value
                 else:
                     logging.debug(
-                        "Conflict at %s; overwrite" % ".".join(path + [str(key)]),
+                        "Conflict at %s; overwrite", ".".join(path + [str(key)]),
                     )
                     dict1[key] = dict2[key]
             else:
@@ -206,6 +207,9 @@ class CloudSelect:
             nargs="?",
             default=False,
             help="edit configuration or profile",
+        )
+        parser.add_argument(
+            "--reporter", nargs="?", default="", help="change Cloud Select output",
         )
         if (
             os.environ.get("CLOUDSELECT_VERBOSE")
