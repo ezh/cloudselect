@@ -114,6 +114,7 @@ def test_cli_configuration_read():
             "report": {
                 "json": "cloudselect.report.json",
                 "json_pp": "cloudselect.report.json_pp",
+                "yaml": "cloudselect.report.yaml",
             },
         },
     }

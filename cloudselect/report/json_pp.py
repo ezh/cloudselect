@@ -5,7 +5,7 @@
 # <LICENSE-MIT or http://opensource.org/licenses/MIT>
 # This file may not be copied, modified, or distributed
 # except according to those terms.
-"""Module that represents list of selected instances as pretty print output."""
+"""Module that represents list of selected instances as formatted JSON output."""
 import json
 
 from cloudselect import Container
@@ -14,10 +14,10 @@ from . import ReportService
 
 
 class JsonPP(ReportService):
-    """Json reporter implementation."""
+    """Formatted JSON reporter implementation."""
 
     def run(self, selected):
-        """Represent instances as pretty print output."""
+        """Represent instances as formatted JSON output."""
         # get first instance
         # assume that all instances match the same group/pattern
         instance = next(iter(selected), None)

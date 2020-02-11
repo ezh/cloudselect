@@ -33,7 +33,8 @@
         },
         "report": {
             "json": "cloudselect.report.json",
-            "json_pp": "cloudselect.report.json_pp"
+            "json_pp": "cloudselect.report.json_pp",
+            "yaml": "cloudselect.report.yaml"
         }
     }
 }
