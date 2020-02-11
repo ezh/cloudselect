@@ -4,7 +4,7 @@ from os import path
 
 from setuptools import find_packages, setup
 
-__version__ = "20.1.5"
+__version__ = "20.1.6"
 
 
 this_directory = path.abspath(path.dirname(__file__))
@@ -36,7 +36,7 @@ setup(
     license="MIT",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=find_packages(include=["cloudselect"]),
+    packages=find_packages(),
     python_requires=">=3",
     url="https://github.com/ezh/cloudselect",
     version=__version__,
