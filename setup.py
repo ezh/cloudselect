@@ -29,7 +29,7 @@ setup(
         "boto3==1.11.14",
         "chardet==3.0.4",
         "dependency-injector==3.15.4",
-        "pyyaml==5.2",
+        "pyyaml==5.3",
     ],
     include_package_data=True,
     keywords=["Cloud", "CLI", "FZF", "SSH", "SCP", "AWS"],
