@@ -4,7 +4,7 @@ We have to jump between nodes quickly. There is a list of cloud accounts. Each a
 
 There is a `~/.ssh/config`, but it is not enough because of the dynamic nature of the cloud. It is too clumsy. It is not suitable for cases when IP addresses are changing instantly, and instances are creating and destroying in minutes.
 
-I tried to structure that hell with shell scripts, but the shell is not enough. I believe that tools like *C*/*C++*/*Java*/*Node.JS*/*Go*?/*Rust* are too heavy for this case. Python is the exact thing. I like to have a dynamic and lightweight solution. Cloud Select is fast enough to go through thousands of nodes. Maybe if my scope will be higher, then I'll create something other.
+I tried to structure that hell with shell scripts, but the shell is not enough. I believe that tools like _C_/_C++_/_Java_/_Node.JS_/_Go_?/_Rust_ are too heavy for this case. Python is the exact thing. I like to have a dynamic and lightweight solution. Cloud Select is fast enough to go through thousands of nodes. Maybe if my scope will be higher, then I'll create something other.
 
 It is useful for diving inside geo-distributed onion enterprise environments with weird security settings.
 
@@ -24,7 +24,7 @@ The tool is:
 4.  running `sudo -i` at startup
 5.  entering `sudo` password 12345678
 
-&nbsp; *And after that, we have four ready to use interactive sessions in our terminal...*
+  _And after that, we have four ready to use interactive sessions in our terminal..._
 
 You may find a demo files in <a href="https://github.com/ezh/cloudselect/tree/master/docs/demo" target="_blank">docs/demo</a> directory.
 
@@ -33,19 +33,21 @@ You may find a demo files in <a href="https://github.com/ezh/cloudselect/tree/ma
 -   Connect to a single known_hosts server
 -   Connect to a single EC2 AWS instance
 
-P.S. To be exact, *connect* or *execute* command or whatever you like
+P.S. To be exact, _connect_ or _run_ command or whatever you like
 
 ## Advanced usage
 
 -   Connect to multiple known_hosts servers, run `sudo -i` command at startup and enter `sudo` password
 -   Connect to multiple EC2 AWS instances, run `sudo -i` command at startup and enter `sudo` password
--   Connect to multiple EC2 AWS instances through a *bastion* host, run `sudo -i` command at startup and enter `sudo` password
+-   Connect to multiple EC2 AWS instances through a _bastion_ host, run `sudo -i` command at startup and enter `sudo` password
 
-P.S. To be exact, *connect* or *execute* command or whatever you like
+P.S. To be exact, _connect_ or _run_ command or whatever you like
 
 ## Features
 
 :rocket: We may use jump hosts even if jump host hasn't been configured to allow remote port forwarding and we have the following settings in sshd_config:
 
-        AllowTcpForwarding no
-        GatewayPorts no
+```sh
+  AllowTcpForwarding no
+  GatewayPorts no
+```

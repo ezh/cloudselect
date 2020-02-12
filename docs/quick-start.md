@@ -13,9 +13,9 @@ You may find a demo configuration that was used for animated gif in <a href="htt
 
 ## Usage
 
-Execute `cloudselect` to see the list of profiles. It should be empty. <br/>
+Run `cloudselect` to see the list of profiles. It should be empty. <br/>
 Do `cp example/known_hosts.cloud.json ~/.config/cloudselect/` to copy `known_hosts` profile to `.config` directory. <br/>
-Execute `cloudselect` one more time to see the list of profiles. It should contain `known_hosts` profile. <br/>
+Run `cloudselect` one more time to see the list of profiles. It should contain `known_hosts` profile. <br/>
 Run `cloudselect known_hosts` to invoke FZF selector on your local hosts and get a JSON result. <br/><br/>
 **Feel free to copy shell scripts in the example directory to your local `bin` folder.**
 
