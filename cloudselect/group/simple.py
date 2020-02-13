@@ -24,7 +24,7 @@ class Simple(GroupService):
         groups_by_priority = list(self.get_groups_with_priority(self.config()))
 
         for priority, filters, group in sorted(groups_by_priority, key=lambda x: x[0]):
-            self.logger.debug("Process group {} {}".format(priority, filters))
+            self.logger.debug("Process group %s %s", priority, filters)
             for entry in filters:
                 if entry == "*":
                     result = group.get(name)
@@ -37,23 +37,21 @@ class Simple(GroupService):
                         try:
                             value = value.get(key_part)
                             if not value:
-                                self.logger.debug(
-                                    "Unable to find key {}".format(key_part),
-                                )
+                                self.logger.debug("Unable to find key %s", key_part)
                                 break
                         except Exception:
-                            self.logger.debug("Unable to find key {}".format(key_part))
+                            self.logger.debug("Unable to find key %s", key_part)
                             break
                         if pattern in value:
                             self.logger.debug(
-                                "Match pattern {} and value {}".format(pattern, value),
+                                "Match pattern %s and value %s", pattern, value,
                             )
                             result = group.get(name)
                             if result is not None:
                                 return result
                 else:
                     self.logger.warning(
-                        "Unable to find filter definition for {}".format(group),
+                        "Unable to find filter definition for %s", group,
                     )
         return {}
 
@@ -62,7 +60,7 @@ class Simple(GroupService):
         for pattern in groups:
             group = groups[pattern]
             if not isinstance(group, dict):
-                logging.debug("Skip group with pattern {}".format(pattern))
+                logging.debug("Skip group with pattern %s", pattern)
                 continue
             filters = pattern.split(" ", 1)
             priority = self.default_priority
