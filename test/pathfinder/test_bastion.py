@@ -10,35 +10,35 @@ from cloudselect import Container, Instance
 from cloudselect.cloudselect import CloudSelect
 from cloudselect.pathfinder.bastion import Bastion
 
-instance = Instance(1, "127.0.0.1", "key", "user", 22, None, {}, [])
+INSTANCE = Instance(1, "127.0.0.1", "key", "user", 22, None, {}, [])
 
 
-def test_bastion_initialization(mocker):
+def test_bastion_initialization(tmpdir):
     """Assert plugin initialization."""
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     configuration = cloud.configuration_read()
     args = cloud.parse_args([])
     configuration["pathfinder"] = {"type": "bastion"}
     cloud.fabric(configuration, args)
 
-    assert type(Container.pathfinder()) == Bastion
+    assert isinstance(Container.pathfinder(), Bastion)
 
-    result = Container.pathfinder().run(instance, [instance])
+    result = Container.pathfinder().run(INSTANCE, [INSTANCE])
     assert result.jumphost is None
 
 
-def test_bastion_behaviour(mocker):
+def test_bastion_behaviour(tmpdir):
     """Assert bastion returning correct result."""
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     configuration = cloud.configuration_read()
     args = cloud.parse_args([])
     configuration["pathfinder"] = {"type": "bastion", "host": "my-bastion-hostname"}
     cloud.fabric(configuration, args)
 
-    assert type(Container.pathfinder()) == Bastion
+    assert isinstance(Container.pathfinder(), Bastion)
 
-    result = Container.pathfinder().run(instance, [instance])
+    result = Container.pathfinder().run(INSTANCE, [INSTANCE])
 
-    assert type(result.jumphost) == Instance
+    assert isinstance(result.jumphost, Instance)
     assert result.jumphost.host == "my-bastion-hostname"
     # assert result.jumphost is None

@@ -19,7 +19,7 @@ from cloudselect.discovery.aws import AWS
 from cloudselect.discovery.local import Local
 from cloudselect.discovery.stub import Stub as DiscoveryStub
 from cloudselect.group import GroupServiceProvider
-from cloudselect.group.simple import Simple as Simple
+from cloudselect.group.simple import Simple
 from cloudselect.group.stub import Stub as GroupStub
 from cloudselect.pathfinder import PathFinderServiceProvider
 from cloudselect.pathfinder.bastion import Bastion
@@ -37,7 +37,7 @@ def test_cli_incorrect_configuration(script_runner):
     assert ret.stderr == 'Error: Profile "something_that_does_not_exist" not found\n'
 
 
-def test_cli_version(script_runner):
+def test_cli_version(tmpdir, script_runner):
     """Testing that cloudselect has expected version."""
     ret = script_runner.run("cloudselect", "--version")
     assert ret.success
@@ -45,13 +45,13 @@ def test_cli_version(script_runner):
     assert ret.stderr == ""
 
     with pytest.raises(SystemExit):
-        cloud = CloudSelect()
+        cloud = CloudSelect(tmpdir)
         cloud.parse_args(["--version"])
 
 
-def test_cli_verbose():
+def test_cli_verbose(tmpdir):
     """Testing cloudselect verbose behavior."""
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     if os.environ.get("CLOUDSELECT_VERBOSE"):
         del os.environ["CLOUDSELECT_VERBOSE"]
     args = cloud.parse_args("-v".split(" "))
@@ -68,9 +68,9 @@ def test_cli_verbose():
     assert args.verbose == 2
 
 
-def test_cli_query():
+def test_cli_query(tmpdir):
     """Testing query option."""
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     args = cloud.parse_args([])
     assert args.query == ""
     args = cloud.parse_args("-q test".split(" "))
@@ -87,7 +87,7 @@ def test_cli_profile():
     assert args.profile == "test"
 
 
-def test_cli_configuration_read():
+def test_cli_configuration_read(tmpdir):
     """Testing initial configuration."""
     initial_config = {
         "log": {
@@ -118,32 +118,32 @@ def test_cli_configuration_read():
             },
         },
     }
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     configuration = cloud.configuration_read()
     assert configuration == initial_config
 
 
-def test_resolve():
+def test_resolve(tmpdir):
     """Testing resolve behavior."""
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     discovery = cloud.resolve("cloudselect.discovery.aws", DiscoveryService)
     discovery_instance = discovery()
     assert discovery_instance.__class__.__name__ == "AWS"
 
 
-def test_factory_load_plugin():
+def test_factory_load_plugin(tmpdir):
     """Testing factory_load_plugin behavior."""
     # fmt off
     class BrokenServiceProvider(providers.Singleton):
-        pass
+        """Broken provider."""
 
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     configuration = {}
     discovery = cloud.fabric_load_plugin(
         configuration, "discovery", DiscoveryServiceProvider, DiscoveryStub,
     )
-    assert type(discovery) == DiscoveryServiceProvider
-    assert type(discovery()) == DiscoveryStub
+    assert isinstance(discovery, DiscoveryServiceProvider)
+    assert isinstance(discovery(), DiscoveryStub)
     assert discovery() == discovery()
 
     # pass ServiceProvider without specialization
@@ -165,58 +165,58 @@ def test_factory_load_plugin():
     discovery = cloud.fabric_load_plugin(
         configuration, "discovery", DiscoveryServiceProvider, DiscoveryStub,
     )
-    assert type(discovery()) == AWS
+    assert isinstance(discovery(), AWS)
 
 
-def test_factory_load_discovery():
+def test_factory_load_discovery(tmpdir):
     """Testing that factory is able to load AWS discovery plugin."""
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     configuration = cloud.configuration_read()
 
     configuration["discovery"] = {"type": "aws"}
     plugin = cloud.fabric_load_plugin(
         configuration, "discovery", DiscoveryServiceProvider, DiscoveryStub,
     )
-    assert type(plugin()) == AWS
+    assert isinstance(plugin(), AWS)
 
     configuration["discovery"] = {"type": "local"}
     plugin = cloud.fabric_load_plugin(
         configuration, "discovery", DiscoveryServiceProvider, DiscoveryStub,
     )
-    assert type(plugin()) == Local
+    assert isinstance(plugin(), Local)
 
 
-def test_factory_load_group():
+def test_factory_load_group(tmpdir):
     """Testing that factory is able to load simple group plugin."""
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     configuration = cloud.configuration_read()
 
     configuration["group"] = {"type": "simple"}
     plugin = cloud.fabric_load_plugin(
         configuration, "group", GroupServiceProvider, GroupStub,
     )
-    assert type(plugin()) == Simple
+    assert isinstance(plugin(), Simple)
 
 
-def test_factory_load_pathfinder():
+def test_factory_load_pathfinder(tmpdir):
     """Testing that factory is able to load bastion pathfinder plugin."""
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     configuration = cloud.configuration_read()
 
     configuration["pathfinder"] = {"type": "bastion"}
     plugin = cloud.fabric_load_plugin(
         configuration, "pathfinder", PathFinderServiceProvider, PathFinderStub,
     )
-    assert type(plugin()) == Bastion
+    assert isinstance(plugin(), Bastion)
 
 
-def test_factory_load_report():
+def test_factory_load_report(tmpdir):
     """Testing that factory is able to load json report plugin."""
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     configuration = cloud.configuration_read()
 
     configuration["report"] = {"type": "json"}
     plugin = cloud.fabric_load_plugin(
         configuration, "report", ReportServiceProvider, ReportStub,
     )
-    assert type(plugin()) == Json
+    assert isinstance(plugin(), Json)
