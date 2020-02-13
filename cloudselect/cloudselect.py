@@ -50,7 +50,7 @@ class CloudSelect:
     def __init__(self, configpath=None):
         """Class constructor."""
         if configpath:
-            self.configpath = configpath
+            self.configpath = str(configpath)
         self.logger = None
 
     def configuration_exists(self, name):
@@ -83,7 +83,8 @@ class CloudSelect:
                 break
 
         try:
-            if name is None and not os.path.isfile(full_path):
+            if name is None and full_path is None:
+                full_path = os.path.join(self.configpath, self.extensions[0])
                 if not os.path.exists(self.configpath):
                     os.mkdir(self.configpath)
                 source = pkg_resources.resource_string(
@@ -98,8 +99,8 @@ class CloudSelect:
             with open(full_path, "r", encoding=charenc) as f:
                 if full_path.endswith(".json"):
                     return json.load(f)
-                else:
-                    return safe_load(f)
+                # Load YAML
+                return safe_load(f)
         except Exception as e:
             message = "Unable to read configuration {}: {}".format(full_path, str(e))
             if self.logger:
