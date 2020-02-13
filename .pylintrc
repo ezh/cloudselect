@@ -1,0 +1,38 @@
+[MASTER]
+# A comma-separated list of package or module names from where C extensions may
+# be loaded. Extensions are loading into the active Python interpreter and may
+# run arbitrary code.
+extension-pkg-whitelist=dependency_injector.containers, dependency_injector.providers
+
+[BASIC]
+good-names=
+    app,
+    d,
+    db,
+    e,
+    f,
+    f,
+    fp,
+    i,
+    LOG,
+    logger,
+    m,
+    p,
+    r,
+    s,
+    tb,
+    ui,
+
+[FORMAT]
+# Follow the standard from Black
+# https://black.readthedocs.io/en/stable/the_black_code_style.html#line-length
+max-line-length=88
+
+[TYPECHECK]
+# https://github.com/PyCQA/pylint/issues/73
+ignored-modules = distutils
+
+[MESSAGES CONTROL]
+disable=
+    C0301,  # [black] Line too long
+    C0330,  # [black] Wrong hanging indentation before block
