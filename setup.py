@@ -4,7 +4,7 @@ from os import path
 
 from setuptools import find_packages, setup
 
-__version__ = "20.1.6"
+__version__ = "v20.1.7"
 
 
 THIS_DIRECTORY = path.abspath(path.dirname(__file__))
