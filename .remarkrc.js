@@ -31,12 +31,6 @@ exports.plugins = [
           }
         ],
         require("retext-diacritics"),
-        [
-          require("retext-quotes"),
-          {
-            preferred: "straight"
-          }
-        ],
         require("retext-passive")
       ]
     })
