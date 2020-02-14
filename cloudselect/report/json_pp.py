@@ -13,7 +13,7 @@ from cloudselect import Container
 from . import ReportService
 
 
-class JsonPP(ReportService):
+class JsonPP(ReportService):  # pylint: disable=too-few-public-methods
     """Formatted JSON reporter implementation."""
 
     def run(self, selected):

@@ -11,11 +11,11 @@ import dependency_injector.providers as providers
 from cloudselect import Container
 
 
-class PathFinderService(object):
+class PathFinderService:
     """Base class for pathfinder service."""
 
     @staticmethod
-    def run(instance, instances):
+    def run(instance, instances):  # pylint: disable=unused-argument
         """Enrich instance object with jump hosts."""
         return instance
 

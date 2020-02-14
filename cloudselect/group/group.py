@@ -11,11 +11,11 @@ import dependency_injector.providers as providers
 from cloudselect import Container
 
 
-class GroupService(object):
+class GroupService:
     """Base class for group service."""
 
     @staticmethod
-    def run(name, metadata):
+    def run(name, metadata):  # pylint: disable=unused-argument
         """Get options for name regard with metadata."""
         return {}
 

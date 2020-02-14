@@ -13,7 +13,7 @@ from cloudselect import Container
 from . import ReportService
 
 
-class Yaml(ReportService):
+class Yaml(ReportService):  # pylint: disable=too-few-public-methods
     """YAML reporter implementation."""
 
     def run(self, selected):

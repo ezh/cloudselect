@@ -11,5 +11,3 @@ from . import PathFinderService
 
 class Stub(PathFinderService):
     """Class implementing pathfinder stub plugin."""
-
-    pass

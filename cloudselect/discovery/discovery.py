@@ -11,7 +11,7 @@ import dependency_injector.providers as providers
 from cloudselect import Container
 
 
-class DiscoveryService(object):
+class DiscoveryService:
     """Base class for discovery service."""
 
     @staticmethod

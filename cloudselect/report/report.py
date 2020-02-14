@@ -11,7 +11,7 @@ import pprint
 import dependency_injector.providers as providers
 
 
-class ReportService(object):
+class ReportService:  # pylint: disable=too-few-public-methods
     """Base class for reporting service."""
 
     @staticmethod

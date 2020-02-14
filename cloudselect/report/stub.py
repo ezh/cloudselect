@@ -9,7 +9,5 @@
 from . import ReportService
 
 
-class Stub(ReportService):
+class Stub(ReportService):  # pylint: disable=too-few-public-methods
     """Class implementing report stub plugin."""
-
-    pass

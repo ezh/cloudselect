@@ -69,16 +69,12 @@ class Bastion(PathFinderService):
             try:
                 value = value.get(key_part)
                 if not value:
-                    self.logger.debug(
-                        "Unable to find metadata key {}".format(key_part),
-                    )
+                    self.logger.debug("Unable to find metadata key %s", key_part)
                     break
             except Exception:
-                self.logger.debug("Unable to find key {}".format(key_part))
+                self.logger.debug("Unable to find key %s", key_part)
                 break
             if value_pattern in value:
-                self.logger.debug(
-                    "Match pattern {} and value {}".format(value_pattern, value),
-                )
+                self.logger.debug("Match pattern %s and value %s", value_pattern, value)
                 return instance
         return None

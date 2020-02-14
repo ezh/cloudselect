@@ -6,20 +6,14 @@ extension-pkg-whitelist=dependency_injector.containers, dependency_injector.prov
 
 [BASIC]
 good-names=
-    app,
-    d,
+    Container,
     db,
     e,
     f,
-    f,
-    fp,
     i,
-    LOG,
-    logger,
-    m,
-    p,
-    r,
-    s,
+    ip,
+    pp,
+    rv,
     tb,
     ui,
 # List of module names for which member attributes should not be checked

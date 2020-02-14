@@ -11,5 +11,3 @@ from . import DiscoveryService
 
 class Stub(DiscoveryService):
     """Class implementing discovery stub plugin."""
-
-    pass

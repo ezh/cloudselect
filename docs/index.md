@@ -1,6 +1,6 @@
 ## Purpose
 
-We have to jump between nodes quickly. There is a list of cloud accounts. Each account has multiple regions. Some nodes are publicity available, some of them not. Dozen of nodes sit behind bastion hosts. And few of them sit behind a group of jump points. And they all have different SSH keys.
+We should jump between nodes quickly, having a pack of cloud accounts. Each account could be in a different region. Some nodes are publicity available, some of them not. Dozen of nodes sit behind bastion hosts. And a few of them sit behind a group of jump points. And they all have different SSH keys.
 
 There is a `~/.ssh/config`, but it is not enough because of the dynamic nature of the cloud. It is too clumsy. It is not suitable for cases when IP addresses are changing instantly, and instances are creating and destroying in minutes.
 

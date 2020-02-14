@@ -51,7 +51,7 @@ class Local(DiscoveryService):
 
     def get_key(self, host):
         """Get key for ssh host."""
-        self.logger.debug("Search SSH key for {}".format(host))
+        self.logger.debug("Search SSH key for %s", host)
         config = Container.options("discovery", host)
         return (
             config.get("key")
@@ -61,7 +61,7 @@ class Local(DiscoveryService):
 
     def get_user(self, host):
         """Get user for SSH host."""
-        self.logger.debug("Search user for {}".format(host))
+        self.logger.debug("Search user for %s", host)
         config = Container.options("discovery", host)
         return (
             config.get("user")

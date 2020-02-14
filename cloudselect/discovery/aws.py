@@ -64,7 +64,7 @@ class AWS(DiscoveryService):
         elif config.profile_name():
             session = boto3.Session(profile_name=config.profile_name())
         elif config.region():
-            session = boto3.Session(region=config.region())
+            session = boto3.Session(region_name=config.region())
         else:
             session = boto3.Session()
         ec2 = session.client("ec2")
@@ -114,21 +114,21 @@ class AWS(DiscoveryService):
         ip = self.get_option(config.get("ip", {}), None, profile_name, region)
         if ip == "public":
             return instance.get("PublicIpAddress", "")
-        elif ip == "private":
+        if ip == "private":
             return instance.get("PrivateIpAddress", "")
-        elif ip == "public_private":
+        if ip == "public_private":
             return instance.get("PublicIpAddress", instance.get("PrivateIpAddress", ""))
-        elif ip == "private_public":
+        if ip == "private_public":
             return instance.get("PrivateIpAddress", instance.get("PublicIpAddress", ""))
-        else:
-            return instance.get("PublicIpAddress", instance.get("PrivateIpAddress", ""))
+
+        return instance.get("PublicIpAddress", instance.get("PrivateIpAddress", ""))
 
     def get_key(self, instance, config):
         """Get instance key."""
         profile_name = Container.config.discovery.profile_name()
         region = instance["Placement"]["AvailabilityZone"][:-1]
 
-        self.logger.debug("Search for SSH key {}".format(instance["KeyName"]))
+        self.logger.debug("Search for SSH key %s", instance["KeyName"])
         return self.get_option(
             config.get("key", {}), instance["KeyName"], profile_name, region,
         )

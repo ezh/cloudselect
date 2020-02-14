@@ -248,8 +248,8 @@ class CloudSelect:
                 plugin_class, service_provider.provided_type,
             )
             return service_provider(plugin_class_object)
-        else:
-            return service_provider(plugin_class)
+
+        return service_provider(plugin_class)
 
     def resolve(self, reference, base):
         """Resolve strings to objects using standard import and attribute syntax."""
