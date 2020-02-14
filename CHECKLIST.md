@@ -16,7 +16,7 @@
 - [x] Upload to GitHub
 - [x] README and LICENSE files
 - [x] Continuous integration service
-- [ ] Requirements updater
+- [x] Requirements updater
 - [x] Test coverage checker
 - [x] Automated code review
 - [x] Publish your project on PyPI
