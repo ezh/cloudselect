@@ -35,3 +35,4 @@ ignored-modules = distutils
 disable=
     C0301,  # [black] Line too long
     C0330,  # [black] Wrong hanging indentation before block
+    E0401,  # import-error
