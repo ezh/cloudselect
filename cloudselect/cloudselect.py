@@ -13,12 +13,12 @@ import logging
 import os
 import sys
 import traceback
-from logging.config import dictConfig
+from logging.config import dictConfig  # pylint: disable=ungrouped-imports
 
 import appdirs
 import chardet
 import dependency_injector.providers as providers
-import pkg_resources
+import pkg_resources  # pylint: disable=wrong-import-order
 from yaml import safe_load
 
 import cloudselect

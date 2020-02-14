@@ -7,9 +7,9 @@ from setuptools import find_packages, setup
 __version__ = "20.1.6"
 
 
-this_directory = path.abspath(path.dirname(__file__))
-with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
-    long_description = f.read()
+THIS_DIRECTORY = path.abspath(path.dirname(__file__))
+with open(path.join(THIS_DIRECTORY, "README.md"), encoding="utf-8") as f:
+    LONG_DESCRIPTION = f.read()
 
 setup(
     name="cloudselect",
@@ -34,7 +34,7 @@ setup(
     include_package_data=True,
     keywords=["Cloud", "CLI", "FZF", "SSH", "SCP", "AWS"],
     license="MIT",
-    long_description=long_description,
+    long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     packages=find_packages(),
     python_requires=">=3",

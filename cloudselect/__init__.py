@@ -9,7 +9,7 @@
 from __future__ import absolute_import, division, print_function
 
 import dependency_injector.containers as containers
-import pkg_resources
+import pkg_resources  # pylint: disable=wrong-import-order
 
 from .instance import Instance
 
