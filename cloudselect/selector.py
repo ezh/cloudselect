@@ -35,17 +35,20 @@ class Selector:
     def complete(self, cline, cpoint):
         """List profiles for shell completion."""
         configpath = Container.configpath()
-        extension = Container.extension()
+        extensions = Container.extensions()
 
         prefix = cline[0:cpoint].partition(" ")[-1]
         self.logger.debug(
             "Complete line %s, point %s, prefix %s", cline, cpoint, prefix,
         )
+        profiles = []
         for profile in os.listdir(configpath):
-            if profile.endswith(".{}".format(extension)):
-                name = profile.replace(".{}".format(extension), "")
-                if name.startswith(prefix):
-                    print(name)
+            for extension in extensions:
+                if profile.endswith(".{}".format(extension)):
+                    name = profile.replace(".{}".format(extension), "")
+                    if name.startswith(prefix):
+                        profiles.append(name)
+        print("\n".join(sorted(set(profiles))))
 
     def edit(self, configuration):
         """Edit profile or shared configuration file if file is None."""
@@ -104,16 +107,21 @@ class Selector:
     def profile_list(self):
         """List available profiles."""
         configpath = Container.configpath()
-        extension = Container.extension()
+        extensions = Container.extensions()
 
         self.logger.debug("List all available profiles from %s", configpath)
-        empty = True
+        profiles = []
         print("CloudSelect profiles:")
+
         for profile in os.listdir(configpath):
-            if profile.endswith(".{}".format(extension)):
-                empty = False
-                print("- {}".format(profile.replace(".{}".format(extension), "")))
-        if empty:
+            for extension in extensions:
+                if profile.endswith(".{}".format(extension)):
+                    profiles.append(
+                        "- {}".format(profile.replace(".{}".format(extension), "")),
+                    )
+        if profiles:
+            print("\n".join(sorted(set(profiles))))
+        else:
             print("- NO PROFILES -")
 
     def profile_process(self):
@@ -148,14 +156,18 @@ class Selector:
         """Entry point. Select instances."""
         args = Container.args()
         configpath = Container.configpath()
-        extension = Container.extension()
+        extensions = Container.extensions()
 
         if args.edit is None or args.edit:
             if args.edit is None:
-                configuration = os.path.join(configpath, "{}".format(extension))
+                configuration = os.path.join(configpath, "{}".format(extensions[0]))
                 return self.edit(configuration)
-            profile = os.path.join(configpath, "{}.{}".format(args.edit, extension))
-            return self.edit(profile)
+            for extension in extensions:
+                profile = os.path.join(configpath, "{}.{}".format(args.edit, extension))
+                if os.path.isfile(profile):
+                    return self.edit(profile)
+            print("Profile '{}' does not exist".format(args.edit), file=sys.stderr)
+            return self.logger.error("Profile '%s' does not exist", args.edit)
         if args.reporter is None:
             return self.reporter_list()
         if not args.profile:

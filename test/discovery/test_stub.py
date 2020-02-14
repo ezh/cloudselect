@@ -12,7 +12,7 @@ from cloudselect.discovery import DiscoveryServiceProvider
 from cloudselect.discovery.stub import Stub
 
 
-def test_stub_discovery():
+def test_stub_discovery(tmpdir):
     """
     Testing Stub initializaion.
 
@@ -20,7 +20,7 @@ def test_stub_discovery():
     Does Stub return []?
     Is Stub singleton?
     """
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     # Read shared part
     profile = cloud.configuration_read()
     args = cloud.parse_args([])
@@ -30,9 +30,9 @@ def test_stub_discovery():
     assert Container.discovery() == Container.discovery()
 
 
-def test_stub_behaviour(mocker):
+def test_stub_behaviour(mocker, tmpdir):
     """Assert calling run() for "cloudselect.discovery.stub" plugin."""
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     service_provider = cloud.plugin(
         "cloudselect.discovery.stub", DiscoveryServiceProvider,
     )

@@ -9,14 +9,14 @@
 from cloudselect.cloudselect import CloudSelect
 
 
-def test_options():
+def test_options(tmpdir):
     """
     Testing cloud.options(...) behaviour.
 
     There should be {} if there is no any options.
     There should be dictionary if there is required option.
     """
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     configuration = cloud.configuration_read()
     args = cloud.parse_args([])
     cloud.fabric(configuration, args)

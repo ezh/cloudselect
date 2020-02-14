@@ -11,10 +11,10 @@ from cloudselect.cloudselect import CloudSelect
 from cloudselect.group import GroupServiceProvider
 from cloudselect.group.stub import Stub
 
-metadata = {"hello": "world"}
+METADATA = {"hello": "world"}
 
 
-def test_stub_group():
+def test_stub_group(tmpdir):
     """
     Testing Stub initializaion.
 
@@ -22,21 +22,21 @@ def test_stub_group():
     Does Stub return {}?
     Is Stub singleton?
     """
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     # Read shared part
     profile = cloud.configuration_read()
     args = cloud.parse_args([])
     cloud.fabric(profile, args)
     assert Container.group().__class__.__name__ == "Stub"
-    assert Container.group().run("aws", metadata) == {}
+    assert Container.group().run("aws", METADATA) == {}
     assert Container.group() == Container.group()
 
 
-def test_stub_behaviour(mocker):
+def test_stub_behaviour(mocker, tmpdir):
     """Assert calling run() for "cloudselect.group.stub" plugin."""
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     service_provider = cloud.plugin("cloudselect.group.stub", GroupServiceProvider)
     stub = service_provider()
     mocker.patch.object(Stub, "run")
-    stub.run("aws", metadata)
-    Stub.run.assert_called_once_with("aws", metadata)
+    stub.run("aws", METADATA)
+    Stub.run.assert_called_once_with("aws", METADATA)

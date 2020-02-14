@@ -11,7 +11,7 @@ from cloudselect.cloudselect import CloudSelect
 from cloudselect.group.simple import Simple
 
 
-def test_options():
+def test_options(tmpdir):
     """
     Test options behaviour for simple plugin.
 
@@ -20,13 +20,13 @@ def test_options():
     It should returns clarified dictionary if there is * filter.
     It should returns clarified dictionary if there is matched filter.
     """
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     configuration = cloud.configuration_read()
     args = cloud.parse_args([])
     configuration["group"] = {"type": "simple"}
     cloud.fabric(configuration, args)
 
-    assert type(Container.group()) == Simple
+    assert isinstance(Container.group(), Simple)
 
     assert Container.options("test") == {}
     assert Container.options("plugin") == configuration["plugin"]

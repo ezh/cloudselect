@@ -19,6 +19,7 @@ import appdirs
 import chardet
 import dependency_injector.providers as providers
 import pkg_resources
+from yaml import safe_load
 
 import cloudselect
 from cloudselect import Container
@@ -42,43 +43,52 @@ class CloudSelect:
 
     """
 
-    extension = "cloud.json"
+    configpath = appdirs.user_config_dir("cloudselect")
+    extensions = ["cloud.json", "cloud.yml", "cloud.yaml"]
     importer = staticmethod(__import__)
 
-    def __init__(self):
+    def __init__(self, configpath=None):
         """Class constructor."""
-        self.configpath = appdirs.user_config_dir("cloudselect")
+        if configpath:
+            self.configpath = str(configpath)
         self.logger = None
 
     def configuration_exists(self, name):
         """Check if configuration/profile exists."""
-        if os.path.isfile(name):
-            return True
-        else:
-            file_name = ".".join(filter(None, [name, self.extension]))
+        for i in self.extensions:
+            if os.path.isfile(name):
+                return True
+            file_name = ".".join(filter(None, [name, i]))
             full_path = os.path.join(self.configpath, file_name)
-            return os.path.isfile(full_path)
+            if os.path.isfile(full_path):
+                return True
+        return False
 
     def configuration_read(self, name=None):
         """Read configuration/profile."""
         """
-        Read json configuration from configpath
+        Read JSON/YAML configuration from configpath
         Copy initial configuration from cloud.json.dist to cloud.json if needed
         """  # pylint: disable=W0105
         full_path = name
-        if name and os.path.isfile(name):
-            full_path = os.path.abspath(name)
-            name = os.path.basename(name).replace(".{}".format(self.extension), "")
-        else:
-            file_name = ".".join(filter(None, [name, self.extension]))
-            full_path = os.path.join(self.configpath, file_name)
+        for i in self.extensions:
+            if name and os.path.isfile(name):
+                full_path = os.path.abspath(name)
+                name = os.path.basename(name).replace(".{}".format(i), "")
+                break
+            file_name = ".".join(filter(None, [name, i]))
+            full_path_candidate = os.path.join(self.configpath, file_name)
+            if os.path.isfile(full_path_candidate):
+                full_path = full_path_candidate
+                break
 
         try:
-            if name is None and not os.path.isfile(full_path):
+            if name is None and full_path is None:
+                full_path = os.path.join(self.configpath, self.extensions[0])
                 if not os.path.exists(self.configpath):
                     os.mkdir(self.configpath)
                 source = pkg_resources.resource_string(
-                    __name__, "{}.dist".format(self.extension),
+                    __name__, "{}.dist".format(self.extensions[0]),
                 )
                 with open(full_path, "w") as f:
                     data = json.loads(source.decode())
@@ -87,7 +97,10 @@ class CloudSelect:
                     )
             charenc = chardet.detect(open(full_path, "rb").read())["encoding"]
             with open(full_path, "r", encoding=charenc) as f:
-                return json.load(f)
+                if full_path.endswith(".json"):
+                    return json.load(f)
+                # Load YAML
+                return safe_load(f)
         except Exception as e:
             message = "Unable to read configuration {}: {}".format(full_path, str(e))
             if self.logger:
@@ -114,7 +127,7 @@ class CloudSelect:
         Container.args = providers.Object(args)
         Container.config = providers.Configuration(name="config", default=configuration)
         Container.configpath = providers.Object(self.configpath)
-        Container.extension = providers.Object(self.extension)
+        Container.extensions = providers.Object(self.extensions)
         Container.options = providers.Callable(self.options)
         Container.selector = providers.Singleton(Selector)
 

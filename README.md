@@ -55,8 +55,8 @@ You may find a demo files in <a href="https://github.com/ezh/cloudselect/tree/ma
 :rocket: We may use jump hosts even if jump host hasn't been configured to allow remote port forwarding and we have the following settings in sshd_config:
 
 ```sh
-  AllowTcpForwarding no
-  GatewayPorts no
+AllowTcpForwarding no
+GatewayPorts no
 ```
 
 ## Installation
@@ -64,16 +64,16 @@ You may find a demo files in <a href="https://github.com/ezh/cloudselect/tree/ma
 CloudSelect is on PyPi! You can install CloudSelect with a simple pip command:
 
 ```sh
-  pip install cloudselect
+pip install cloudselect
 ```
 
 Add profile bash completion:
 
 ```sh
-  complete -C cloudselect_completer cloudselect
+complete -C cloudselect_completer cloudselect
 ```
 
-You may copy suitable wrapper from `example` directory.
+You may copy suitable wrapper from [example](https://github.com/ezh/cloudselect/tree/master/example) directory.
 
 # License
 

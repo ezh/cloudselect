@@ -12,10 +12,10 @@ from cloudselect.cloudselect import CloudSelect
 from cloudselect.pathfinder import PathFinderServiceProvider
 from cloudselect.pathfinder.stub import Stub
 
-instance = Instance(1, "127.0.0.1", "key", "user", 22, [], {}, [])
+INSTANCE = Instance(1, "127.0.0.1", "key", "user", 22, [], {}, [])
 
 
-def test_stub_pathfinder():
+def test_stub_pathfinder(tmpdir):
     """
     Testing Stub initializaion.
 
@@ -23,23 +23,23 @@ def test_stub_pathfinder():
     Does Stub return {}?
     Is Stub singleton?
     """
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     # Read shared part
     profile = cloud.configuration_read()
     args = cloud.parse_args([])
     cloud.fabric(profile, args)
     assert Container.pathfinder().__class__.__name__ == "Stub"
-    assert Container.pathfinder().run(instance, [instance]) == instance
+    assert Container.pathfinder().run(INSTANCE, [INSTANCE]) == INSTANCE
     assert Container.pathfinder() == Container.pathfinder()
 
 
-def test_stub_behaviour(mocker):
+def test_stub_behaviour(mocker, tmpdir):
     """Assert calling run() for "cloudselect.pathfinder.stub" plugin."""
-    cloud = CloudSelect()
+    cloud = CloudSelect(tmpdir)
     service_provider = cloud.plugin(
         "cloudselect.pathfinder.stub", PathFinderServiceProvider,
     )
     stub = service_provider()
     mocker.patch.object(Stub, "run")
-    stub.run(instance, [instance])
-    Stub.run.assert_called_once_with(instance, [instance])
+    stub.run(INSTANCE, [INSTANCE])
+    Stub.run.assert_called_once_with(INSTANCE, [INSTANCE])

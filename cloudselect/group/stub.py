@@ -11,5 +11,3 @@ from . import GroupService
 
 class Stub(GroupService):
     """Class implementing group stub plugin."""
-
-    pass
