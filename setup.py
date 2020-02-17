@@ -26,7 +26,7 @@ setup(
     },
     install_requires=[
         "appdirs==1.4.3",
-        "boto3==1.12.0",
+        "boto3==1.12.1",
         "chardet==3.0.4",
         "dependency-injector==3.15.4",
         "pyyaml==5.2",
