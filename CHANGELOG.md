@@ -1,5 +1,15 @@
 # Changelog
 
+## v20.1.8 (18/02/2020)
+
+-   [Add regex to simple groups](https://github.com/ezh/cloudselect/commit/b57c6c9b2aa61ee30724e93d8e1355f2dce515f1) - @ezh
+-   [Add release task](https://github.com/ezh/cloudselect/commit/807836b7942b712ed41298a813c51b4fc803a405) - @ezh
+-   [Mark requirements updater as DONE](https://github.com/ezh/cloudselect/commit/ef05eb55e782f892f609236eff6157acb838833b) - @ezh
+-   [Release version 20.1.8](https://github.com/ezh/cloudselect/commit/59ee02a22e3fb37a1bdf9fd57c75ac69396a7ed2) - @ezh
+-   [Update changelog for release version 20.1.7](https://github.com/ezh/cloudselect/commit/c92da822d9914bbba6ebe1390f7d4bd6ead3bc87) - @ezh
+
+* * *
+
 ## v20.1.7 (14/02/2020)
 
 -   [Add configuration files and fix markdown](https://github.com/ezh/cloudselect/commit/3e638ae70e739d12ec6e97d8b0acad5994921188) - @ezh
