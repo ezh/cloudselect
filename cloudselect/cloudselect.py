@@ -7,6 +7,7 @@
 # except according to those terms.
 """CloudSelect module loads configuration, plugins and invokes Select module."""
 import argparse
+import copy
 import inspect
 import json
 import logging
@@ -197,7 +198,7 @@ class CloudSelect:
     def options(self, name, metadata=None):
         """Get plugin/block options."""
         group = Container.group()
-        base = Container.config().get(name, {})
+        base = copy.deepcopy(Container.config().get(name, {}))
         override = group.run(name, metadata)
         return self.merge(base, override)
 

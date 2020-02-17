@@ -7,6 +7,7 @@
 # except according to those terms.
 """Module returning appropriate options per group of instances."""
 import logging
+import re
 
 from . import GroupService
 
@@ -21,52 +22,34 @@ class Simple(GroupService):
 
     def run(self, name, metadata):
         """Return dictionary with options for the group of instances."""
-        groups_by_priority = list(self.get_groups_with_priority(self.config()))
-
-        for priority, filters, group in sorted(groups_by_priority, key=lambda x: x[0]):
-            self.logger.debug("Process group %s %s", priority, filters)
-            for entry in filters:
-                if entry == "*":
-                    result = group.get(name)
-                    if result:
-                        return result
-                elif ":" in entry:
-                    key, pattern = entry.split(":", 1)
-                    value = metadata
-                    for key_part in key.split("."):
-                        try:
-                            value = value.get(key_part)
-                            if not value:
-                                self.logger.debug("Unable to find key %s", key_part)
-                                break
-                        except Exception:
-                            self.logger.debug("Unable to find key %s", key_part)
-                            break
-                        if pattern in value:
-                            self.logger.debug(
-                                "Match pattern %s and value %s", pattern, value,
-                            )
-                            result = group.get(name)
-                            if result is not None:
-                                return result
-                else:
-                    self.logger.warning(
-                        "Unable to find filter definition for %s", group,
-                    )
-        return {}
-
-    def get_groups_with_priority(self, groups):
-        """Extract priority for groups."""
-        for pattern in groups:
-            group = groups[pattern]
-            if not isinstance(group, dict):
-                logging.debug("Skip group with pattern %s", pattern)
+        for group in self.config().get("options", []):
+            self.logger.debug("Process group %s", group)
+            entry = group.get("match")
+            if not entry:
+                self.logger.warning("Unable to find 'match' key in %s", group)
                 continue
-            filters = pattern.split(" ", 1)
-            priority = self.default_priority
-            if len(filters) == 2 and filters[0].isdigit():
-                priority = int(filters[0])
-                filters = filters[-1].split(",")
-            else:
-                filters = pattern
-            yield [priority, filters, group]
+            if ":" not in entry:
+                self.logger.warning(
+                    "Unable to parse 'match' value %s for %s", entry, group,
+                )
+                continue
+            key, pattern = entry.split(":", 1)
+            regex = re.compile(pattern)
+            value = metadata
+            for key_part in key.split("."):
+                try:
+                    value = value.get(key_part)
+                    if not value:
+                        self.logger.debug("Unable to find key %s", key_part)
+                        break
+                except (AttributeError, NameError):
+                    self.logger.debug("Unable to find key %s", key_part)
+                    break
+                if isinstance(value, str) and regex.match(value):
+                    self.logger.debug(
+                        "Match pattern %s and value %s", pattern, value,
+                    )
+                    result = group.get(name)
+                    if result is not None:
+                        return result
+        return {}

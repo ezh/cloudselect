@@ -48,6 +48,7 @@ def release(ctx, version):
             ),
         )
         ctx.run("git push")
+        ctx.run("gren release --tags={}".format(version))
     except Failure as e:
         print(e)
 

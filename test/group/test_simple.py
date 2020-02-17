@@ -17,7 +17,6 @@ def test_options(tmpdir):
 
     It should returns {} if there is no options.
     It should returns shared dictionary if there is no any matched filters.
-    It should returns clarified dictionary if there is * filter.
     It should returns clarified dictionary if there is matched filter.
     """
     cloud = CloudSelect(tmpdir)
@@ -39,19 +38,18 @@ def test_options(tmpdir):
     configuration["option"] = options_a
     assert Container.options("option") == options_a
 
-    configuration["group"]["*"] = {"option": options_a}
+    configuration["group"]["options"] = [{"match": "x:y", "option": options_a}]
     assert Container.options("option") == options_a
-    assert Container.options("option", {"a": {"b": "c"}}) == options_a
+    assert Container.options("option", {"a": {"b": "c123"}}) == options_a
 
-    configuration["group"]["*"] = {"option": options_b}
-    assert Container.options("option") == options_b
-    assert Container.options("option", {"a": {"b": "c"}}) == options_b
+    configuration["group"]["options"].append({"match": "a.b:c123", "option": options_b})
+    assert Container.options("option") == options_a
+    assert Container.options("option", {"a": {"b": "c123"}}) == options_b
 
-    configuration["group"]["0 a.b:c"] = {"option": options_c}
-    assert Container.options("option") == options_b
-    assert Container.options("option", {"a": {"b": "c"}}) == options_c
-    assert Container.options("option", {"a": {"b": "d"}}) == options_b
-    assert (
-        Container.options("option", {"a": {"b": "long string with c inside"}})
-        == options_c
+    configuration["group"]["options"].append(
+        {"match": "a.b:c(.*3|111)", "option": options_c},
     )
+    assert Container.options("option") == options_a
+    assert Container.options("option", {"a": {"b": "c1nnnn3"}}) == options_c
+    assert Container.options("option", {"a": {"b": "c111111"}}) == options_c
+    assert Container.options("option", {"a": {"b": "c112111"}}) == options_a
