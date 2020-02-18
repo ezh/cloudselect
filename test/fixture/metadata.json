@@ -1,0 +1,73 @@
+{
+  "AmiLaunchIndex": 0,
+  "Architecture": "x86_64",
+  "CapacityReservationSpecification": {
+    "CapacityReservationPreference": "open"
+  },
+  "ClientToken": "",
+  "CpuOptions": {
+    "CoreCount": 1,
+    "ThreadsPerCore": 1
+  },
+  "EbsOptimized": false,
+  "EnaSupport": true,
+  "HibernationOptions": {
+    "Configured": false
+  },
+  "Hypervisor": "xen",
+  "IamInstanceProfile": {
+    "Arn": "arn:aws:iam::123456789012:instance-profile/ec2",
+    "Id": "ABCDEFGHIJKLMNOPQRSTU"
+  },
+  "ImageId": "ami-0713f98de93617bb4",
+  "InstanceId": "i-01234567890123456",
+  "InstanceType": "t2.small",
+  "KeyName": "organization-devops",
+  "MetadataOptions": {
+    "HttpEndpoint": "enabled",
+    "HttpPutResponseHopLimit": 1,
+    "HttpTokens": "optional",
+    "State": "applied"
+  },
+  "Monitoring": {
+    "State": "disabled"
+  },
+  "Placement": {
+    "AvailabilityZone": "eu-west-1b",
+    "GroupName": "",
+    "Tenancy": "default"
+  },
+  "PrivateDnsName": "ip-10-0-0-1.abc.def.net",
+  "PrivateIpAddress": "10.0.0.1",
+  "ProductCodes": [],
+  "PublicDnsName": "",
+  "PublicIpAddress": "8.8.8.8",
+  "RootDeviceName": "/dev/xvda",
+  "RootDeviceType": "ebs",
+  "SecurityGroups": [
+    {
+      "GroupId": "sg-abcdefgh",
+      "GroupName": "acl-allow"
+    },
+    {
+      "GroupId": "sg-xyzqrstu",
+      "GroupName": "acl-admin"
+    }
+  ],
+  "SourceDestCheck": true,
+  "State": {
+    "Code": 16,
+    "Name": "running"
+  },
+  "StateTransitionReason": "",
+  "SubnetId": "subnet-abcdefgh",
+  "Tags": {
+    "Application": "My App",
+    "Description": "My AWS App",
+    "Name": "my-app.abc"
+  },
+  "VirtualizationType": "hvm",
+  "VpcId": "vpc-abcdefgh",
+  "profile": "default",
+  "region": "eu-west-1"
+}
