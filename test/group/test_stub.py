@@ -28,7 +28,7 @@ def test_stub_group(tmpdir):
     args = cloud.parse_args([])
     cloud.fabric(profile, args)
     assert Container.group().__class__.__name__ == "Stub"
-    assert Container.group().run("aws", METADATA) == {}
+    assert Container.group().run("aws", METADATA) is None
     assert Container.group() == Container.group()
 
 
