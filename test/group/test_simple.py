@@ -79,7 +79,7 @@ def test_options_errors(caplog, cfgdir):
     assert len(caplog.records) == 1
     assert (
         caplog.records[0].getMessage()
-        == "'options' block not found in {'type': 'simple'}"
+        == "option: 'options' block not found in {'type': 'simple'}"
     )
 
     caplog.clear()
@@ -87,7 +87,8 @@ def test_options_errors(caplog, cfgdir):
     Container.options("option")
     assert len(caplog.records) == 1
     assert (
-        caplog.records[0].msg == "'options' block should be list of dictionaries in %s"
+        caplog.records[0].msg
+        == "%s: 'options' block should be list of dictionaries in %s"
     )
 
 

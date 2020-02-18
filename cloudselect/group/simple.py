@@ -24,23 +24,30 @@ class Simple(GroupService):
         """Return dictionary with options for the group of instances."""
         options = self.config().get("options")
         if not options:
-            self.log.warning("'options' block not found in %s", self.config())
+            self.log.warning("%s: 'options' block not found in %s", name, self.config())
             return None
         if not isinstance(options, list):
             self.log.warning(
-                "'options' block should be list of dictionaries in %s", self.config(),
+                "%s: 'options' block should be list of dictionaries in %s",
+                name,
+                self.config(),
             )
             return None
         for group in self.config().get("options", []):
             try:
-                self.log.debug("Process group %s", group)
+                self.log.debug("%s: Process group %s", name, group)
                 entry = group.get("match")
                 if not entry:
-                    self.log.warning("Unable to find 'match' key in %s", group)
+                    self.log.warning(
+                        "%s: Unable to find 'match' key in %s", name, group,
+                    )
                     continue
                 if ":" not in entry:
                     self.log.warning(
-                        "Unable to parse 'match' value %s for %s", entry, group,
+                        "%s: Unable to parse 'match' value %s for %s",
+                        name,
+                        entry,
+                        group,
                     )
                     continue
                 key, pattern = entry.split(":", 1)
@@ -50,18 +57,21 @@ class Simple(GroupService):
                     try:
                         value = value.get(key_part)
                         if not value:
-                            self.log.debug("Unable to find key %s", key_part)
+                            self.log.debug("%s: Unable to find key %s", name, key_part)
                             break
                     except (AttributeError, NameError):
-                        self.log.debug("Unable to find key %s", key_part)
+                        self.log.debug("%s: Unable to find key %s", name, key_part)
                         break
                     if isinstance(value, str) and regex.match(value) is not None:
                         self.log.debug(
-                            "Match pattern %s and value %s", pattern, value,
+                            "%s: Pattern %s and value %s is matched",
+                            name,
+                            pattern,
+                            value,
                         )
                         result = group.get(name)
                         if result is not None:
                             return result
             except AttributeError:
-                self.log.warning("Unable to find 'match' key in %s", group)
+                self.log.warning("%s: Unable to find 'match' key in %s", name, group)
         return None
