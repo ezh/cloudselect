@@ -6,7 +6,6 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 """This module is used for testing CloudSelect class."""
-import logging
 import os
 
 import dependency_injector.providers as providers
@@ -37,7 +36,7 @@ def test_cli_incorrect_configuration(script_runner):
     assert ret.stderr == 'Error: Profile "something_that_does_not_exist" not found\n'
 
 
-def test_cli_version(tmpdir, script_runner):
+def test_cli_version(cfgdir, script_runner):
     """Testing that cloudselect has expected version."""
     ret = script_runner.run("cloudselect", "--version")
     assert ret.success
@@ -45,13 +44,13 @@ def test_cli_version(tmpdir, script_runner):
     assert ret.stderr == ""
 
     with pytest.raises(SystemExit):
-        cloud = CloudSelect(tmpdir)
+        cloud = CloudSelect(cfgdir)
         cloud.parse_args(["--version"])
 
 
-def test_cli_verbose(tmpdir):
+def test_cli_verbose(cfgdir):
     """Testing cloudselect verbose behavior."""
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     if os.environ.get("CLOUDSELECT_VERBOSE"):
         del os.environ["CLOUDSELECT_VERBOSE"]
     args = cloud.parse_args("-v".split(" "))
@@ -68,9 +67,9 @@ def test_cli_verbose(tmpdir):
     assert args.verbose == 2
 
 
-def test_cli_query(tmpdir):
+def test_cli_query(cfgdir):
     """Testing query option."""
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     args = cloud.parse_args([])
     assert args.query == ""
     args = cloud.parse_args("-q test".split(" "))
@@ -87,23 +86,10 @@ def test_cli_profile():
     assert args.profile == "test"
 
 
-def test_cli_configuration_read(tmpdir):
+def test_cli_configuration_read(cfgdir):
     """Testing initial configuration."""
     initial_config = {
-        "log": {
-            "version": 1,
-            "formatters": {
-                "f": {"format": "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"},
-            },
-            "handlers": {
-                "h": {
-                    "class": "logging.StreamHandler",
-                    "formatter": "f",
-                    "level": logging.DEBUG,
-                },
-            },
-            "root": {"handlers": ["h"], "level": logging.ERROR},
-        },
+        "log": {"version": 1},
         "plugin": {
             "discovery": {
                 "aws": "cloudselect.discovery.aws",
@@ -118,26 +104,26 @@ def test_cli_configuration_read(tmpdir):
             },
         },
     }
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     configuration = cloud.configuration_read()
     assert configuration == initial_config
 
 
-def test_resolve(tmpdir):
+def test_resolve(cfgdir):
     """Testing resolve behavior."""
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     discovery = cloud.resolve("cloudselect.discovery.aws", DiscoveryService)
     discovery_instance = discovery()
     assert discovery_instance.__class__.__name__ == "AWS"
 
 
-def test_factory_load_plugin(tmpdir):
+def test_factory_load_plugin(cfgdir):
     """Testing factory_load_plugin behavior."""
     # fmt off
     class BrokenServiceProvider(providers.Singleton):
         """Broken provider."""
 
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     configuration = {}
     discovery = cloud.fabric_load_plugin(
         configuration, "discovery", DiscoveryServiceProvider, DiscoveryStub,
@@ -168,9 +154,9 @@ def test_factory_load_plugin(tmpdir):
     assert isinstance(discovery(), AWS)
 
 
-def test_factory_load_discovery(tmpdir):
+def test_factory_load_discovery(cfgdir):
     """Testing that factory is able to load AWS discovery plugin."""
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     configuration = cloud.configuration_read()
 
     configuration["discovery"] = {"type": "aws"}
@@ -186,9 +172,9 @@ def test_factory_load_discovery(tmpdir):
     assert isinstance(plugin(), Local)
 
 
-def test_factory_load_group(tmpdir):
+def test_factory_load_group(cfgdir):
     """Testing that factory is able to load simple group plugin."""
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     configuration = cloud.configuration_read()
 
     configuration["group"] = {"type": "simple"}
@@ -198,9 +184,9 @@ def test_factory_load_group(tmpdir):
     assert isinstance(plugin(), Simple)
 
 
-def test_factory_load_pathfinder(tmpdir):
+def test_factory_load_pathfinder(cfgdir):
     """Testing that factory is able to load bastion pathfinder plugin."""
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     configuration = cloud.configuration_read()
 
     configuration["pathfinder"] = {"type": "bastion"}
@@ -210,9 +196,9 @@ def test_factory_load_pathfinder(tmpdir):
     assert isinstance(plugin(), Bastion)
 
 
-def test_factory_load_report(tmpdir):
+def test_factory_load_report(cfgdir):
     """Testing that factory is able to load json report plugin."""
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     configuration = cloud.configuration_read()
 
     configuration["report"] = {"type": "json"}

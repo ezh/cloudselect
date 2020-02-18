@@ -106,10 +106,10 @@ def test_select_edit_non_existent_profile(mocker, capsys):
     assert captured.err.endswith("Profile 'non-existent' does not exist\n")
 
 
-def test_select_empty(tmpdir):
+def test_select_empty(cfgdir):
     """Testing that Selector exits if there is no any instances."""
     profile = os.path.join(os.path.dirname(__file__), "fixture", "empty.cloud.json")
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     args = cloud.parse_args([profile])
     configuration = cloud.configuration_read()
     configuration = cloud.merge(configuration, cloud.configuration_read(args.profile))
@@ -122,10 +122,10 @@ def test_select_empty(tmpdir):
     assert pytest_wrapped_e.value.code == "Error: No instances found"
 
 
-def test_select_single(tmpdir):
+def test_select_single(cfgdir):
     """Testing that Selector automaticaly select the only one available instance."""
     profile = os.path.join(os.path.dirname(__file__), "fixture", "single.cloud.json")
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     args = cloud.parse_args([profile])
     configuration = cloud.configuration_read()
     configuration = cloud.merge(configuration, cloud.configuration_read(args.profile))

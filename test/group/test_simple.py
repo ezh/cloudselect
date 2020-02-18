@@ -6,20 +6,24 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 """This module is used for testing Simple group plugin."""
+import json
+import logging
+import os
+
 from cloudselect import Container
 from cloudselect.cloudselect import CloudSelect
 from cloudselect.group.simple import Simple
 
 
-def test_options(tmpdir):
+def test_options(cfgdir):
     """
-    Test options behaviour for simple plugin.
+    Test options behaviour of simple plugin.
 
     It should returns {} if there is no options.
     It should returns shared dictionary if there is no any matched filters.
     It should returns clarified dictionary if there is matched filter.
     """
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     configuration = cloud.configuration_read()
     args = cloud.parse_args([])
     configuration["group"] = {"type": "simple"}
@@ -53,3 +57,56 @@ def test_options(tmpdir):
     assert Container.options("option", {"a": {"b": "c1nnnn3"}}) == options_c
     assert Container.options("option", {"a": {"b": "c111111"}}) == options_c
     assert Container.options("option", {"a": {"b": "c112111"}}) == options_a
+
+
+def test_options_errors(caplog, cfgdir):
+    """Test error messages when options block is incorrect."""
+    caplog.set_level(logging.INFO)
+    configuration = os.path.join(
+        os.path.dirname(__file__), "..", "fixture", "metadata.json",
+    )
+
+    logging.Logger.manager.loggerDict.clear()
+    cloud = CloudSelect(cfgdir)
+    configuration = cloud.configuration_read()
+    args = cloud.parse_args([])
+    configuration["group"] = {"type": "simple"}
+    cloud.fabric(configuration, args)
+    assert isinstance(Container.group(), Simple)
+
+    caplog.clear()
+    Container.options("option")
+    assert len(caplog.records) == 1
+    assert (
+        caplog.records[0].getMessage()
+        == "'options' block not found in {'type': 'simple'}"
+    )
+
+    caplog.clear()
+    configuration["group"]["options"] = 123
+    Container.options("option")
+    assert len(caplog.records) == 1
+    assert (
+        caplog.records[0].msg == "'options' block should be list of dictionaries in %s"
+    )
+
+
+def test_options_regex(cfgdir):
+    """Test regex against metadata mock."""
+    metadata = os.path.join(os.path.dirname(__file__), "..", "fixture", "metadata.json")
+
+    cloud = CloudSelect(cfgdir)
+    configuration = cloud.configuration_read()
+    args = cloud.parse_args([])
+    configuration["group"] = {
+        "type": "simple",
+        "options": [{"match": "Tags.Name:my-app.abc", "option": {}}],
+    }
+    configuration["option"] = {"ssh": "-t"}
+    cloud.fabric(configuration, args)
+    assert isinstance(Container.group(), Simple)
+
+    with open(metadata) as json_file:
+        data = json.load(json_file)
+        assert Container.options("option") == {"ssh": "-t"}
+        assert Container.options("option", data) == {}

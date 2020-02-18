@@ -13,9 +13,9 @@ from cloudselect.pathfinder.bastion import Bastion
 INSTANCE = Instance(1, "127.0.0.1", "key", "user", 22, None, {}, [])
 
 
-def test_bastion_initialization(tmpdir):
+def test_bastion_initialization(cfgdir):
     """Assert plugin initialization."""
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     configuration = cloud.configuration_read()
     args = cloud.parse_args([])
     configuration["pathfinder"] = {"type": "bastion"}
@@ -27,9 +27,9 @@ def test_bastion_initialization(tmpdir):
     assert result.jumphost is None
 
 
-def test_bastion_behaviour(tmpdir):
+def test_bastion_behaviour(cfgdir):
     """Assert bastion returning correct result."""
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     configuration = cloud.configuration_read()
     args = cloud.parse_args([])
     configuration["pathfinder"] = {"type": "bastion", "host": "my-bastion-hostname"}
