@@ -26,7 +26,7 @@ def test_stub_report(cfgdir):
     args = cloud.parse_args([])
     cloud.fabric(profile, args)
     assert Container.report().__class__.__name__ == "Stub"
-    assert Container.report().run([]) == []
+    assert Container.report().run([]) == {"instances": [], "option": {}}
     assert Container.report() == Container.report()
 
 

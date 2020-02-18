@@ -8,8 +8,6 @@
 """Module that represents list of selected instances as JSON output."""
 from yaml import safe_dump
 
-from cloudselect import Container
-
 from . import ReportService
 
 
@@ -18,9 +16,7 @@ class Yaml(ReportService):  # pylint: disable=too-few-public-methods
 
     def run(self, selected):
         """Represent instances as YAML output."""
-        # get first instance
-        # assume that all instances match the same group/pattern
-        instance = next(iter(selected), None)
-        options = Container.options("option", instance.metadata)
+        options = self.get_option(selected)
         report = {"instances": [i.to_dict() for i in selected], "option": options}
         print(safe_dump(report, indent=2))
+        return report

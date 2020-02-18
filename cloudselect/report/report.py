@@ -20,12 +20,20 @@ class ReportService:  # pylint: disable=too-few-public-methods
     def run(selected):
         """Prepare report based on list of selected instances."""
         pp = pprint.PrettyPrinter()
+        options = ReportService.get_option(selected)
+        report = {"instances": [i.to_dict() for i in selected], "option": options}
+        pp.pprint(report)
+        return report
+
+    @staticmethod
+    def get_option(selected):
+        """Get option block for report."""
         # get first instance
         # assume that all instances match the same group/pattern
         instance = next(iter(selected), None)
-        options = Container.options("option", instance.metadata)
-        report = {"instances": [i.to_dict() for i in selected], "option": options}
-        pp.pprint(report)
+        if instance:
+            return Container.options("option", instance.metadata)
+        return Container.options("option")
 
 
 class ReportServiceProvider(providers.Singleton):

@@ -8,8 +8,6 @@
 """Module that represents list of selected instances as formatted JSON output."""
 import json
 
-from cloudselect import Container
-
 from . import ReportService
 
 
@@ -18,9 +16,7 @@ class JsonPP(ReportService):  # pylint: disable=too-few-public-methods
 
     def run(self, selected):
         """Represent instances as formatted JSON output."""
-        # get first instance
-        # assume that all instances match the same group/pattern
-        instance = next(iter(selected), None)
-        options = Container.options("option", instance.metadata)
+        options = self.get_option(selected)
         report = {"instances": [i.to_dict() for i in selected], "option": options}
         print(json.dumps(report, indent=2, sort_keys=True))
+        return report

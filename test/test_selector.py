@@ -133,5 +133,5 @@ def test_select_single(cfgdir):
     selector = cloud.fabric(configuration, args)
     assert isinstance(Container.discovery(), Local)
     report = selector.select()
-    assert len(report) == 1
-    assert report[0].host == "my.cloud.instance"
+    assert len(report["instances"]) == 1
+    assert report["instances"][0]["host"] == "my.cloud.instance"
