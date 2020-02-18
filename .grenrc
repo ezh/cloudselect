@@ -1,6 +1,6 @@
 {
     "changelogFilename": "CHANGELOG.md",
     "dataSource": "commits",
-    "ignoreCommitsWith": ["Bump", "changelog"],
+    "ignoreCommitsWith": ["Bump", "changelog", "Release"],
     "prefix": ""
 }
