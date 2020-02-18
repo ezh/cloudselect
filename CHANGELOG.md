@@ -1,12 +1,22 @@
 # Changelog
 
+## v20.1.9 (18/02/2020)
+
+-   [Improve gren configuration](https://github.com/ezh/cloudselect/commit/78a291685729fbd6dfd5849e2777fa82488ad34c) - @ezh
+-   [Improve simple group behavior](https://github.com/ezh/cloudselect/commit/85a6489c5c3322287d32089e38e109820eb01ad9) - @ezh
+-   [Improve testing behavior](https://github.com/ezh/cloudselect/commit/e81c777936ce122a524b47fbbc47fe5fd24f4501) - @ezh
+-   [Improve/fix tests](https://github.com/ezh/cloudselect/commit/708c5440ffe9c4065446629d4315e64a5f6ba9d5) - @ezh
+-   [Release version 20.1.9](https://github.com/ezh/cloudselect/commit/040135d13782132f427e9b553bb9a6208add7ab9) - @ezh
+-   [Update test fixtures](https://github.com/ezh/cloudselect/commit/ea06a7c2a5e02b665c9d25d9586aa989ac47ae14) - @ezh
+
+* * *
+
 ## v20.1.8 (18/02/2020)
 
 -   [Add regex to simple groups](https://github.com/ezh/cloudselect/commit/b57c6c9b2aa61ee30724e93d8e1355f2dce515f1) - @ezh
 -   [Add release task](https://github.com/ezh/cloudselect/commit/807836b7942b712ed41298a813c51b4fc803a405) - @ezh
 -   [Mark requirements updater as DONE](https://github.com/ezh/cloudselect/commit/ef05eb55e782f892f609236eff6157acb838833b) - @ezh
 -   [Release version 20.1.8](https://github.com/ezh/cloudselect/commit/59ee02a22e3fb37a1bdf9fd57c75ac69396a7ed2) - @ezh
--   [Update changelog for release version 20.1.7](https://github.com/ezh/cloudselect/commit/c92da822d9914bbba6ebe1390f7d4bd6ead3bc87) - @ezh
 
 * * *
 
@@ -25,7 +35,6 @@
 -   [Minor improvements for group scope](https://github.com/ezh/cloudselect/commit/b5ec2a3582bba1d48af1695af42a728100a7aa41) - @ezh
 -   [Release version 20.1.7](https://github.com/ezh/cloudselect/commit/7467a9d6ee3e151d2f23ca2c46322f203524af91) - @ezh
 -   [Update .pylintrc](https://github.com/ezh/cloudselect/commit/f56f5d5ee6b1d73ec5c264b558b65c32afcde8ed) - @ezh
--   [Update CHANGELOG.md formatting](https://github.com/ezh/cloudselect/commit/44fe25dd274a103823a41301998da222ad448010) - @ezh
 -   [Update configuration settings](https://github.com/ezh/cloudselect/commit/4538b4039c468515d81d1994dddda1ae1c74b875) - @ezh
 
 * * *
@@ -52,14 +61,11 @@
 
 ## v20.1.1 (11/02/2020)
 
--   [Update CHANGELOG.md](https://github.com/ezh/cloudselect/commit/f80f414eb8a1d366495d0680edc89dd23f0af1ab) - @ezh
-
 * * *
 
 ## v20.1 (11/02/2020)
 
 -   [Add 'site' to .gitignore](https://github.com/ezh/cloudselect/commit/ef95946b479935cc0e3d087d9cdd52d3c69b5232) - @ezh
--   [Add CHANGELOG file](https://github.com/ezh/cloudselect/commit/7a6d611e39a3a2551973d976bb429ac647745d0d) - @ezh
 -   [Add JSON pretty print formatter](https://github.com/ezh/cloudselect/commit/2672defaa6238f421e1825356cd7fba892214e65) - @ezh
 -   [Add YAML reporter](https://github.com/ezh/cloudselect/commit/4609a19142e9c0536d26d1514217ba1418f87c6d) - @ezh
 -   [Add **main** entry point](https://github.com/ezh/cloudselect/commit/d8b81956ee28def4ba2d28a5a8990a552393c9d7) - @ezh
