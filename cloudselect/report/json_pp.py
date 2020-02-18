@@ -21,6 +21,6 @@ class JsonPP(ReportService):  # pylint: disable=too-few-public-methods
         # get first instance
         # assume that all instances match the same group/pattern
         instance = next(iter(selected), None)
-        options = Container.options("option", instance)
+        options = Container.options("option", instance.metadata)
         report = {"instances": [i.to_dict() for i in selected], "option": options}
         print(json.dumps(report, indent=2, sort_keys=True))

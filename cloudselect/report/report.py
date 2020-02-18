@@ -10,6 +10,8 @@ import pprint
 
 import dependency_injector.providers as providers
 
+from cloudselect import Container
+
 
 class ReportService:  # pylint: disable=too-few-public-methods
     """Base class for reporting service."""
@@ -18,8 +20,12 @@ class ReportService:  # pylint: disable=too-few-public-methods
     def run(selected):
         """Prepare report based on list of selected instances."""
         pp = pprint.PrettyPrinter()
-        pp.pprint(selected)
-        return selected
+        # get first instance
+        # assume that all instances match the same group/pattern
+        instance = next(iter(selected), None)
+        options = Container.options("option", instance.metadata)
+        report = {"instances": [i.to_dict() for i in selected], "option": options}
+        pp.pprint(report)
 
 
 class ReportServiceProvider(providers.Singleton):
