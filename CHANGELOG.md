@@ -1,5 +1,12 @@
 # Changelog
 
+## v20.1.11 (19/02/2020)
+
+-   [Fix option block in report plugins](https://github.com/ezh/cloudselect/commit/ccc614518517784753faa75418a73f01f07f304d) - @ezh
+-   [Fix reporters](https://github.com/ezh/cloudselect/commit/87b7bfc5e70f693b04fec7f67b9e282a27bdb89e) - @ezh
+
+* * *
+
 ## v20.1.10 (18/02/2020)
 
 -   [Improve gren configuration](https://github.com/ezh/cloudselect/commit/8f6a650944d679cc6f251f6690e7910d086a1041) - @ezh
