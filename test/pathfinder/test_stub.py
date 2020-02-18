@@ -15,7 +15,7 @@ from cloudselect.pathfinder.stub import Stub
 INSTANCE = Instance(1, "127.0.0.1", "key", "user", 22, [], {}, [])
 
 
-def test_stub_pathfinder(tmpdir):
+def test_stub_pathfinder(cfgdir):
     """
     Testing Stub initializaion.
 
@@ -23,7 +23,7 @@ def test_stub_pathfinder(tmpdir):
     Does Stub return {}?
     Is Stub singleton?
     """
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     # Read shared part
     profile = cloud.configuration_read()
     args = cloud.parse_args([])
@@ -33,9 +33,9 @@ def test_stub_pathfinder(tmpdir):
     assert Container.pathfinder() == Container.pathfinder()
 
 
-def test_stub_behaviour(mocker, tmpdir):
+def test_stub_behaviour(mocker, cfgdir):
     """Assert calling run() for "cloudselect.pathfinder.stub" plugin."""
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     service_provider = cloud.plugin(
         "cloudselect.pathfinder.stub", PathFinderServiceProvider,
     )

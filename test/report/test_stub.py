@@ -12,7 +12,7 @@ from cloudselect.report import ReportServiceProvider
 from cloudselect.report.stub import Stub
 
 
-def test_stub_report(tmpdir):
+def test_stub_report(cfgdir):
     """
     Testing Stub initializaion.
 
@@ -20,7 +20,7 @@ def test_stub_report(tmpdir):
     Does Stub return []?
     Is Stub singleton?
     """
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     # Read shared part
     profile = cloud.configuration_read()
     args = cloud.parse_args([])
@@ -30,9 +30,9 @@ def test_stub_report(tmpdir):
     assert Container.report() == Container.report()
 
 
-def test_stub_behaviour(mocker, tmpdir):
+def test_stub_behaviour(mocker, cfgdir):
     """Assert calling run() for "cloudselect.report.stub" plugin."""
-    cloud = CloudSelect(tmpdir)
+    cloud = CloudSelect(cfgdir)
     service_provider = cloud.plugin("cloudselect.report.stub", ReportServiceProvider)
     stub = service_provider()
     mocker.patch.object(Stub, "run")
