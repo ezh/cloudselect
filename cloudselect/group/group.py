@@ -17,7 +17,7 @@ class GroupService:
     @staticmethod
     def run(name, metadata):  # pylint: disable=unused-argument
         """Get options for name regard with metadata."""
-        return {}
+        return None
 
     @staticmethod
     def config():

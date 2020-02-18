@@ -52,7 +52,7 @@ class CloudSelect:
         """Class constructor."""
         if configpath:
             self.configpath = str(configpath)
-        self.logger = None
+        self.log = None
 
     def configuration_exists(self, name):
         """Check if configuration/profile exists."""
@@ -104,9 +104,9 @@ class CloudSelect:
                 return safe_load(f)
         except Exception as e:
             message = "Unable to read configuration {}: {}".format(full_path, str(e))
-            if self.logger:
-                self.logger.debug(traceback.format_exc())
-                self.logger.error(message)
+            if self.log:
+                self.log.debug(traceback.format_exc())
+                self.log.error(message)
             else:
                 traceback.print_exc()
                 print(message)
@@ -119,9 +119,9 @@ class CloudSelect:
             elif args.verbose > 1:
                 configuration.get("log", {}).get("root", {})["level"] = logging.DEBUG
         dictConfig(configuration.get("log", {}))
-        self.logger = logging.getLogger("cloudselect.CloudSelect")
-        self.logger.debug("Logging is initialized")
-        self.logger.debug(
+        self.log = logging.getLogger("cloudselect.CloudSelect")
+        self.log.debug("Logging is initialized")
+        self.log.debug(
             "Configuration:\n%s",
             json.dumps(configuration, sort_keys=True, indent=4, separators=(",", ": ")),
         )
@@ -200,6 +200,10 @@ class CloudSelect:
         group = Container.group()
         base = copy.deepcopy(Container.config().get(name, {}))
         override = group.run(name, metadata)
+        if override is None:
+            return base
+        if override == {}:
+            return {}
         return self.merge(base, override)
 
     @staticmethod
