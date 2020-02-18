@@ -1,12 +1,18 @@
 # Changelog
 
+## v20.1.10 (18/02/2020)
+
+-   [Improve gren configuration](https://github.com/ezh/cloudselect/commit/8f6a650944d679cc6f251f6690e7910d086a1041) - @ezh
+-   [Improve simple group logging](https://github.com/ezh/cloudselect/commit/0e76ae3f30afe8830aff8a537057d3fef684f53c) - @ezh
+
+* * *
+
 ## v20.1.9 (18/02/2020)
 
 -   [Improve gren configuration](https://github.com/ezh/cloudselect/commit/78a291685729fbd6dfd5849e2777fa82488ad34c) - @ezh
 -   [Improve simple group behavior](https://github.com/ezh/cloudselect/commit/85a6489c5c3322287d32089e38e109820eb01ad9) - @ezh
 -   [Improve testing behavior](https://github.com/ezh/cloudselect/commit/e81c777936ce122a524b47fbbc47fe5fd24f4501) - @ezh
 -   [Improve/fix tests](https://github.com/ezh/cloudselect/commit/708c5440ffe9c4065446629d4315e64a5f6ba9d5) - @ezh
--   [Release version 20.1.9](https://github.com/ezh/cloudselect/commit/040135d13782132f427e9b553bb9a6208add7ab9) - @ezh
 -   [Update test fixtures](https://github.com/ezh/cloudselect/commit/ea06a7c2a5e02b665c9d25d9586aa989ac47ae14) - @ezh
 
 * * *
@@ -14,9 +20,7 @@
 ## v20.1.8 (18/02/2020)
 
 -   [Add regex to simple groups](https://github.com/ezh/cloudselect/commit/b57c6c9b2aa61ee30724e93d8e1355f2dce515f1) - @ezh
--   [Add release task](https://github.com/ezh/cloudselect/commit/807836b7942b712ed41298a813c51b4fc803a405) - @ezh
 -   [Mark requirements updater as DONE](https://github.com/ezh/cloudselect/commit/ef05eb55e782f892f609236eff6157acb838833b) - @ezh
--   [Release version 20.1.8](https://github.com/ezh/cloudselect/commit/59ee02a22e3fb37a1bdf9fd57c75ac69396a7ed2) - @ezh
 
 * * *
 
@@ -33,7 +37,6 @@
 -   [Improve README.md](https://github.com/ezh/cloudselect/commit/d2eb3f9ce37186aa4c7c035f0ae972a183ebda6a) - @ezh
 -   [Improve tests](https://github.com/ezh/cloudselect/commit/8b79586a533d14c462158b3717067d1e1c49fa55) - @ezh
 -   [Minor improvements for group scope](https://github.com/ezh/cloudselect/commit/b5ec2a3582bba1d48af1695af42a728100a7aa41) - @ezh
--   [Release version 20.1.7](https://github.com/ezh/cloudselect/commit/7467a9d6ee3e151d2f23ca2c46322f203524af91) - @ezh
 -   [Update .pylintrc](https://github.com/ezh/cloudselect/commit/f56f5d5ee6b1d73ec5c264b558b65c32afcde8ed) - @ezh
 -   [Update configuration settings](https://github.com/ezh/cloudselect/commit/4538b4039c468515d81d1994dddda1ae1c74b875) - @ezh
 
