@@ -28,7 +28,7 @@ setup(
         "appdirs==1.4.3",
         "boto3==1.12.3",
         "chardet==3.0.4",
-        "dependency-injector==3.15.4",
+        "dependency-injector==3.15.6",
         "pyyaml==5.2",
     ],
     include_package_data=True,
