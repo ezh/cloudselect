@@ -29,6 +29,7 @@ def release(ctx, version):
     print("Release new version {}".format(version))
     version_num = version[1:]
     try:
+        ctx.run("$(git rev-parse --abbrev-ref HEAD) == master")
         ctx.run("git tag")
         ctx.run(
             'sed -i \'s#__version__ = ".*"#__version__ = "{}"#\' setup.py'.format(
