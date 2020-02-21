@@ -39,42 +39,46 @@ class Hetzner(DiscoveryService):
             instance_id = i["id"]
             metadata = i
             config = Container.options("discovery", metadata)
-            ip = self.get_ip(i, config)
-            key = self.get_key(i, config)
-            port = self.get_port(i, config)
-            user = self.get_user(i, config)
+            ip = self.get_ip(i)
+            key = self.get_key(config)
+            port = self.get_port(config)
+            user = self.get_user(config)
 
             representation = [instance_id, ip]
-            for field in self.config().get("fzf_extra", []):
-                if field in i:
-                    if isinstance(i[field], dict):
-                        values = []
-                        for dict_key in i[field]:
-                            if i[field][dict_key]:
-                                values.append(dict_key + ":" + i[field][dict_key])
-                            else:
-                                values.append(dict_key)
-                        representation.append(",".join(values))
-                    elif isinstance(i[field], list):
-                        representation.append(",".join(i[field]))
-                    else:
-                        representation.append(str(i[field]))
-                elif ":" in field:
-                    value = metadata
-                    path = field.split(":")
-                    for dict_key in path:
-                        value = value.get(dict_key)
-                        if not value:
-                            self.logger.debug(
-                                "Unable to find key %s in %s", dict_key, metadata,
-                            )
-                            break
-                    representation.append(str(value))
+            self.enrich_representation(representation, metadata)
 
             instance = Instance(
                 instance_id, ip, key, user, port, None, metadata, representation,
             )
             yield instance
+
+    def enrich_representation(self, representation, metadata):
+        """Collect additional representation items from metadata."""
+        for field in self.config().get("fzf_extra", []):
+            if field in metadata:
+                if isinstance(metadata[field], dict):
+                    values = []
+                    for dict_key in metadata[field]:
+                        if metadata[field][dict_key]:
+                            values.append(dict_key + ":" + metadata[field][dict_key])
+                        else:
+                            values.append(dict_key)
+                    representation.append(",".join(values))
+                elif isinstance(metadata[field], list):
+                    representation.append(",".join(metadata[field]))
+                else:
+                    representation.append(str(metadata[field]))
+            elif ":" in field:
+                value = metadata
+                path = field.split(":")
+                for dict_key in path:
+                    value = value.get(dict_key)
+                    if not value:
+                        self.logger.debug(
+                            "Unable to find key %s in %s", dict_key, metadata,
+                        )
+                        break
+                representation.append(str(value))
 
     @staticmethod
     def find():
@@ -117,12 +121,12 @@ class Hetzner(DiscoveryService):
             }
 
     @staticmethod
-    def get_ip(instance, config):
+    def get_ip(instance):
         """Get instance IP."""
         return instance["public_net"]["ipv4"].get("ip", "")
 
     @staticmethod
-    def get_key(instance, config):
+    def get_key(config):
         """Get instance key."""
         return config.get("key")
 
@@ -137,12 +141,12 @@ class Hetzner(DiscoveryService):
         return dict(Hetzner.process(raw))
 
     @staticmethod
-    def get_port(instance, config):
+    def get_port(config):
         """Get instance port."""
         return config.get("port")
 
     @staticmethod
-    def get_user(instance, config):
+    def get_user(config):
         """Get instance user."""
         return config.get("user")
 
