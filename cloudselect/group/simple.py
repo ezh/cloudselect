@@ -56,7 +56,7 @@ class Simple(GroupService):
                 for key_part in key.split("."):
                     try:
                         value = value.get(key_part)
-                        if not value:
+                        if value is None:
                             self.log.debug("%s: Unable to find key %s", name, key_part)
                             break
                     except (AttributeError, NameError):

@@ -23,6 +23,7 @@
     "plugin": {
         "discovery": {
             "aws": "cloudselect.discovery.aws",
+            "hetzner": "cloudselect.discovery.hetzner",
             "local": "cloudselect.discovery.local"
         },
         "group": {

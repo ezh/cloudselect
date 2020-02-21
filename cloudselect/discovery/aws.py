@@ -19,15 +19,15 @@ from . import DiscoveryService
 class AWS(DiscoveryService):
     """Class implementing discovery service plugin."""
 
-    logger = None
+    log = None
 
     def __init__(self):
         """Class constructor."""
-        self.logger = logging.getLogger("cloudselect.discovery.AWS")
+        self.log = logging.getLogger("cloudselect.discovery.AWS")
 
     def run(self):
         """Collect AWS instances."""
-        self.logger.debug("Discover AWS instances")
+        self.log.debug("Discover AWS instances")
         return list(self.instances())
 
     def instances(self):
@@ -128,7 +128,7 @@ class AWS(DiscoveryService):
         profile_name = Container.config.discovery.profile_name()
         region = instance["Placement"]["AvailabilityZone"][:-1]
 
-        self.logger.debug("Search for SSH key %s", instance["KeyName"])
+        self.log.debug("Search for SSH key %s", instance["KeyName"])
         return self.get_option(
             config.get("key", {}), instance["KeyName"], profile_name, region,
         )
