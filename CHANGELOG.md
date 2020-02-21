@@ -1,5 +1,16 @@
 # Changelog
 
+## v20.1.12 (21/02/2020)
+
+-   [Add Hetzner discovery](https://github.com/ezh/cloudselect/commit/61e49bcd14ec003874566e6639aa7f3af15884a2) - @ezh
+-   [Add PORT option to tmux script](https://github.com/ezh/cloudselect/commit/f86eb91012151944b1abe11c49ec7c2a16e5b877) - @ezh
+-   [Fix simple group](https://github.com/ezh/cloudselect/commit/b6bfe5ffb3c4a44e8e433084bcc124975dddecd2) - @ezh
+-   [Fix warnings](https://github.com/ezh/cloudselect/commit/515f21925ca79faf9df594d44c3a7215de3a1f31) - @ezh
+-   [Improve requirements](https://github.com/ezh/cloudselect/commit/e842669a23261f15e7af8e36af0b2fcc53a76fbb) - @ezh
+-   [Refactor AWS logger to log](https://github.com/ezh/cloudselect/commit/8a866645622046a807c00e58119de22ac5949821) - @ezh
+
+* * *
+
 ## v20.1.11 (19/02/2020)
 
 -   [Fix option block in report plugins](https://github.com/ezh/cloudselect/commit/ccc614518517784753faa75418a73f01f07f304d) - @ezh
