@@ -9,6 +9,12 @@
 
 You may find a documentation at the <a href="https://cloudselect.readthedocs.io/" target="_blank">Read The Docs</a>
 
+## Environments
+
+-   [Amazon Web Services (AWS)](https://aws.amazon.com/)
+-   [Hetzner cloud](https://www.hetzner.com/cloud)
+-   Discovery results from local command
+
 ## Purpose
 
 We should jump between nodes quickly, having a pack of cloud accounts. Each account could be in a different region. Some nodes are publicity available, some of them not. Dozen of nodes sit behind bastion hosts. And a few of them sit behind a group of jump points. And they all have different SSH keys.
@@ -21,7 +27,7 @@ Cloud Select is useful for diving inside geo-distributed onion enterprise enviro
 
 ## Implementation
 
-CloudSelect retrieves node list from the cloud, passes that list to FZF, adds some useful information to selected nodes (like jump hosts, `sudo -i` command, etc...), and returns JSON dictionary that could be used by other programs. CloudSelect is a team player in a shell environment. We can automatically open interactive SSH sessions in parallel and provide passwords to `sudo -i` under TMUX environment.
+CloudSelect retrieves node list from the cloud, passes that list to FZF, adds some useful information to selected nodes (like jump hosts, `sudo -i` command, etc...), and returns dictionary that could be used by other programs. CloudSelect is a team player in a shell environment. We can automatically open interactive SSH sessions in parallel and provide passwords to `sudo -i` under TMUX environment.
 
 ## Demo
 
