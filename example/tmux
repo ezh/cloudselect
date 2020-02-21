@@ -10,16 +10,17 @@ function jumphost() {
 
   HOST=$(echo $OUTPUT | jq -r '.jumphost.host')
   KEY="-i"$(echo $OUTPUT | jq -r '.jumphost.key // ""')
+  PORT=$(echo $OUTPUT | jq -r '.jumphost.port // "22"')
   USER=$(echo $OUTPUT | jq -r '.jumphost.user // ""')"@"
 
   test "$KEY" == "-i" && KEY=""
   test "$USER" == "@" && USER=""
-  echo ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $OPTION_SSH $KEY $USER$HOST
+  echo ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $PORT $OPTION_SSH $KEY $USER$HOST
 }
 
 CLOUDSELECT_ARGS=$#
 if [ $CLOUDSELECT_ARGS -eq 0 ]; then
-  cloudselect
+  python -m cloudselect
   exit
 fi
 for (( i=1; i <= "$#"; i++ )); do
@@ -30,7 +31,7 @@ for (( i=1; i <= "$#"; i++ )); do
 done
 SSH_ARGS=$(($CLOUDSELECT_ARGS+2))
 
-OUTPUT=$(cloudselect "${@:1:$CLOUDSELECT_ARGS}")
+OUTPUT=$(python -m cloudselect "${@:1:$CLOUDSELECT_ARGS}")
 if [ $? -ne 0 ];then
   exit
 fi
@@ -59,16 +60,17 @@ for row in $(echo $CLOUD); do
     HOST=$(echo $OUTPUT | jq -r '.host')
     JUMPHOST=$(jumphost $row)
     KEY="-i"$(echo $OUTPUT | jq -r '.key // ""')
+    PORT=$(echo $OUTPUT | jq -r '.port // "22"')
     USER=$(echo $OUTPUT | jq -r '.user // ""')"@"
 
     test "$KEY" == "-i" && KEY=""
     test "$USER" == "@" && USER=""
 
-    connectString="$JUMPHOST ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $OPTION_SSH $KEY $USER$HOST $OPTION_SSH_COMMAND ${@:$SSH_ARGS}"
+    connectString="$JUMPHOST ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $PORT $OPTION_SSH $KEY $USER$HOST $OPTION_SSH_COMMAND ${@:$SSH_ARGS}"
     commandString="${connectString}; $WAIT_FOR_INPUT"
 
     if [ $# -ge $SSH_ARGS ];then
-      echo "$JUMPHOST ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $OPTION_SSH $KEY $USER$HOST ${@:$SSH_ARGS}"
+      echo "$JUMPHOST ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $PORT $OPTION_SSH $KEY $USER$HOST ${@:$SSH_ARGS}"
       $JUMPHOST ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $OPTION_SSH $KEY $USER$HOST ${@:$SSH_ARGS}
       continue
     fi
