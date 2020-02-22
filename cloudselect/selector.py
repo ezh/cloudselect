@@ -1,4 +1,4 @@
-# Copyright 2019 Alexey Aksenov and individual contributors
+# Copyright 2019-2020 Alexey Aksenov and individual contributors
 # See the LICENSE.txt file at the top-level directory of this distribution.
 #
 # Licensed under the MIT license
@@ -74,8 +74,11 @@ class Selector:
         fzf_options = Container.config.fzf() or ["-1", "-m", "--with-nth", "2.."]
 
         def find(instance_id):
-            return next(x for x in instances if x.id == instance_id)
+            return next(x for x in instances if x.instance_id == instance_id)
 
+        if Container.config.sort_by():
+            sort_by = Container.config.sort_by()
+            instances = sorted(instances, key=lambda x: x.representation[sort_by])
         fzf_input = "\n".join("\t".join(i.representation) for i in instances).encode()
         selected = self.execute("fzf", fzf_options, input=fzf_input)
         if not selected:

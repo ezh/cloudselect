@@ -1,4 +1,4 @@
-# Copyright 2019 Alexey Aksenov and individual contributors
+# Copyright 2019-2020 Alexey Aksenov and individual contributors
 # See the LICENSE.txt file at the top-level directory of this distribution.
 #
 # Licensed under the MIT license
@@ -8,7 +8,9 @@
 """Module that enrich instances with jumphosts."""
 import logging
 
-from cloudselect import Container, Instance
+import attr
+
+from cloudselect import CloudInstance, Container
 
 from . import PathFinderService
 
@@ -30,15 +32,15 @@ class Bastion(PathFinderService):
         if arguments:
             jumphost = None
             if "host" in arguments:
-                jumphost = Instance(
+                jumphost = CloudInstance(
                     -1,
                     arguments["host"],
-                    arguments.get("key"),
-                    arguments.get("user"),
-                    arguments.get("port", 22),
                     None,
                     {},
                     [],
+                    arguments.get("key"),
+                    arguments.get("user"),
+                    arguments.get("port", 22),
                 )
             elif "metadata" in arguments and ":" in arguments["metadata"]:
                 key, pattern = arguments["metadata"].split(":", 1)
@@ -50,16 +52,7 @@ class Bastion(PathFinderService):
                         jumphost = point
                         break
             if jumphost:
-                return Instance(
-                    instance.id,
-                    instance.host,
-                    instance.key,
-                    instance.user,
-                    instance.port,
-                    jumphost,
-                    instance.metadata,
-                    instance.representation,
-                )
+                return attr.evolve(instance, jumphost=jumphost)
         return instance
 
     def find_jumphost(self, metadata_key, value_pattern, instance):

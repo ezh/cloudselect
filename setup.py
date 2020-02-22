@@ -25,11 +25,13 @@ setup(
         ],
     },
     install_requires=[
+        "attrs==19.3.0",
         "appdirs==1.4.3",
         "boto3==1.12.3",
         "chardet==3.0.4",
         "dependency-injector==3.15.6",
         "hcloud==1.6.3",
+        "kubernetes==10.0.1",
         "pyyaml==5.3",
     ],
     include_package_data=True,

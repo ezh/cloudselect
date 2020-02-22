@@ -1,4 +1,4 @@
-# Copyright 2019 Alexey Aksenov and individual contributors
+# Copyright 2019-2020 Alexey Aksenov and individual contributors
 # See the LICENSE.txt file at the top-level directory of this distribution.
 #
 # Licensed under the MIT license
@@ -9,7 +9,7 @@
 import logging
 import subprocess
 
-from cloudselect import Container, Instance
+from cloudselect import CloudInstance, Container
 
 from . import DiscoveryService
 
@@ -44,8 +44,8 @@ class Local(DiscoveryService):
             metadata = {"host": host}
             representation = [host_id, host]
             user = self.get_user(host)
-            instance = Instance(
-                host_id, ip, key, user, None, None, metadata, representation,
+            instance = CloudInstance(
+                host_id, ip, None, metadata, representation, key, user, None,
             )
             yield instance
 

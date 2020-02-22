@@ -1,4 +1,4 @@
-# Copyright 2019 Alexey Aksenov and individual contributors
+# Copyright 2019-2020 Alexey Aksenov and individual contributors
 # See the LICENSE.txt file at the top-level directory of this distribution.
 #
 # Licensed under the MIT license
@@ -11,9 +11,9 @@ from __future__ import absolute_import, division, print_function
 import dependency_injector.containers as containers
 import pkg_resources  # pylint: disable=wrong-import-order
 
-from .instance import Instance
+from .instance import CloudInstance, Instance, PodContainer
 
-__all__ = ["Instance"]
+__all__ = ["CloudInstance", "Instance", "PodContainer"]
 
 __title__ = "awselect"
 __summary__ = "AWS FZF selector"
