@@ -10,10 +10,9 @@ import copy
 import logging
 import re
 
-from kubernetes import client
-from kubernetes import config as config
+from kubernetes import client, config
 
-from cloudselect import Container, Pod
+from cloudselect import Container, PodContainer
 
 from . import DiscoveryService
 
@@ -38,22 +37,24 @@ class Kubernetes(DiscoveryService):
             instance_id = i["metadata"]["uid"]
             metadata = self.simplify_metadata(i)
             configuration = i["cluster"]["configuration"]
+            container = i["container"]
             context = i["cluster"]["context"]
             ip = i["status"]["pod_ip"]
             name = i["metadata"]["name"]
             namespace = i["metadata"]["namespace"]
             node_ip = i["status"]["host_ip"]
 
-            representation = [instance_id, name]
+            representation = [instance_id, name, container]
             self.enrich_representation(representation, metadata)
 
-            instance = Pod(
+            instance = PodContainer(
                 instance_id,
                 name,
                 None,
                 metadata,
                 representation,
                 configuration,
+                container,
                 context,
                 namespace,
                 ip,
@@ -81,19 +82,21 @@ class Kubernetes(DiscoveryService):
             core_v1 = client.CoreV1Api(api_client=api_client)
             ret = core_v1.list_pod_for_all_namespaces(watch=False)
             for pod in ret.items:
-                instance = copy.deepcopy(pod.to_dict())
-                if instance["status"]["phase"] == "Running":
-                    instance["cluster"] = {
-                        "configuration": config_file,
-                        "context": context,
-                    }
-                    if patterns:
-                        namespace = instance["metadata"]["namespace"]
-                        matched = next(
-                            (m for m in patterns if m.match(namespace) is not None),
-                            None,
-                        )
-                        if matched is not None:
+                for container in pod.spec.containers:
+                    instance = copy.deepcopy(pod.to_dict())
+                    if instance["status"]["phase"] == "Running":
+                        instance["cluster"] = {
+                            "configuration": config_file,
+                            "context": context,
+                        }
+                        instance["container"] = container.name
+                        if patterns:
+                            namespace = instance["metadata"]["namespace"]
+                            matched = next(
+                                (m for m in patterns if m.match(namespace) is not None),
+                                None,
+                            )
+                            if matched is not None:
+                                yield instance
+                        else:
                             yield instance
-                    else:
-                        yield instance

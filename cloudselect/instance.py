@@ -51,10 +51,11 @@ class CloudInstance(Instance):
 
 
 @attr.s
-class Pod(Instance):
-    """Kubernetes pod class."""
+class PodContainer(Instance):
+    """Kubernetes container class."""
 
     configuration = attr.ib()
+    container = attr.ib()
     context = attr.ib()
     namespace = attr.ib()
     ip = attr.ib()
@@ -65,6 +66,7 @@ class Pod(Instance):
         return {
             "id": self.instance_id,
             "configuration": self.configuration,
+            "container": self.container,
             "context": self.context,
             "host": self.host,
             "ip": self.ip,

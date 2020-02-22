@@ -11,11 +11,9 @@ from __future__ import absolute_import, division, print_function
 import dependency_injector.containers as containers
 import pkg_resources  # pylint: disable=wrong-import-order
 
-from .instance import CloudInstance
-from .instance import Instance
-from .instance import Pod
+from .instance import CloudInstance, Instance, PodContainer
 
-__all__ = ["CloudInstance", "Instance", "Pod"]
+__all__ = ["CloudInstance", "Instance", "PodContainer"]
 
 __title__ = "awselect"
 __summary__ = "AWS FZF selector"
