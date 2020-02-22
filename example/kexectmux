@@ -1,0 +1,74 @@
+#!/bin/sh
+#
+# Split arguments by --:
+# cloudselect arguments -- exec arguments
+
+CLOUDSELECT_ARGS=$#
+if [ $CLOUDSELECT_ARGS -eq 0 ]; then
+  python -m cloudselect
+  exit
+fi
+for (( i=1; i <= "$#"; i++ )); do
+  if [ "${!i}" == "--" ]; then
+    CLOUDSELECT_ARGS=$(($i-1))
+    break
+  fi
+done
+KEXEC_ARGS=$(($CLOUDSELECT_ARGS+2))
+
+OUTPUT=$(python -m cloudselect "${@:1:$CLOUDSELECT_ARGS}")
+if [ $? -ne 0 ];then
+  exit
+fi
+
+CLOUD=$(echo $OUTPUT | jq -r '.instances[] | @base64')
+TMUX_LAYOUT=${TMUX_LAYOUT:-tiled}
+TMUX_SESSION_NAME="assh-"$(date +%s)
+WAIT_FOR_INPUT='read -n 1 -s -r -p "Press any key to continue"'
+WINDOW=0
+
+OPTION_AFTER=$(echo $OUTPUT | jq -r '.option.after // ""')
+OPTION_BEFORE=$(echo $OUTPUT | jq -r '.option.before // ""')
+OPTION_SHELL=$(echo $OUTPUT | jq -r '.option.shell // "bash"')
+
+# Collect shared arguments
+for row in $(echo $CLOUD); do
+    OUTPUT=$(echo ${row} | base64 --decode)
+    break
+done
+
+test "$OPTION_BEFORE" != "null" && eval "$OPTION_BEFORE"
+# Iterate over instances
+for row in $(echo $CLOUD); do
+    OUTPUT=$(echo ${row} | base64 --decode)
+    HOST=$(echo $OUTPUT | jq -r '.host')
+    CONFIGURATION="--kubeconfig="$(echo $OUTPUT | jq -r '.configuration // ""')
+    CONTEXT="--context="$(echo $OUTPUT | jq -r '.context // ""')
+    NAMESPACE=$(echo $OUTPUT | jq -r '.namespace // ""')
+
+    test "$CONFIGURATION" == "--kubeconfig=" && CONFIGURATION=""
+    test "$CONTEXT" == "--context=" && CONTEXT=""
+
+    connectString="kubectl $CONFIGURATION $CONTEXT -n $NAMESPACE exec $HOST -i -t $OPTION_SHELL"
+    commandString="${connectString}; $WAIT_FOR_INPUT"
+
+    if [ $# -ge $KEXEC_ARGS ];then
+      echo "kubectl $CONFIGURATION $CONTEXT -n $NAMESPACE exec $HOST -- ${@:$KEXEC_ARGS}"
+      kubectl $CONFIGURATION $CONTEXT -n $NAMESPACE exec $HOST -- ${@:$KEXEC_ARGS}
+      continue
+    fi
+
+    tmux list-windows | grep -q "${TMUX_SESSION_NAME}"
+    if [ $WINDOW -eq 0 -a $? -ne 0 ]; then
+        tmux new-window -n "${TMUX_SESSION_NAME}" "$commandString"
+        echo "$connectString"
+    else
+        tmux split-window -t "${TMUX_SESSION_NAME}" "${commandString}" && \
+            echo "$connectString"
+    fi
+    WINDOW=$((WINDOW+1))
+done
+
+test $WINDOW -gt 0 && tmux set-window-option -t "${TMUX_SESSION_NAME}" synchronize-panes on
+test $WINDOW -gt 0 && tmux select-layout -t "${TMUX_SESSION_NAME}" "${TMUX_LAYOUT}"
+test "$OPTION_AFTER" != "null" && eval "$OPTION_AFTER"
