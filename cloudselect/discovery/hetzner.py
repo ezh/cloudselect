@@ -14,7 +14,7 @@ from hcloud.images.domain import Image
 from hcloud.server_types.domain import ServerType
 from hcloud.servers.domain import IPv4Address, IPv6Network
 
-from cloudselect import Container, Instance
+from cloudselect import CloudInstance, Container
 
 from . import DiscoveryService
 
@@ -22,19 +22,19 @@ from . import DiscoveryService
 class Hetzner(DiscoveryService):
     """Class implementing discovery service plugin."""
 
-    logger = None
+    log = None
 
     def __init__(self):
         """Class constructor."""
-        self.logger = logging.getLogger("cloudselect.discovery.AWS")
+        self.log = logging.getLogger("cloudselect.discovery.Hetzner")
 
     def run(self):
-        """Collect AWS instances."""
-        self.logger.debug("Discover AWS instances")
+        """Collect Hetzner instances."""
+        self.log.debug("Discover Hetzner instances")
         return list(self.instances())
 
     def instances(self):
-        """Collect AWS instances."""
+        """Collect Hetzner instances."""
         for i in self.find():
             instance_id = i["id"]
             metadata = i
@@ -47,38 +47,10 @@ class Hetzner(DiscoveryService):
             representation = [instance_id, ip]
             self.enrich_representation(representation, metadata)
 
-            instance = Instance(
-                instance_id, ip, key, user, port, None, metadata, representation,
+            instance = CloudInstance(
+                instance_id, ip, None, metadata, representation, key, user, port,
             )
             yield instance
-
-    def enrich_representation(self, representation, metadata):
-        """Collect additional representation items from metadata."""
-        for field in self.config().get("fzf_extra", []):
-            if field in metadata:
-                if isinstance(metadata[field], dict):
-                    values = []
-                    for dict_key in metadata[field]:
-                        if metadata[field][dict_key]:
-                            values.append(dict_key + ":" + metadata[field][dict_key])
-                        else:
-                            values.append(dict_key)
-                    representation.append(",".join(values))
-                elif isinstance(metadata[field], list):
-                    representation.append(",".join(metadata[field]))
-                else:
-                    representation.append(str(metadata[field]))
-            elif ":" in field:
-                value = metadata
-                path = field.split(":")
-                for dict_key in path:
-                    value = value.get(dict_key)
-                    if not value:
-                        self.logger.debug(
-                            "Unable to find key %s in %s", dict_key, metadata,
-                        )
-                        break
-                representation.append(str(value))
 
     @staticmethod
     def find():

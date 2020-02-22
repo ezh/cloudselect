@@ -1,4 +1,4 @@
-# Copyright 2019 Alexey Aksenov and individual contributors
+# Copyright 2019-2020 Alexey Aksenov and individual contributors
 # See the LICENSE.txt file at the top-level directory of this distribution.
 #
 # Licensed under the MIT license
@@ -11,7 +11,7 @@ import logging
 
 import boto3
 
-from cloudselect import Container, Instance
+from cloudselect import CloudInstance, Container
 
 from . import DiscoveryService
 
@@ -47,8 +47,8 @@ class AWS(DiscoveryService):
                     representation.append(i[field])
                 elif field.startswith("tag:"):
                     representation.append(self.tag(i, field.replace("tag:", "")))
-            instance = Instance(
-                instance_id, ip, key, user, 22, None, metadata, representation,
+            instance = CloudInstance(
+                instance_id, ip, None, metadata, representation, key, user, 22,
             )
             yield instance
 
