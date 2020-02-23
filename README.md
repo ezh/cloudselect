@@ -9,12 +9,14 @@
 
 You may find a documentation at the <a href="https://cloudselect.readthedocs.io/" target="_blank">Read The Docs</a>
 
+[![PyPI - The Latest Version](https://img.shields.io/pypi/v/cloudselect?label=the%20latest%20version&style=for-the-badge)](https://pypi.org/project/cloudselect/)
+
 ## Environments
 
 -   [Amazon Web Services (AWS)](https://aws.amazon.com/)
 -   [Hetzner cloud](https://www.hetzner.com/cloud)
 -   [Kubernetes](https://kubernetes.io/)
--   Discovery results from local command
+-   Discovery results from a local command
 
 ## Purpose
 
@@ -87,7 +89,5 @@ You may copy suitable wrapper from [example](https://github.com/ezh/cloudselect/
 [MIT][mit] © [Alexey Aksenov][author] et [al][contributors]
 
 [mit]: https://opensource.org/licenses/MIT
-
 [author]: https://github.com/ezh
-
 [contributors]: https://github.com/ezh/cloudselect/graphs/contributors
