@@ -13,6 +13,7 @@ You may find a documentation at the <a href="https://cloudselect.readthedocs.io/
 
 -   [Amazon Web Services (AWS)](https://aws.amazon.com/)
 -   [Hetzner cloud](https://www.hetzner.com/cloud)
+-   [Kubernetes](https://kubernetes.io/)
 -   Discovery results from local command
 
 ## Purpose
