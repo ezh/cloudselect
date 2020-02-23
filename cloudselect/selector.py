@@ -109,7 +109,7 @@ class Selector:
             raise AssertionError(
                 "There should be at least 2 fields in instance representation: id and something meaningful",
             )
-        return [find(i.split("\t", 1)[0]) for i in selected.split("\n")]
+        return [find(i.split("\t", 1)[0].strip()) for i in selected.split("\n")]
 
     def get_editor(self):
         """Get editor path."""

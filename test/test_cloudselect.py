@@ -94,6 +94,7 @@ def test_cli_configuration_read(cfgdir):
             "discovery": {
                 "aws": "cloudselect.discovery.aws",
                 "hetzner": "cloudselect.discovery.hetzner",
+                "kubernetes": "cloudselect.discovery.kubernetes",
                 "local": "cloudselect.discovery.local",
             },
             "group": {"simple": "cloudselect.group.simple"},
