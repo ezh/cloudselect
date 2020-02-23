@@ -63,6 +63,9 @@ class DiscoveryService:
 
         def map_nested_dicts_modify(obj, func):
             """Apply function to object."""
+            filtered = {k: v for k, v in obj.items() if v is not None}
+            obj.clear()
+            obj.update(filtered)
             for key, value in obj.items():
                 if isinstance(value, collections.Mapping):
                     map_nested_dicts_modify(value, func)
