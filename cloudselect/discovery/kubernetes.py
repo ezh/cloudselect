@@ -111,15 +111,9 @@ class Kubernetes(DiscoveryService):
             pods = self.get_pods(cluster_id, configuration, context)
             self.aws_restore(*aws_envs)
             for pod in pods:
-                namespace = pod["metadata"]["namespace"]
-                matched = True
-                if patterns:
-                    matched = False
-                    for i in patterns:
-                        if i.match(namespace) is not None:
-                            matched = True
-                            break
-                if pod["status"]["phase"] in ["Running"] and matched:
+                if pod["status"]["phase"] in ["Running"] and any(
+                    i.match(pod["metadata"]["namespace"]) is not None for i in patterns
+                ):
                     for container in pod["spec"]["containers"]:
                         yield {
                             "aws_profile": aws_profile,
