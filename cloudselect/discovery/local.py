@@ -44,8 +44,6 @@ class Local(DiscoveryService):
         )
         for index, host in enumerate(output):
             host_id = str(index)
-            ip = host
-            key = self.get_key(host)
             metadata = {"host": host}
 
             representation = [host_id, host]
@@ -58,11 +56,16 @@ class Local(DiscoveryService):
                 else:
                     fields_length[idx] = max(fields_length[idx], len(value))
 
-            user = self.get_user(host)
-            instance = CloudInstance(
-                host_id, ip, None, metadata, representation, key, user, None,
+            yield CloudInstance(
+                host_id,
+                host,
+                None,
+                metadata,
+                representation,
+                self.get_key(host),
+                self.get_user(host),
+                None,
             )
-            yield instance
         yield fields_length
 
     def get_key(self, host):
