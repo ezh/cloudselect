@@ -85,9 +85,11 @@ class Selector:
         ]
 
         def find(instance_id):
+            """Find instance by instance_id."""
             return next(x for x in instances if x.instance_id == instance_id)
 
         def adjust(representation, representation_maximum_field_length):
+            """Adjust representation items if necessary."""
             if self.config().get("adjust"):
                 for idx, value in enumerate(representation):
                     representation[idx] = value.ljust(
