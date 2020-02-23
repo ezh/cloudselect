@@ -23,7 +23,7 @@ def test_completer(capsys):
     selector = cloud.fabric(configuration, args)
     selector.complete("", 0)
     captured = capsys.readouterr()
-    assert captured.out == "a\nb\nc\nempty\nsingle\n"
+    assert captured.out == "a\nb\nc\nempty\nk8s\nsingle\n"
     assert captured.err == ""
 
 
@@ -35,7 +35,10 @@ def test_profile_list(capsys):
     selector = cloud.fabric(configuration, args)
     selector.profile_list()
     captured = capsys.readouterr()
-    assert captured.out == "CloudSelect profiles:\n- a\n- b\n- c\n- empty\n- single\n"
+    assert (
+        captured.out
+        == "CloudSelect profiles:\n- a\n- b\n- c\n- empty\n- k8s\n- single\n"
+    )
     assert captured.err == ""
 
 

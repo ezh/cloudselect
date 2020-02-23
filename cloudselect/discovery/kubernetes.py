@@ -29,10 +29,15 @@ class Kubernetes(DiscoveryService):
     def run(self):
         """Collect Kubernetes pods."""
         self.log.debug("Discover Kubernetes pods")
-        return list(self.instances())
+        instances = list(self.instances())
+        representation = instances[-1]
+        del instances[-1]
+        return (representation, instances)
 
     def instances(self):
         """Collect Kubernetes pods."""
+        # Array with maximum field length for each element in representation
+        fields_length = []
         for i in self.find():
             metadata = self.simplify_metadata(i["metadata"])
             container = i["container"]
@@ -42,6 +47,13 @@ class Kubernetes(DiscoveryService):
 
             representation = [instance_id, name, container]
             self.enrich_representation(representation, metadata)
+
+            # Update maximum field length
+            for idx, value in enumerate(representation):
+                if idx >= len(fields_length):
+                    fields_length.append(len(value))
+                else:
+                    fields_length[idx] = max(fields_length[idx], len(value))
 
             yield PodContainer(
                 instance_id,
@@ -58,6 +70,7 @@ class Kubernetes(DiscoveryService):
                 namespace,
                 metadata["status"]["host_ip"],
             )
+        yield fields_length
 
     @staticmethod
     def aws_apply(aws_profile, aws_region):
@@ -97,8 +110,8 @@ class Kubernetes(DiscoveryService):
             aws_envs = self.aws_apply(aws_profile, aws_region)
             pods = self.get_pods(cluster_id, configuration, context)
             self.aws_restore(*aws_envs)
-            for pod in pods.items:
-                namespace = pod.metadata.namespace
+            for pod in pods:
+                namespace = pod["metadata"]["namespace"]
                 matched = True
                 if patterns:
                     matched = False
@@ -106,15 +119,15 @@ class Kubernetes(DiscoveryService):
                         if i.match(namespace) is not None:
                             matched = True
                             break
-                if pod.status.phase == "Running" and matched:
-                    for container in pod.spec.containers:
+                if pod["status"]["phase"] in ["Running"] and matched:
+                    for container in pod["spec"]["containers"]:
                         yield {
                             "aws_profile": aws_profile,
                             "aws_region": aws_region,
                             "configuration": configuration,
-                            "container": container.name,
+                            "container": container["name"],
                             "context": context,
-                            "metadata": pod.to_dict(),
+                            "metadata": pod,
                         }
 
     def get_pods(self, cluster_id, configuration, context):
@@ -130,4 +143,6 @@ class Kubernetes(DiscoveryService):
             version.git_version,
         )
         core_v1 = client.CoreV1Api(api_client=api_client)
-        return core_v1.list_pod_for_all_namespaces(watch=False)
+        return [
+            i.to_dict() for i in core_v1.list_pod_for_all_namespaces(watch=False).items
+        ]

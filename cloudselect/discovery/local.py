@@ -26,12 +26,17 @@ class Local(DiscoveryService):
     def run(self):
         """Collect instances from shell output."""
         self.logger.debug("Discover local instances")
-        return list(self.instances())
+        instances = list(self.instances())
+        representation = instances[-1]
+        del instances[-1]
+        return (representation, instances)
 
     def instances(self):
         """Collect instances from shell output."""
         config = Container.config.discovery
 
+        # Array with maximum field length for each element in representation
+        fields_length = []
         stdout = subprocess.check_output(config.cmd(), shell=True)  # noqa: DUO116
         output = sorted(
             filter(lambda item: item.strip() != "", stdout.decode().split("\n")),
@@ -42,12 +47,23 @@ class Local(DiscoveryService):
             ip = host
             key = self.get_key(host)
             metadata = {"host": host}
+
             representation = [host_id, host]
+            self.enrich_representation(representation, metadata)
+
+            # Update maximum field length
+            for idx, value in enumerate(representation):
+                if idx >= len(fields_length):
+                    fields_length.append(len(value))
+                else:
+                    fields_length[idx] = max(fields_length[idx], len(value))
+
             user = self.get_user(host)
             instance = CloudInstance(
                 host_id, ip, None, metadata, representation, key, user, None,
             )
             yield instance
+        yield fields_length
 
     def get_key(self, host):
         """Get key for ssh host."""

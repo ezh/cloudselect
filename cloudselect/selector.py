@@ -50,6 +50,11 @@ class Selector:
                         profiles.append(name)
         print("\n".join(sorted(set(profiles))))
 
+    @staticmethod
+    def config():
+        """Return selector configuration."""
+        return Container.config().get("option", {})
+
     def edit(self, configuration):
         """Edit profile or shared configuration file if file is None."""
         self.logger.debug("Edit '%s'", configuration)
@@ -69,17 +74,36 @@ class Selector:
             .strip()
         )
 
-    def fzf_select(self, instances):
+    def fzf_select(self, representation_maximum_field_length, instances):
         """Invoke FZF with list of instances and return selected."""
-        fzf_options = Container.config.fzf() or ["-1", "-m", "--with-nth", "2.."]
+        fzf_options = self.config().get("fzf") or [
+            "-1",
+            "-m",
+            "-e",
+            "--with-nth",
+            "2..",
+        ]
 
         def find(instance_id):
+            """Find instance by instance_id."""
             return next(x for x in instances if x.instance_id == instance_id)
 
-        if Container.config.sort_by():
-            sort_by = Container.config.sort_by()
+        def adjust(representation, representation_maximum_field_length):
+            """Adjust representation items if necessary."""
+            if self.config().get("adjust"):
+                for idx, value in enumerate(representation):
+                    representation[idx] = value.ljust(
+                        representation_maximum_field_length[idx],
+                    )
+            return representation
+
+        if self.config().get("sort_by"):
+            sort_by = self.config().get("sort_by")
             instances = sorted(instances, key=lambda x: x.representation[sort_by])
-        fzf_input = "\n".join("\t".join(i.representation) for i in instances).encode()
+        fzf_input = "\n".join(
+            "\t".join(adjust(i.representation, representation_maximum_field_length))
+            for i in instances
+        ).encode()
         selected = self.execute("fzf", fzf_options, input=fzf_input)
         if not selected:
             sys.exit("Error: No instances selected")
@@ -87,7 +111,7 @@ class Selector:
             raise AssertionError(
                 "There should be at least 2 fields in instance representation: id and something meaningful",
             )
-        return [find(i.split("\t", 1)[0]) for i in selected.split("\n")]
+        return [find(i.split("\t", 1)[0].strip()) for i in selected.split("\n")]
 
     def get_editor(self):
         """Get editor path."""
@@ -135,10 +159,10 @@ class Selector:
         report = Container.report()
 
         self.logger.debug("Process profile '%s'", profile_name)
-        instances = discovery.run()
+        representation_maximum_field_length, instances = discovery.run()
         if not instances:
             sys.exit("Error: No instances found")
-        selected = self.fzf_select(instances)
+        selected = self.fzf_select(representation_maximum_field_length, instances)
         selected = [pathfinder.run(i, instances) for i in selected]
         return report.run(selected)
 

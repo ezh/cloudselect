@@ -18,6 +18,8 @@ from cloudselect import Container
 class DiscoveryService:
     """Base class for discovery service."""
 
+    log = None
+
     @staticmethod
     def run():
         """Get list of instances."""

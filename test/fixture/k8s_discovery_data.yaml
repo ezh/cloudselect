@@ -1,0 +1,600 @@
+- api_version: null
+  kind: null
+  metadata:
+    annotations:
+      kubernetes.io/psp: eks.privileged
+    cluster_name: null
+    creation_timestamp: 2020-02-09 16:00:29+00:00
+    deletion_grace_period_seconds: null
+    deletion_timestamp: null
+    finalizers: null
+    generate_name: myveryveryverylongnam-abcdefghi-
+    generation: null
+    initializers: null
+    labels:
+      eks.amazonaws.com/component: myveryveryverylongnam
+      k8s-app: kube-dns
+      pod-template-hash: abcdefghi
+    managed_fields: null
+    name: myveryveryverylongnam-abcdefghi-7fg62
+    namespace: kube-system
+    owner_references:
+    - api_version: apps/v1
+      block_owner_deletion: true
+      controller: true
+      kind: ReplicaSet
+      name: myveryveryverylongnam-abcdefghi
+      uid: 3de525e1-0a16-11ea-b7b3-000000000000
+    resource_version: '171300821'
+    self_link: /api/v1/namespaces/kube-system/pods/myveryveryverylongnam-abcdefghi-7fg62
+    uid: 4b669064-4b55-11ea-b54e-000000000000
+  spec:
+    active_deadline_seconds: null
+    affinity:
+      node_affinity:
+        preferred_during_scheduling_ignored_during_execution: null
+        required_during_scheduling_ignored_during_execution:
+          node_selector_terms:
+          - match_expressions:
+            - key: beta.kubernetes.io/os
+              operator: In
+              values:
+              - linux
+            - key: beta.kubernetes.io/arch
+              operator: In
+              values:
+              - amd64
+            match_fields: null
+      pod_affinity: null
+      pod_anti_affinity: null
+    automount_service_account_token: null
+    containers:
+    - args:
+      - -conf
+      - /etc/myveryveryverylongnam/Corefile
+      command: null
+      env: null
+      env_from: null
+      image: 602401143452.dkr.ecr.eu-west-1.amazonaws.com/eks/myveryveryverylongnam:v1.3.1
+      image_pull_policy: IfNotPresent
+      lifecycle: null
+      liveness_probe:
+        _exec: null
+        failure_threshold: 5
+        http_get:
+          host: null
+          http_headers: null
+          path: /health
+          port: 8080
+          scheme: HTTP
+        initial_delay_seconds: 60
+        period_seconds: 10
+        success_threshold: 1
+        tcp_socket: null
+        timeout_seconds: 5
+      name: myveryveryverylongnam
+      ports:
+      - container_port: 53
+        host_ip: null
+        host_port: null
+        name: dns
+        protocol: UDP
+      - container_port: 53
+        host_ip: null
+        host_port: null
+        name: dns-tcp
+        protocol: TCP
+      - container_port: 9153
+        host_ip: null
+        host_port: null
+        name: metrics
+        protocol: TCP
+      readiness_probe: null
+      resources:
+        limits:
+          memory: 170Mi
+        requests:
+          cpu: 100m
+          memory: 70Mi
+      security_context:
+        allow_privilege_escalation: false
+        capabilities:
+          add:
+          - NET_BIND_SERVICE
+          drop:
+          - all
+        privileged: null
+        proc_mount: null
+        read_only_root_filesystem: true
+        run_as_group: null
+        run_as_non_root: null
+        run_as_user: null
+        se_linux_options: null
+      stdin: null
+      stdin_once: null
+      termination_message_path: /dev/termination-log
+      termination_message_policy: File
+      tty: null
+      volume_devices: null
+      volume_mounts:
+      - mount_path: /etc/myveryveryverylongnam
+        mount_propagation: null
+        name: config-volume
+        read_only: true
+        sub_path: null
+        sub_path_expr: null
+      - mount_path: /var/run/secrets/kubernetes.io/serviceaccount
+        mount_propagation: null
+        name: myveryveryverylongnam-token-5cdqg
+        read_only: true
+        sub_path: null
+        sub_path_expr: null
+      working_dir: null
+    dns_config: null
+    dns_policy: Default
+    enable_service_links: true
+    host_aliases: null
+    host_ipc: null
+    host_network: null
+    host_pid: null
+    hostname: null
+    image_pull_secrets: null
+    init_containers: null
+    node_name: ip-2-2-2-2.k8s
+    node_selector: null
+    priority: 2000001000
+    priority_class_name: system-node-critical
+    readiness_gates: null
+    restart_policy: Always
+    runtime_class_name: null
+    scheduler_name: default-scheduler
+    security_context:
+      fs_group: null
+      run_as_group: null
+      run_as_non_root: null
+      run_as_user: null
+      se_linux_options: null
+      supplemental_groups: null
+      sysctls: null
+    service_account: myveryveryverylongnam
+    service_account_name: myveryveryverylongnam
+    share_process_namespace: null
+    subdomain: null
+    termination_grace_period_seconds: 30
+    tolerations:
+    - effect: null
+      key: CriticalAddonsOnly
+      operator: Exists
+      toleration_seconds: null
+      value: null
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      toleration_seconds: 300
+      value: null
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      toleration_seconds: 300
+      value: null
+    volumes:
+    - aws_elastic_block_store: null
+      azure_disk: null
+      azure_file: null
+      cephfs: null
+      cinder: null
+      config_map:
+        default_mode: 420
+        items:
+        - key: Corefile
+          mode: null
+          path: Corefile
+        name: myveryveryverylongnam
+        optional: null
+      csi: null
+      downward_api: null
+      empty_dir: null
+      fc: null
+      flex_volume: null
+      flocker: null
+      gce_persistent_disk: null
+      git_repo: null
+      glusterfs: null
+      host_path: null
+      iscsi: null
+      name: config-volume
+      nfs: null
+      persistent_volume_claim: null
+      photon_persistent_disk: null
+      portworx_volume: null
+      projected: null
+      quobyte: null
+      rbd: null
+      scale_io: null
+      secret: null
+      storageos: null
+      vsphere_volume: null
+    - aws_elastic_block_store: null
+      azure_disk: null
+      azure_file: null
+      cephfs: null
+      cinder: null
+      config_map: null
+      csi: null
+      downward_api: null
+      empty_dir: null
+      fc: null
+      flex_volume: null
+      flocker: null
+      gce_persistent_disk: null
+      git_repo: null
+      glusterfs: null
+      host_path: null
+      iscsi: null
+      name: myveryveryverylongnam-token-5cdqg
+      nfs: null
+      persistent_volume_claim: null
+      photon_persistent_disk: null
+      portworx_volume: null
+      projected: null
+      quobyte: null
+      rbd: null
+      scale_io: null
+      secret:
+        default_mode: 420
+        items: null
+        optional: null
+        secret_name: myveryveryverylongnam-token-5cdqg
+      storageos: null
+      vsphere_volume: null
+  status:
+    conditions:
+    - last_probe_time: null
+      last_transition_time: 2020-02-09 16:00:29+00:00
+      message: null
+      reason: null
+      status: 'True'
+      type: Initialized
+    - last_probe_time: null
+      last_transition_time: 2020-02-09 16:00:31+00:00
+      message: null
+      reason: null
+      status: 'True'
+      type: Ready
+    - last_probe_time: null
+      last_transition_time: 2020-02-09 16:00:31+00:00
+      message: null
+      reason: null
+      status: 'True'
+      type: ContainersReady
+    - last_probe_time: null
+      last_transition_time: 2020-02-09 16:00:29+00:00
+      message: null
+      reason: null
+      status: 'True'
+      type: PodScheduled
+    container_statuses:
+    - container_id: docker://532d6d0540176e58bf3dbf2aeda233fa3628e2b4abe99dcd5db433d68d284db6
+      image: 602401143452.dkr.ecr.eu-west-1.amazonaws.com/eks/myveryveryverylongnam:v1.3.1
+      image_id: docker-pullable://602401143452.dkr.ecr.eu-west-1.amazonaws.com/eks/myveryveryverylongnam@sha256:c85954b828a5627b9f3c4540893ab9d8a4be5f8da7513882ad122e08f5c2e60a
+      last_state:
+        running: null
+        terminated: null
+        waiting: null
+      name: myveryveryverylongnam
+      ready: true
+      restart_count: 0
+      state:
+        running:
+          started_at: 2020-02-09 16:00:30+00:00
+        terminated: null
+        waiting: null
+    host_ip: 2.2.2.2
+    init_container_statuses: null
+    message: null
+    nominated_node_name: null
+    phase: Running
+    pod_ip: 1.1.1.1
+    qos_class: Burstable
+    reason: null
+    start_time: 2020-02-09 16:00:29+00:00
+- api_version: null
+  kind: null
+  metadata:
+    annotations:
+      kubernetes.io/psp: eks.privileged
+    cluster_name: null
+    creation_timestamp: 2020-02-09 16:00:29+00:00
+    deletion_grace_period_seconds: null
+    deletion_timestamp: null
+    finalizers: null
+    generate_name: shortname-abcdefghi-
+    generation: null
+    initializers: null
+    labels:
+      eks.amazonaws.com/component: shortname
+      k8s-app: kube-dns
+      pod-template-hash: abcdefghi
+    managed_fields: null
+    name: shortname-abcdefghi-7fg62
+    namespace: kube-system
+    owner_references:
+    - api_version: apps/v1
+      block_owner_deletion: true
+      controller: true
+      kind: ReplicaSet
+      name: shortname-abcdefghi
+      uid: 3de525e1-0a16-11ea-b7b3-000000000000
+    resource_version: '171300821'
+    self_link: /api/v1/namespaces/kube-system/pods/shortname-abcdefghi-7fg62
+    uid: 4b669064-4b55-11ea-b54e-000000000000
+  spec:
+    active_deadline_seconds: null
+    affinity:
+      node_affinity:
+        preferred_during_scheduling_ignored_during_execution: null
+        required_during_scheduling_ignored_during_execution:
+          node_selector_terms:
+          - match_expressions:
+            - key: beta.kubernetes.io/os
+              operator: In
+              values:
+              - linux
+            - key: beta.kubernetes.io/arch
+              operator: In
+              values:
+              - amd64
+            match_fields: null
+      pod_affinity: null
+      pod_anti_affinity: null
+    automount_service_account_token: null
+    containers:
+    - args:
+      - -conf
+      - /etc/shortname/Corefile
+      command: null
+      env: null
+      env_from: null
+      image: 602401143452.dkr.ecr.eu-west-1.amazonaws.com/eks/shortname:v1.3.1
+      image_pull_policy: IfNotPresent
+      lifecycle: null
+      liveness_probe:
+        _exec: null
+        failure_threshold: 5
+        http_get:
+          host: null
+          http_headers: null
+          path: /health
+          port: 8080
+          scheme: HTTP
+        initial_delay_seconds: 60
+        period_seconds: 10
+        success_threshold: 1
+        tcp_socket: null
+        timeout_seconds: 5
+      name: shortname
+      ports:
+      - container_port: 53
+        host_ip: null
+        host_port: null
+        name: dns
+        protocol: UDP
+      - container_port: 53
+        host_ip: null
+        host_port: null
+        name: dns-tcp
+        protocol: TCP
+      - container_port: 9153
+        host_ip: null
+        host_port: null
+        name: metrics
+        protocol: TCP
+      readiness_probe: null
+      resources:
+        limits:
+          memory: 170Mi
+        requests:
+          cpu: 100m
+          memory: 70Mi
+      security_context:
+        allow_privilege_escalation: false
+        capabilities:
+          add:
+          - NET_BIND_SERVICE
+          drop:
+          - all
+        privileged: null
+        proc_mount: null
+        read_only_root_filesystem: true
+        run_as_group: null
+        run_as_non_root: null
+        run_as_user: null
+        se_linux_options: null
+      stdin: null
+      stdin_once: null
+      termination_message_path: /dev/termination-log
+      termination_message_policy: File
+      tty: null
+      volume_devices: null
+      volume_mounts:
+      - mount_path: /etc/shortname
+        mount_propagation: null
+        name: config-volume
+        read_only: true
+        sub_path: null
+        sub_path_expr: null
+      - mount_path: /var/run/secrets/kubernetes.io/serviceaccount
+        mount_propagation: null
+        name: shortname-token-5cdqg
+        read_only: true
+        sub_path: null
+        sub_path_expr: null
+      working_dir: null
+    dns_config: null
+    dns_policy: Default
+    enable_service_links: true
+    host_aliases: null
+    host_ipc: null
+    host_network: null
+    host_pid: null
+    hostname: null
+    image_pull_secrets: null
+    init_containers: null
+    node_name: ip-2-2-2-2.k8s
+    node_selector: null
+    priority: 2000001000
+    priority_class_name: system-node-critical
+    readiness_gates: null
+    restart_policy: Always
+    runtime_class_name: null
+    scheduler_name: default-scheduler
+    security_context:
+      fs_group: null
+      run_as_group: null
+      run_as_non_root: null
+      run_as_user: null
+      se_linux_options: null
+      supplemental_groups: null
+      sysctls: null
+    service_account: shortname
+    service_account_name: shortname
+    share_process_namespace: null
+    subdomain: null
+    termination_grace_period_seconds: 30
+    tolerations:
+    - effect: null
+      key: CriticalAddonsOnly
+      operator: Exists
+      toleration_seconds: null
+      value: null
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      toleration_seconds: 300
+      value: null
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      toleration_seconds: 300
+      value: null
+    volumes:
+    - aws_elastic_block_store: null
+      azure_disk: null
+      azure_file: null
+      cephfs: null
+      cinder: null
+      config_map:
+        default_mode: 420
+        items:
+        - key: Corefile
+          mode: null
+          path: Corefile
+        name: shortname
+        optional: null
+      csi: null
+      downward_api: null
+      empty_dir: null
+      fc: null
+      flex_volume: null
+      flocker: null
+      gce_persistent_disk: null
+      git_repo: null
+      glusterfs: null
+      host_path: null
+      iscsi: null
+      name: config-volume
+      nfs: null
+      persistent_volume_claim: null
+      photon_persistent_disk: null
+      portworx_volume: null
+      projected: null
+      quobyte: null
+      rbd: null
+      scale_io: null
+      secret: null
+      storageos: null
+      vsphere_volume: null
+    - aws_elastic_block_store: null
+      azure_disk: null
+      azure_file: null
+      cephfs: null
+      cinder: null
+      config_map: null
+      csi: null
+      downward_api: null
+      empty_dir: null
+      fc: null
+      flex_volume: null
+      flocker: null
+      gce_persistent_disk: null
+      git_repo: null
+      glusterfs: null
+      host_path: null
+      iscsi: null
+      name: shortname-token-5cdqg
+      nfs: null
+      persistent_volume_claim: null
+      photon_persistent_disk: null
+      portworx_volume: null
+      projected: null
+      quobyte: null
+      rbd: null
+      scale_io: null
+      secret:
+        default_mode: 420
+        items: null
+        optional: null
+        secret_name: shortname-token-5cdqg
+      storageos: null
+      vsphere_volume: null
+  status:
+    conditions:
+    - last_probe_time: null
+      last_transition_time: 2020-02-09 16:00:29+00:00
+      message: null
+      reason: null
+      status: 'True'
+      type: Initialized
+    - last_probe_time: null
+      last_transition_time: 2020-02-09 16:00:31+00:00
+      message: null
+      reason: null
+      status: 'True'
+      type: Ready
+    - last_probe_time: null
+      last_transition_time: 2020-02-09 16:00:31+00:00
+      message: null
+      reason: null
+      status: 'True'
+      type: ContainersReady
+    - last_probe_time: null
+      last_transition_time: 2020-02-09 16:00:29+00:00
+      message: null
+      reason: null
+      status: 'True'
+      type: PodScheduled
+    container_statuses:
+    - container_id: docker://532d6d0540176e58bf3dbf2aeda233fa3628e2b4abe99dcd5db433d68d284db6
+      image: 602401143452.dkr.ecr.eu-west-1.amazonaws.com/eks/shortname:v1.3.1
+      image_id: docker-pullable://602401143452.dkr.ecr.eu-west-1.amazonaws.com/eks/shortname@sha256:c85954b828a5627b9f3c4540893ab9d8a4be5f8da7513882ad122e08f5c2e60a
+      last_state:
+        running: null
+        terminated: null
+        waiting: null
+      name: shortname
+      ready: true
+      restart_count: 0
+      state:
+        running:
+          started_at: 2020-02-09 16:00:30+00:00
+        terminated: null
+        waiting: null
+    host_ip: 2.2.2.2
+    init_container_statuses: null
+    message: null
+    nominated_node_name: null
+    phase: Running
+    pod_ip: 1.1.1.2
+    qos_class: Burstable
+    reason: null
+    start_time: 2020-02-09 16:00:29+00:00
