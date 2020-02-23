@@ -1,0 +1,20 @@
+discovery:
+  cluster:
+    ft-qa:
+      aws_profile: my_profile
+      aws_region: my_region
+      configuration: /home/user/.kube/config.yaml
+      context: user_context
+      namespace:
+        - kube-system
+  fzf_extra:
+  - container
+  - status:pod_ip
+  - status:host_ip
+  - metadata:namespace
+  type: kubernetes
+report:
+  type: json
+option:
+  adjust: True
+  sort_by: 1

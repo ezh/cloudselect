@@ -6,6 +6,7 @@
         "discovery": {
             "aws": "cloudselect.discovery.aws",
             "hetzner": "cloudselect.discovery.hetzner",
+            "kubernetes": "cloudselect.discovery.kubernetes",
             "local": "cloudselect.discovery.local"
         },
         "group": {
