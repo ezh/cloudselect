@@ -31,10 +31,15 @@ class Hetzner(DiscoveryService):
     def run(self):
         """Collect Hetzner instances."""
         self.log.debug("Discover Hetzner instances")
-        return list(self.instances())
+        instances = list(self.instances())
+        representation = instances[-1]
+        del instances[-1]
+        return (representation, instances)
 
     def instances(self):
         """Collect Hetzner instances."""
+        # Array with maximum field length for each element in representation
+        fields_length = []
         for i in self.find():
             instance_id = i["id"]
             metadata = i
@@ -47,10 +52,18 @@ class Hetzner(DiscoveryService):
             representation = [instance_id, ip]
             self.enrich_representation(representation, metadata)
 
+            # Update maximum field length
+            for idx, value in enumerate(representation):
+                if idx >= len(fields_length):
+                    fields_length.append(len(value))
+                else:
+                    fields_length[idx] = max(fields_length[idx], len(value))
+
             instance = CloudInstance(
                 instance_id, ip, None, metadata, representation, key, user, port,
             )
             yield instance
+        yield fields_length
 
     @staticmethod
     def find():

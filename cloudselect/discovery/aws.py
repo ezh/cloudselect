@@ -28,10 +28,15 @@ class AWS(DiscoveryService):
     def run(self):
         """Collect AWS instances."""
         self.log.debug("Discover AWS instances")
-        return list(self.instances())
+        instances = list(self.instances())
+        representation = instances[-1]
+        del instances[-1]
+        return (representation, instances)
 
     def instances(self):
         """Collect AWS instances."""
+        # Array with maximum field length for each element in representation
+        fields_length = []
         for i in self.find():
             instance_id = i["InstanceId"]
             metadata = self.get_metadata(i)
@@ -42,15 +47,20 @@ class AWS(DiscoveryService):
             user = self.get_user(i, config)
 
             representation = [instance_id, ip]
-            for field in self.config().get("fzf_extra", []):
-                if field in i:
-                    representation.append(i[field])
-                elif field.startswith("tag:"):
-                    representation.append(self.tag(i, field.replace("tag:", "")))
+            self.enrich_representation(representation, metadata)
+
+            # Update maximum field length
+            for idx, value in enumerate(representation):
+                if idx >= len(fields_length):
+                    fields_length.append(len(value))
+                else:
+                    fields_length[idx] = max(fields_length[idx], len(value))
+
             instance = CloudInstance(
                 instance_id, ip, None, metadata, representation, key, user, 22,
             )
             yield instance
+        yield fields_length
 
     @staticmethod
     def find():
