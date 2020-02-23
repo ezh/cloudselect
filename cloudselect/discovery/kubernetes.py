@@ -6,8 +6,8 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 """Module collecting instances from Kubernetes namespaces."""
-import copy
 import logging
+import os
 import re
 
 from kubernetes import client, config
@@ -24,7 +24,7 @@ class Kubernetes(DiscoveryService):
 
     def __init__(self):
         """Class constructor."""
-        self.log = logging.getLogger("cloudselect.discovery.kubernetes")
+        self.log = logging.getLogger("cloudselect.discovery.Kubernetes")
 
     def run(self):
         """Collect Kubernetes pods."""
@@ -34,69 +34,100 @@ class Kubernetes(DiscoveryService):
     def instances(self):
         """Collect Kubernetes pods."""
         for i in self.find():
-            instance_id = i["metadata"]["uid"]
-            metadata = self.simplify_metadata(i)
-            configuration = i["cluster"]["configuration"]
+            metadata = self.simplify_metadata(i["metadata"])
             container = i["container"]
-            context = i["cluster"]["context"]
-            ip = i["status"]["pod_ip"]
-            name = i["metadata"]["name"]
-            namespace = i["metadata"]["namespace"]
-            node_ip = i["status"]["host_ip"]
+            instance_id = metadata["metadata"]["uid"]
+            name = metadata["metadata"]["name"]
+            namespace = metadata["metadata"]["namespace"]
 
             representation = [instance_id, name, container]
             self.enrich_representation(representation, metadata)
 
-            instance = PodContainer(
+            yield PodContainer(
                 instance_id,
                 name,
                 None,
                 metadata,
                 representation,
-                configuration,
+                i["aws_profile"],
+                i["aws_region"],
+                i["configuration"],
                 container,
-                context,
+                i["context"],
+                metadata["status"]["pod_ip"],
                 namespace,
-                ip,
-                node_ip,
+                metadata["status"]["host_ip"],
             )
-            yield instance
+
+    @staticmethod
+    def aws_apply(aws_profile, aws_region):
+        """Apply AWS environmen variables if necessary.
+
+        Those variables are using by k8s aws-iam-authenticator.
+        """
+        aws_profile_save = os.environ.get("AWS_PROFILE")
+        aws_region_save = os.environ.get("AWS_REGION")
+        if aws_profile:
+            os.environ["AWS_PROFILE"] = aws_profile
+        if aws_region:
+            os.environ["AWS_REGION"] = aws_region
+        return [aws_profile_save, aws_region_save]
+
+    @staticmethod
+    def aws_restore(aws_profile, aws_region):
+        """Restore AWS environment variables."""
+        if aws_profile:
+            os.environ["AWS_PROFILE"] = aws_profile
+        else:
+            del os.environ["AWS_PROFILE"]
+        if aws_profile:
+            os.environ["AWS_REGION"] = aws_region
+        else:
+            del os.environ["AWS_REGION"]
 
     def find(self):
         """Discover pods in Kubernetes clouds."""
         cluster = Container.config.discovery.cluster()
         for cluster_id in cluster:
-            patterns = [re.compile(i) for i in cluster[cluster_id].get("namespace", [])]
-            config_file = cluster[cluster_id].get("configuration")
+            aws_profile = cluster[cluster_id].get("aws_profile")
+            aws_region = cluster[cluster_id].get("aws_region")
+            configuration = cluster[cluster_id].get("configuration")
             context = cluster[cluster_id].get("context")
-            api_client = config.new_client_from_config(
-                config_file=config_file, context=context,
-            )
-            version_api = client.VersionApi(api_client=api_client)
-            version = version_api.get_code()
-            self.log.debug(
-                "Connected to '%s', control plane version %s",
-                cluster_id,
-                version.git_version,
-            )
-            core_v1 = client.CoreV1Api(api_client=api_client)
-            ret = core_v1.list_pod_for_all_namespaces(watch=False)
-            for pod in ret.items:
-                for container in pod.spec.containers:
-                    instance = copy.deepcopy(pod.to_dict())
-                    if instance["status"]["phase"] == "Running":
-                        instance["cluster"] = {
-                            "configuration": config_file,
+            patterns = [re.compile(i) for i in cluster[cluster_id].get("namespace", [])]
+            aws_envs = self.aws_apply(aws_profile, aws_region)
+            pods = self.get_pods(cluster_id, configuration, context)
+            self.aws_restore(*aws_envs)
+            for pod in pods.items:
+                namespace = pod.metadata.namespace
+                matched = True
+                if patterns:
+                    matched = False
+                    for i in patterns:
+                        if i.match(namespace) is not None:
+                            matched = True
+                            break
+                if pod.status.phase == "Running" and matched:
+                    for container in pod.spec.containers:
+                        yield {
+                            "aws_profile": aws_profile,
+                            "aws_region": aws_region,
+                            "configuration": configuration,
+                            "container": container.name,
                             "context": context,
+                            "metadata": pod.to_dict(),
                         }
-                        instance["container"] = container.name
-                        if patterns:
-                            namespace = instance["metadata"]["namespace"]
-                            matched = next(
-                                (m for m in patterns if m.match(namespace) is not None),
-                                None,
-                            )
-                            if matched is not None:
-                                yield instance
-                        else:
-                            yield instance
+
+    def get_pods(self, cluster_id, configuration, context):
+        """Get list of pods from cluster."""
+        api_client = config.new_client_from_config(
+            config_file=configuration, context=context,
+        )
+        version_api = client.VersionApi(api_client=api_client)
+        version = version_api.get_code()
+        self.log.debug(
+            "Connected to '%s', control plane version %s",
+            cluster_id,
+            version.git_version,
+        )
+        core_v1 = client.CoreV1Api(api_client=api_client)
+        return core_v1.list_pod_for_all_namespaces(watch=False)

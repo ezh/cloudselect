@@ -50,28 +50,32 @@ class CloudInstance(Instance):
         }
 
 
-@attr.s
+@attr.s  # pylint: disable=too-many-instance-attributes
 class PodContainer(Instance):
     """Kubernetes container class."""
 
+    aws_profile = attr.ib()
+    aws_region = attr.ib()
     configuration = attr.ib()
     container = attr.ib()
     context = attr.ib()
-    namespace = attr.ib()
     ip = attr.ib()
+    namespace = attr.ib()
     node_ip = attr.ib()
 
     def to_dict(self):
         """Convert class to dictionary."""
         return {
             "id": self.instance_id,
+            "aws_profile": self.aws_profile,
+            "aws_region": self.aws_region,
             "configuration": self.configuration,
             "container": self.container,
             "context": self.context,
             "host": self.host,
             "ip": self.ip,
-            "node_ip": self.node_ip,
             "jumphost": self.jumphost.to_dict() if self.jumphost else None,
-            "namespace": self.namespace,
             "metadata": self.metadata,
+            "namespace": self.namespace,
+            "node_ip": self.node_ip,
         }

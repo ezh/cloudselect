@@ -42,18 +42,24 @@ test "$OPTION_BEFORE" != "null" && eval "$OPTION_BEFORE"
 for row in $(echo $CLOUD); do
     OUTPUT=$(echo ${row} | base64 --decode)
     HOST=$(echo $OUTPUT | jq -r '.host')
+    AWS_PROFILE="AWS_PROFILE="$(echo $OUTPUT | jq -r '.aws_profile // ""')
+    AWS_REGION="AWS_REGION="$(echo $OUTPUT | jq -r '.aws_region // ""')
     CONFIGURATION="--kubeconfig="$(echo $OUTPUT | jq -r '.configuration // ""')
     CONTAINER="-c "$(echo $OUTPUT | jq -r '.container')
     CONTEXT="--context="$(echo $OUTPUT | jq -r '.context // ""')
     NAMESPACE=$(echo $OUTPUT | jq -r '.namespace // ""')
 
+    test "$AWS_PROFILE" == "AWS_PROFILE=" && AWS_PROFILE=""
+    test "$AWS_REGION" == "AWS_REGION=" && AWS_REGION=""
     test "$CONFIGURATION" == "--kubeconfig=" && CONFIGURATION=""
     test "$CONTEXT" == "--context=" && CONTEXT=""
 
-    connectString="kubectl $CONFIGURATION $CONTEXT -n $NAMESPACE exec $HOST $CONTAINER -i -t $OPTION_SHELL"
+    connectString="$AWS_PROFILE $AWS_REGION kubectl $CONFIGURATION $CONTEXT -n $NAMESPACE exec $HOST $CONTAINER -i -t $OPTION_SHELL"
     commandString="${connectString}; $WAIT_FOR_INPUT"
 
     if [ $# -ge $KEXEC_ARGS ];then
+      [ -n "$AWS_PROFILE" ] && eval "export $AWS_PROFILE"
+      [ -n "$AWS_REGION" ] && eval "export $AWS_REGION"
       echo "kubectl $CONFIGURATION $CONTEXT -n $NAMESPACE exec $HOST $CONTAINER -- ${@:$KEXEC_ARGS}"
       kubectl $CONFIGURATION $CONTEXT -n $NAMESPACE exec $HOST $CONTAINER -- ${@:$KEXEC_ARGS}
       continue

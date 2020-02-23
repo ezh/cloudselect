@@ -8,6 +8,7 @@
 """Module providing Discovery service base class and service provider."""
 import collections.abc
 import copy
+from datetime import datetime
 
 import dependency_injector.providers as providers
 
@@ -16,8 +17,6 @@ from cloudselect import Container
 
 class DiscoveryService:
     """Base class for discovery service."""
-
-    log = None
 
     @staticmethod
     def run():
@@ -64,6 +63,9 @@ class DiscoveryService:
 
         def map_nested_dicts_modify(obj, func):
             """Apply function to object."""
+            filtered = {k: v for k, v in obj.items() if v is not None}
+            obj.clear()
+            obj.update(filtered)
             for key, value in obj.items():
                 if isinstance(value, collections.Mapping):
                     map_nested_dicts_modify(value, func)
@@ -72,7 +74,16 @@ class DiscoveryService:
                 else:
                     obj[key] = func(value)
 
-        map_nested_dicts_modify(metadata, str)
+        def to_string(value):
+            """Convert object to string."""
+            if isinstance(value, collections.Mapping):
+                map_nested_dicts_modify(value, to_string)
+                return value
+            if isinstance(value, datetime):
+                return str(value)
+            return value
+
+        map_nested_dicts_modify(metadata, to_string)
         return metadata
 
 
