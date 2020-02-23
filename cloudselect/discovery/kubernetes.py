@@ -7,6 +7,7 @@
 # except according to those terms.
 """Module collecting instances from Kubernetes namespaces."""
 import logging
+import os
 import re
 
 from kubernetes import client, config
@@ -42,29 +43,60 @@ class Kubernetes(DiscoveryService):
             representation = [instance_id, name, container]
             self.enrich_representation(representation, metadata)
 
-            instance = PodContainer(
+            yield PodContainer(
                 instance_id,
                 name,
                 None,
                 metadata,
                 representation,
+                i["aws_profile"],
+                i["aws_region"],
                 i["configuration"],
                 container,
                 i["context"],
-                namespace,
                 metadata["status"]["pod_ip"],
+                namespace,
                 metadata["status"]["host_ip"],
             )
-            yield instance
+
+    @staticmethod
+    def aws_apply(aws_profile, aws_region):
+        """Apply AWS environmen variables if necessary.
+
+        Those variables are using by k8s aws-iam-authenticator.
+        """
+        aws_profile_save = os.environ.get("AWS_PROFILE")
+        aws_region_save = os.environ.get("AWS_REGION")
+        if aws_profile:
+            os.environ["AWS_PROFILE"] = aws_profile
+        if aws_region:
+            os.environ["AWS_REGION"] = aws_region
+        return [aws_profile_save, aws_region_save]
+
+    @staticmethod
+    def aws_restore(aws_profile, aws_region):
+        """Restore AWS environment variables."""
+        if aws_profile:
+            os.environ["AWS_PROFILE"] = aws_profile
+        else:
+            del os.environ["AWS_PROFILE"]
+        if aws_profile:
+            os.environ["AWS_REGION"] = aws_region
+        else:
+            del os.environ["AWS_REGION"]
 
     def find(self):
         """Discover pods in Kubernetes clouds."""
         cluster = Container.config.discovery.cluster()
         for cluster_id in cluster:
-            patterns = [re.compile(i) for i in cluster[cluster_id].get("namespace", [])]
+            aws_profile = cluster[cluster_id].get("aws_profile")
+            aws_region = cluster[cluster_id].get("aws_region")
             configuration = cluster[cluster_id].get("configuration")
             context = cluster[cluster_id].get("context")
+            patterns = [re.compile(i) for i in cluster[cluster_id].get("namespace", [])]
+            aws_envs = self.aws_apply(aws_profile, aws_region)
             pods = self.get_pods(cluster_id, configuration, context)
+            self.aws_restore(*aws_envs)
             for pod in pods.items:
                 namespace = pod.metadata.namespace
                 matched = True
@@ -77,6 +109,8 @@ class Kubernetes(DiscoveryService):
                 if pod.status.phase == "Running" and matched:
                     for container in pod.spec.containers:
                         yield {
+                            "aws_profile": aws_profile,
+                            "aws_region": aws_region,
                             "configuration": configuration,
                             "container": container.name,
                             "context": context,
