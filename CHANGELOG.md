@@ -1,5 +1,31 @@
 # Changelog
 
+## v20.1.13 (23/02/2020)
+
+-   [Add AWS support for k8s discovery](https://github.com/ezh/cloudselect/commit/9b45b788780c001ac8a515381aff74469c8ed1d2) - @ezh
+-   [Add Kubernetes to documentation](https://github.com/ezh/cloudselect/commit/8dc29cff8014f25c30967ba10a6667276afd0e2f) - @ezh
+-   [Add container fields](https://github.com/ezh/cloudselect/commit/3b10401dfe18e775bdea0571940eb84644ed782c) - @ezh
+-   [Add discovery log member](https://github.com/ezh/cloudselect/commit/b84122c2f1fb6a7fd22a22e2e051897366a040cf) - @ezh
+-   [Add environments block to documentation](https://github.com/ezh/cloudselect/commit/c1aa4c84f76648ea7c226ac9264e59e104132e9d) - @ezh
+-   [Add kubenetes fixtures](https://github.com/ezh/cloudselect/commit/7aad9fa9f644400731116e252b5667afb7f69f7e) - @ezh
+-   [Add kubernetes test](https://github.com/ezh/cloudselect/commit/c738fee31a356216349e58522bf0c1456dcfbc5f) - @ezh
+-   [Drop None values from metadata](https://github.com/ezh/cloudselect/commit/cb88dd5cd40299f68e61c2ff1a5095fd2924612a) - @ezh
+-   [Fix selector](https://github.com/ezh/cloudselect/commit/7c7773cf95263f75282c230836e0dfd4cdb3dead) - @ezh
+-   [Fix tests](https://github.com/ezh/cloudselect/commit/a2cea9731be3d65ddf5954cb1c9f1fc8566625b2) - @ezh
+-   [Fix warnings](https://github.com/ezh/cloudselect/commit/833339e25f3fda9732ce508c39383a27387d0b76) - @ezh
+-   [Implement FZF adjust option](https://github.com/ezh/cloudselect/commit/1e6a636b2c9b01fcc1951c13a105f9a789a1fd95) - @ezh
+-   [Implement K8S discovery](https://github.com/ezh/cloudselect/commit/825bc6a33baaad27e0b198adbbc862d70451b76d) - @ezh
+-   [Improve kubernetes discovery](https://github.com/ezh/cloudselect/commit/22104b4ffc6825aee7a7098936760d6f1ef5435d) - @ezh
+-   [Improve simplify metadata](https://github.com/ezh/cloudselect/commit/921b78065dbabe71c0e9c2a3aac63d1facc680cd) - @ezh
+-   [Move from namedtuple to attrs](https://github.com/ezh/cloudselect/commit/f59792cef2b9ac05d65d1b9cc4aab55962a0b578) - @ezh
+-   [Reduce number of local variables in k8s/find](https://github.com/ezh/cloudselect/commit/d169aac5dc60d513648d98ff202601b17b880ed0) - @ezh
+-   [Reduce number of local variables in local/instances](https://github.com/ezh/cloudselect/commit/5c6ed349ad0caca3c5281fd41cdb1c1c0e298a93) - @ezh
+-   [Rename tmux script to sshtmux](https://github.com/ezh/cloudselect/commit/a499550796b5e3e7591df9cf00beee2427639dbe) - @ezh
+-   [Update discovery modules](https://github.com/ezh/cloudselect/commit/bbaff04861335912c90f0931e3a3cba984ca06d5) - @ezh
+-   [Update pylint rules](https://github.com/ezh/cloudselect/commit/63aaadb92684125da2724ff6541c7b8a9feed7fa) - @ezh
+
+* * *
+
 ## v20.1.12 (21/02/2020)
 
 -   [Add Hetzner discovery](https://github.com/ezh/cloudselect/commit/61e49bcd14ec003874566e6639aa7f3af15884a2) - @ezh
