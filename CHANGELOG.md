@@ -1,5 +1,12 @@
 # Changelog
 
+## v20.1.14 (23/02/2020)
+
+-   [Add the latest version info](https://github.com/ezh/cloudselect/commit/90607490984f0e9870f659ebf4abdc182cad6a6a) - @ezh
+-   [Fix kubernetes namespace filter](https://github.com/ezh/cloudselect/commit/0935445cb49484c644a82766b78d47ba9e7273c6) - @ezh
+
+* * *
+
 ## v20.1.13 (23/02/2020)
 
 -   [Add AWS support for k8s discovery](https://github.com/ezh/cloudselect/commit/9b45b788780c001ac8a515381aff74469c8ed1d2) - @ezh
