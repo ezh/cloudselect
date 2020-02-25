@@ -1,1 +1,2 @@
+mdx_unimoji==1.0
 pymdown-extensions==6.3

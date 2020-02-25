@@ -4,7 +4,7 @@ CloudSelect module loads configuration, plugins and invokes Select module.
 <h2 id="cloudselect.cloudselect.CloudSelect">CloudSelect</h2>
 
 ```python
-CloudSelect(self)
+CloudSelect(self, configpath=None)
 ```
 CloudSelect class that bootstraps application.
 

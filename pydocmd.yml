@@ -6,9 +6,11 @@ generate:
   - discovery.md:
       - cloudselect.discovery:
           - cloudselect.discovery.discovery:
-              - cloudselect.discovery.stub+
               - cloudselect.discovery.aws+
+              - cloudselect.discovery.hetzner+
+              - cloudselect.discovery.kubernetes+
               - cloudselect.discovery.local+
+              - cloudselect.discovery.stub+
   - group.md:
       - cloudselect.group:
         - cloudselect.group.group:
@@ -22,8 +24,10 @@ generate:
   - report.md:
       - cloudselect.report:
         - cloudselect.report.report:
-          - cloudselect.report.stub+
           - cloudselect.report.json+
+          - cloudselect.report.json_pp+
+          - cloudselect.report.stub+
+          - cloudselect.report.yaml+
 
 pages:
   - Home: index.md

@@ -24,8 +24,6 @@ markdown_extensions:
   - pymdownx.caret
   - pymdownx.critic
   - pymdownx.details
-  - pymdownx.emoji:
-      emoji_generator: "!!python/name:pymdownx.emoji.to_svg"
   - pymdownx.inlinehilite
   - pymdownx.keys
   - pymdownx.magiclink
@@ -35,6 +33,15 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
+  - mdx_unimoji:
+      span_class: 'custom_emoji'
+      emoji:
+        '<img alt="rocket" src="https://github.githubassets.com/images/icons/emoji/unicode/1f680.png" width="30" height="30"/>': [ ':rocket:' ]
+        '<img alt="construction" src="/images/emoji/construction.png" width="30" height="30"/>': [ ':construction:' ]
+        '<img alt="warning" src="/images/emoji/warning.png" width="30" height="30"/>': [ ':warning:' ]
+        '<img alt="baby_symbol" src="/images/emoji/baby_symbol.png" width="30" height="30"/>': [ ':baby_symbol:' ]
+        '<img alt="information_source" src="/images/emoji/information_source.png" width="30" height="30"/>': [ ':information_source:' ]
+
 
 repo_url: https://github.com/ezh/cloudselect
 site_author: ezh
@@ -52,6 +59,7 @@ theme:
 nav:
   - Overview: index.md
   - Quick start: quick-start.md
+  - FAQ: faq.md
   - Reference:
       - Overview: Reference/index.md
       - CloudSelect: Reference/cloudselect.md
