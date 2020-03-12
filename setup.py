@@ -31,7 +31,7 @@ setup(
         "chardet==3.0.4",
         "dependency-injector==3.15.6",
         "hcloud==1.6.3",
-        "kubernetes==10.0.1",
+        "kubernetes==11.0.0",
         "pyyaml==5.3",
     ],
     include_package_data=True,
