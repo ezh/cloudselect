@@ -32,7 +32,7 @@ setup(
         "dependency-injector==3.15.6",
         "hcloud==1.6.3",
         "kubernetes==11.0.0",
-        "pyyaml==5.3",
+        "pyyaml==5.3.1",
     ],
     include_package_data=True,
     keywords=["Cloud", "CLI", "FZF", "SSH", "SCP", "AWS"],
