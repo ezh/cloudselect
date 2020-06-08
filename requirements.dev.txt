@@ -10,7 +10,7 @@ pyls==0.1.6
 pyls-black==0.4.4
 pyls-isort==0.1.1
 pymdown-extensions==7.1
-pytest==5.4.2
+pytest==5.4.3
 pytest-console-scripts==0.2.0
 pytest-cov==2.9.0
 pytest-mock==3.1.1
