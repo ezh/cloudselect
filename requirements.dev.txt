@@ -4,7 +4,7 @@ mkdocs==1.1.2
 pre-commit==2.6.0
 ptpdb==0.17
 ptvsd==4.3.2
-pydoc-markdown==3.1.1
+pydoc-markdown==3.3.0
 pylint==2.5.3
 pyls==0.1.6
 pyls-black==0.4.6
