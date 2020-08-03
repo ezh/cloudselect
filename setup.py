@@ -27,7 +27,7 @@ setup(
     install_requires=[
         "attrs==19.3.0",
         "appdirs==1.4.4",
-        "boto3==1.14.30",
+        "boto3==1.14.34",
         "chardet==3.0.4",
         "dependency-injector==3.23.2",
         "hcloud==1.8.2",
