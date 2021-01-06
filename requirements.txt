@@ -1,6 +1,6 @@
 appdirs==1.4.4
 attrs==20.1.0
-boto3==1.14.45
+boto3==1.16.50
 chardet==3.0.4
 dependency-injector==3.23.2
 hcloud==1.9.1
