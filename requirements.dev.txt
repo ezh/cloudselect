@@ -1,7 +1,7 @@
 flake8==3.8.3
 invoke==1.4.1
 mkdocs==1.1.2
-pre-commit==2.7.1
+pre-commit==2.10.1
 ptpdb==0.17
 ptvsd==4.3.2
 pydoc-markdown==3.5.0
