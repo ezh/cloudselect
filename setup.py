@@ -25,7 +25,7 @@ setup(
         ],
     },
     install_requires=[
-        "attrs==20.1.0",
+        "attrs==21.1.0",
         "appdirs==1.4.4",
         "boto3==1.14.45",
         "chardet==3.0.4",
