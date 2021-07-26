@@ -29,7 +29,7 @@ setup(
         "appdirs==1.4.4",
         "boto3==1.17.105",
         "chardet==3.0.4",
-        "dependency-injector==3.23.2",
+        "dependency-injector==4.34.2",
         "hcloud==1.9.1",
         "kubernetes==11.0.0",
         "pyyaml==5.4",
